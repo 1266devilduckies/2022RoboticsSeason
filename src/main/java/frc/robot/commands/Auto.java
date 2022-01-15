@@ -1,44 +1,49 @@
 /*----------------------------------------------------------------------------*/
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
+
+//This is Auto.java. It runs the stuff for the automated phase -JM
+
 
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+//import frc.robot.RobotMap;
 
 public class Auto extends Command {
   private double timeout, startTime, currentTime;
   public Auto(double timeout) {
     this.timeout = timeout;
     // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    // eg. requires(chassis);  
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
+    //run commands
+    Robot.drivetrain.arcadeDriveVoltage(0.3, 0, 1, 0);
+    //
     startTime = Timer.getFPGATimestamp();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
-    Robot.drivetrain.arcadeDriveVoltage(0.3, 0, 1, 0);
+  public void execute() {
+    //update the time difference
     currentTime = Timer.getFPGATimestamp();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (timeout < (currentTime - startTime)) {
-      return true;
-      
-    }
-    return false;
+    //Think outside the box
+    return timeout < (currentTime - startTime);
   }
 
   // Called once after isFinished returns true
