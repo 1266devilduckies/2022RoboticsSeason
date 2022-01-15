@@ -20,6 +20,7 @@ import java.nio.file.Path;
 
 public class Robot extends TimedRobot{
 public static Drivetrain drivetrain;  
+public static Intake intake;
 
 Command m_autonomousCommand;
 SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -27,6 +28,7 @@ SendableChooser<Command> m_chooser = new SendableChooser<>();
 public void robotInit(){
   RobotMap.init();
   drivetrain = new Drivetrain();
+  intake = new Intake();
   JoystickController.Init();
   SmartDashboard.putData("Auto mode", m_chooser);
   String trajectoryJSON = "paths/start1.wpilib.json";
