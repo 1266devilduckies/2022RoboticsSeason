@@ -6,7 +6,7 @@ import frc.robot.RobotMap;
 
 //This class is literally just intakeStart but it instead sets the motor to go backwards (-1 speed) -JM
 public class IntakeReverse extends Command {//--------------class--------------
-  public IntakeStart() {
+  public IntakeReverse() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
   }
