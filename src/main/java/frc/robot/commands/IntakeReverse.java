@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
@@ -19,7 +21,7 @@ public class IntakeReverse extends Command {//--------------class--------------
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.IntakeMotor1.set(-1);
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput,-1);
   }
 
   // Make this return true when this Command no longer needs to run execute()

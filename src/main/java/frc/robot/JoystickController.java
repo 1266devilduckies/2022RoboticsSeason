@@ -7,11 +7,11 @@
 
 package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
-//import edu.wpi.first.wpilibj.buttons.Button;
-//import edu.wpi.first.wpilibj.buttons.Trigger;
-//import edu.wpi.first.wpilibj.buttons.JoystickButton;
-//import edu.wpi.first.wpilibj.command.Command;
-//import frc.robot.commands.*;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.Trigger;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.commands.*;
 
 public class JoystickController {
   	private final Joystick joystick;
@@ -21,10 +21,11 @@ public class JoystickController {
 	
 	private static JoystickController generateMainJoystick(){
 		final Joystick joystick = new Joystick(0);
-		return new JoystickController(joystick);
-		
 		setButtonPressBehavior(joystick, 6, new IntakeStart(), new IntakeStop());
 		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
+		return new JoystickController(joystick);
+		
+		
 		
 	}//JoystickController generateMainJoystick()
 
