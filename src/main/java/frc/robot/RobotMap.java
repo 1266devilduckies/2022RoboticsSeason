@@ -2,8 +2,8 @@ package frc.robot;
 //import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-//RobotMap.java just makes the motors through TalonFX (the actual motors) -JM
-
+//RobotMap.java just makes the motors through TalonFX (the actual motors)
+//When we start working with a new motor, we basically 'initialize' it here -JM
 
 public class RobotMap{
   public static TalonFX MainLeftMotorBack;
