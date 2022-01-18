@@ -11,6 +11,7 @@ public class RobotMap{
   public static TalonFX MainRightMotorBack;
   public static TalonFX MainRightMotorFront;
   public static TalonFX IntakeMotor1;
+  public static TalonFX PewPewMotor1;
 
   public static void init(){
     MainLeftMotorBack = new TalonFX(0);
@@ -18,5 +19,6 @@ public class RobotMap{
     MainRightMotorBack = new TalonFX(2);
     MainRightMotorFront = new TalonFX(3);
     IntakeMotor1 = new TalonFX(4);
+    PewPewMotor1 = new TalonFX(5);
   }
 }
