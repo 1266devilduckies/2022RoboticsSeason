@@ -9,6 +9,7 @@ import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 //import edu.wpi.first.wpilibj.drive.*;
