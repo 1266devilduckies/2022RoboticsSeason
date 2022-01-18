@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 //import edu.wpi.first.wpilibj.drive.*;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 public class Robot extends TimedRobot{
 public static Drivetrain drivetrain;  
 public static Intake intake;
+public static Shooter shooter;
 
 Command m_autonomousCommand;
 SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -30,6 +32,7 @@ public void robotInit(){
   RobotMap.init();
   drivetrain = new Drivetrain();
   intake = new Intake();
+  shooter = new Shooter();
   JoystickController.Init();
   SmartDashboard.putData("Auto mode", m_chooser);
   String trajectoryJSON = "paths/start1.wpilib.json";
