@@ -55,5 +55,7 @@ public class Drivetrain extends Subsystem {
 		 }
 		 @Override
 		 public void initDefaultCommand(){
+        }
+        public static void tankDrive(double d, double e) {
         }   
 	}

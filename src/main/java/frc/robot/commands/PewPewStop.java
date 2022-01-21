@@ -10,7 +10,7 @@ import frc.robot.RobotMap;
 public class PewPewStop extends Command {//--------------class--------------
   public PewPewStop() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.Shooter);
+    requires(Robot.shooter);
   }
 
   // Called just before this Command runs the first time
