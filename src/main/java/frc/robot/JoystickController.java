@@ -21,8 +21,7 @@ public class JoystickController {
 	
 	private static JoystickController generateMainJoystick(){
 		final Joystick joystick = new Joystick(0);
-		setButtonPressBehavior(joystick, 6, new IntakeStart(), new IntakeStop());
-		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
+	
 		return new JoystickController(joystick);
 		
 		
@@ -31,8 +30,12 @@ public class JoystickController {
 
 	private static JoystickController generateCoPilotJoystick(){
 		final Joystick joystick = new Joystick(1);
-        return new JoystickController(joystick);
-	}
+		setButtonPressBehavior(joystick, 6, new IntakeStart(), new IntakeStop());
+		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
+		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
+        setButtonPressBehavior(joystick, 4, new IntakeUpDown(), null);
+		return new JoystickController(joystick);
+	} 
 	public static void Init(){
 		MAIN_JOYSTICK = generateMainJoystick();
 		COPILOT_JOYSTICK = generateCoPilotJoystick();
