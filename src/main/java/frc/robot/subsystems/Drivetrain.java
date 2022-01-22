@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-//import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.RobotMap;
 //import jdk.jfr.Percentage;
 
@@ -11,7 +10,6 @@ public class Drivetrain extends Subsystem {
 	TalonFX MainRightMotor = RobotMap.MainRightMotorBack;
 	TalonFX SlaveLeftMotor = RobotMap.MainLeftMotorFront;
 	TalonFX SlaveRightMotor = RobotMap.MainRightMotorFront;
-
 
 	/*public void tankDriveVoltage(double left, double right, double maxX, double maxY) {
 		left *= maxX;//left joystick x axis    -  to invert controls, make one of these negative

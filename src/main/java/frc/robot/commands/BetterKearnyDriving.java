@@ -2,10 +2,12 @@ package frc.robot.commands;
 import frc.robot.JoystickController;
 import frc.robot.Robot;
 //import frc.robot.subsystems.Drivetrain;
+import frc.robot.RobotMap;
 
 //import javax.management.modelmbean.RequiredModelMBean;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class BetterKearnyDriving extends Command {
     //Drivetrain drivetrain = Robot.drivetrain;
@@ -40,6 +42,12 @@ public void execute(){
   //System.out.println("mainY = " + mainY);
   //System.out.println("mainX = " + mainX);
   Robot.drivetrain.arcadeDriveVoltage(x,y,-normalSpeed,normalTurn);
+  SmartDashboard.putNumber("LB Position", RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0));
+  SmartDashboard.putNumber("LF Position", RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0));
+  SmartDashboard.putNumber("RB Position", RobotMap.MainRightMotorBack.getSelectedSensorPosition(0));
+  SmartDashboard.putNumber("RF Position", RobotMap.MainRightMotorFront.getSelectedSensorPosition(0));
+  //it is updating the data
+  SmartDashboard.putNumber("Time Alapsed", (double)(System.currentTimeMillis()));
 }
 @Override
 protected void end() {

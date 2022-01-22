@@ -23,6 +23,10 @@ import frc.robot.commands.BetterKearnyDriving;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import frc.robot.RobotMap;
 //import edu.wpi.first.math.trajectory.Trajectory;
 //import edu.wpi.first.math.trajectory.TrajectoryUtil;
 //import edu.wpi.first.wpilibj.drive.*;
@@ -38,18 +42,33 @@ public class Robot extends TimedRobot{
 public static Drivetrain drivetrain;  
 public static Intake intake;
 public static Shooter shooter;
-Encoder encoder = new Encoder(0 , 1, false, k1X);
+public static Encoder leftEncoder;
+public static Encoder rightEncoder;
+public double kP;
 
 Command m_autonomousCommand;
 SendableChooser<Command> m_chooser = new SendableChooser<>();
 @Override
 public void robotInit(){
   RobotMap.init();
- 
+  kP = 1;
+  //the first two parameters are the can addresses. they arent the chicken tuner ids
+  //this only works cause the talons are can devices so their ids are the same as their device ids
+  //leftEncoder = new Encoder(0,1,false,Encoder.EncodingType.k2X);
+  //rightEncoder = new Encoder(3,2,false,Encoder.EncodingType.k2X);
+  //the wheels are 6 inches
+  //falcon 500s have a 2048 cpr
+  // leftEncoder.setSamplesToAverage(5);
+  // leftEncoder.setDistancePerPulse(1.0/2048.0 * 2.0 * Math.PI * 3.0);
+  // leftEncoder.setMinRate(1.0);
+
+  // rightEncoder.setSamplesToAverage(5);
+  // rightEncoder.setDistancePerPulse(1.0/2048.0 * 2.0 * Math.PI * 3.0);
+  // rightEncoder.setMinRate(1.0);
+
   drivetrain = new Drivetrain();
   intake = new Intake();
   shooter = new Shooter();
-  encoder.setDistancePerPulse(1./256.);
   JoystickController.Init();
   SmartDashboard.putData("Auto mode", m_chooser);
   String trajectoryJSON = "paths/start1.wpilib.json";
@@ -74,17 +93,12 @@ public void disabledPeriodic(){
 }
 @Override
 public void autonomousInit(){
-  /*Auto auto = new Auto(2.0);
-  auto.initialize(); //creates the start time for the dt check
-  Scheduler.getInstance().add(auto);*/
-
- 
   }
 
 
 @Override
 public void teleopInit(){
-   Scheduler.getInstance().add(new BetterKearnyDriving());
+  Scheduler.getInstance().add(new BetterKearnyDriving());
    
 }
 @Override
@@ -94,11 +108,10 @@ public void teleopPeriodic(){
 
 @Override
 public void autonomousPeriodic(){
-  if(encoder.getDistance() < 5) {
-    Drivetrain.tankDrive(0.5, 0.5);
-} else {
-    Drivetrain.tankDrive(0, 0);
-} 
+  //https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/encoders-software.html
+  //other side is flipped internally
+  double error = leftEncoder.getDistance() - rightEncoder.getDistance();
+  drivetrain.arcadeDriveVoltage(.5 + kP * error, 0., 0.75, -0.75);
   Scheduler.getInstance().run();
 }
 
