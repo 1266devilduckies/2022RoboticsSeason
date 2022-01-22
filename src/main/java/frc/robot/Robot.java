@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
+import frc.robot.Util;
 //import edu.wpi.first.hal.simulation.EncoderDataJNI;
 //import edu.wpi.first.hal.EncoderJNI;
 //import edu.wpi.first.wpilibj.simulation.EncoderSim;
@@ -93,11 +94,17 @@ public void disabledPeriodic(){
 }
 @Override
 public void autonomousInit(){
-  }
+
+}
 
 
 @Override
 public void teleopInit(){
+  RobotMap.MainLeftMotorBack.setSelectedSensorPosition(0);
+  RobotMap.MainLeftMotorFront.setSelectedSensorPosition(0);
+  RobotMap.MainRightMotorBack.setSelectedSensorPosition(0);
+  RobotMap.MainRightMotorFront.setSelectedSensorPosition(0);
+  drivetrain.arcadeDriveVoltage(0.,0., 0.75, -0.75);
   Scheduler.getInstance().add(new BetterKearnyDriving());
    
 }
@@ -108,14 +115,22 @@ public void teleopPeriodic(){
 
 @Override
 public void autonomousPeriodic(){
+  RobotMap.avgPositionRaw = (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) + 
+  RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0)
+  )/2.0;
+  RobotMap.avgPositionInMeters = Util.nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw);
   //https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/encoders-software.html
   //other side is flipped internally
-  double error = leftEncoder.getDistance() - rightEncoder.getDistance();
-  drivetrain.arcadeDriveVoltage(.5 + kP * error, 0., 0.75, -0.75);
-  Scheduler.getInstance().run();
+  if (RobotMap.avgPositionInMeters < 2.3) {
+    //face of intake direction is negative
+    drivetrain.arcadeDriveVoltage(-0.2,0, 0.75, -0.75);
+  } else {
+    drivetrain.arcadeDriveVoltage(0,0, 0.75, -0.75);
+  }
 }
 
 @Override
 public void testPeriodic(){  
 }
+
 }

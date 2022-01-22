@@ -5,7 +5,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 //import javax.management.modelmbean.RequiredModelMBean;
-
+import frc.robot.Util;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -42,10 +42,11 @@ public void execute(){
   //System.out.println("mainY = " + mainY);
   //System.out.println("mainX = " + mainX);
   Robot.drivetrain.arcadeDriveVoltage(x,y,-normalSpeed,normalTurn);
-  SmartDashboard.putNumber("LB Position", RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0));
-  SmartDashboard.putNumber("LF Position", RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0));
-  SmartDashboard.putNumber("RB Position", RobotMap.MainRightMotorBack.getSelectedSensorPosition(0));
-  SmartDashboard.putNumber("RF Position", RobotMap.MainRightMotorFront.getSelectedSensorPosition(0));
+  RobotMap.avgPositionRaw = (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) + 
+  RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0)
+  )/2.0;
+  SmartDashboard.putNumber("Avg Position in Meters", Util.nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw));
+  SmartDashboard.putNumber("Avg Position RAW", RobotMap.avgPositionRaw);
   //it is updating the data
   SmartDashboard.putNumber("Time Alapsed", (double)(System.currentTimeMillis()));
 }

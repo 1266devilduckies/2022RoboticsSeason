@@ -18,6 +18,8 @@ public class RobotMap{
   public static TalonFX MainRightMotorFront;
   public static TalonFX IntakeMotor1;
   public static TalonFX PewPewMotor1;
+  public static double avgPositionRaw;
+  public static double avgPositionInMeters;
  
 
   public static void init(){
@@ -35,9 +37,16 @@ public class RobotMap{
     MainRightMotorBack.setSelectedSensorPosition(0,0,100);
     MainRightMotorFront.setSelectedSensorPosition(0,0,100);
     
-    MainLeftMotorBack.setInverted(true);
-    MainLeftMotorFront.setInverted(true);
+    //MainLeftMotorBack.setInverted(true);
+    //MainLeftMotorFront.setInverted(true);
+
+    MainLeftMotorBack.setSensorPhase(false);
+    MainLeftMotorFront.setSensorPhase(false);
+    MainRightMotorBack.setSensorPhase(false);
+    MainRightMotorFront.setSensorPhase(false);
+
     IntakeMotor1 = new TalonFX(4);
     PewPewMotor1 = new TalonFX(5);
+
   }
 }
