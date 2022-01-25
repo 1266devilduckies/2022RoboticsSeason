@@ -45,29 +45,14 @@ public static Intake intake;
 public static Shooter shooter;
 public static Encoder leftEncoder;
 public static Encoder rightEncoder;
-public double kP;
 
 Command m_autonomousCommand;
 SendableChooser<Command> m_chooser = new SendableChooser<>();
 @Override
 public void robotInit(){
   RobotMap.init();
-  kP = 1;
-  //the first two parameters are the can addresses. they arent the chicken tuner ids
-  //this only works cause the talons are can devices so their ids are the same as their device ids
-  //leftEncoder = new Encoder(0,1,false,Encoder.EncodingType.k2X);
-  //rightEncoder = new Encoder(3,2,false,Encoder.EncodingType.k2X);
-  //the wheels are 6 inches
-  //falcon 500s have a 2048 cpr
-  // leftEncoder.setSamplesToAverage(5);
-  // leftEncoder.setDistancePerPulse(1.0/2048.0 * 2.0 * Math.PI * 3.0);
-  // leftEncoder.setMinRate(1.0);
-
-  // rightEncoder.setSamplesToAverage(5);
-  // rightEncoder.setDistancePerPulse(1.0/2048.0 * 2.0 * Math.PI * 3.0);
-  // rightEncoder.setMinRate(1.0);
-
   drivetrain = new Drivetrain();
+  Util.setEncodersDefaultPhoenixSettings();
   intake = new Intake();
   shooter = new Shooter();
   JoystickController.Init();

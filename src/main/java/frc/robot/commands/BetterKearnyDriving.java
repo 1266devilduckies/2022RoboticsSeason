@@ -42,13 +42,9 @@ public void execute(){
   //System.out.println("mainY = " + mainY);
   //System.out.println("mainX = " + mainX);
   Robot.drivetrain.arcadeDriveVoltage(x,y,-normalSpeed,normalTurn);
-  RobotMap.avgPositionRaw = (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) + 
-  RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0)
-  )/2.0;
+  Util.updateEncoders();
   SmartDashboard.putNumber("Avg Position in Meters", Util.nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw));
   SmartDashboard.putNumber("Avg Position RAW", RobotMap.avgPositionRaw);
-  //it is updating the data
-  SmartDashboard.putNumber("Time Alapsed", (double)(System.currentTimeMillis()));
 }
 @Override
 protected void end() {
