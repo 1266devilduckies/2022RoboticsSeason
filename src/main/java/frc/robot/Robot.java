@@ -55,8 +55,16 @@ public void disabledPeriodic(){
 public void autonomousInit(){
   Auto auto = new Auto(2.0);
   auto.initialize(); //creates the start time for the dt check
+<<<<<<< Updated upstream
   Scheduler.getInstance().add(auto);
 }
+=======
+  Scheduler.getInstance().add(auto);*/
+  encoder.setDistancePerPulse(1./256.);
+ 
+  }
+
+>>>>>>> Stashed changes
 
 @Override
 public void teleopInit(){
@@ -70,7 +78,18 @@ public void teleopPeriodic(){
 
 @Override
 public void autonomousPeriodic(){
+<<<<<<< Updated upstream
    Scheduler.getInstance().run();
+=======
+  Scheduler.getInstance().run();
+  if(encoder.getDistance() < 5) {
+    //Drivetrain.tankDrive(0.5, 0.5);
+    Robot.drivetrain.arcadeDriveVoltage(0.5, 0.5,0.75,-0.75);
+} else {
+  Robot.drivetrain.arcadeDriveVoltage(0.0, 0.0,0.75,-0.75);
+    //Drivetrain.tankDrive(0, 0);
+} 
+>>>>>>> Stashed changes
 }
 
 @Override
