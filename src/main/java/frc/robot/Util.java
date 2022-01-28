@@ -22,7 +22,7 @@ public class Util {
         RobotMap.MainLeftMotorBack.setSelectedSensorPosition(0,0,100);
         RobotMap.MainLeftMotorFront.setSelectedSensorPosition(0,0,100);
         RobotMap.MainRightMotorBack.setSelectedSensorPosition(0,0,100);
-        RobotMap. MainRightMotorFront.setSelectedSensorPosition(0,0,100);
+        RobotMap.MainRightMotorFront.setSelectedSensorPosition(0,0,100);
     
         RobotMap.MainLeftMotorBack.setInverted(false);
         RobotMap.MainLeftMotorFront.setInverted(false);

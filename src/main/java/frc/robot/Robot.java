@@ -100,10 +100,7 @@ public void teleopPeriodic(){
 
 @Override
 public void autonomousPeriodic(){
-  RobotMap.avgPositionRaw = (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) + 
-  RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0)
-  )/2.0;
-  RobotMap.avgPositionInMeters = Util.nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw);
+  Util.updateEncoders();
   //https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/encoders-software.html
   //other side is flipped internally
   if (RobotMap.avgPositionInMeters < 2.3) {
