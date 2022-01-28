@@ -8,7 +8,7 @@
 //This is Auto.java. It runs the stuff for the automated phase -JM
 
 
-package frc.robot.commands;
+/*package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -58,4 +58,4 @@ public class Auto extends Command {
   protected void interrupted() {
     //Robot.drivetrain.arcadeDriveVoltage(0, 0, 0, 0);
   }
-}
+}*/

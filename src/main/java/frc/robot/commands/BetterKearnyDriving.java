@@ -2,10 +2,12 @@ package frc.robot.commands;
 import frc.robot.JoystickController;
 import frc.robot.Robot;
 //import frc.robot.subsystems.Drivetrain;
+import frc.robot.RobotMap;
 
 //import javax.management.modelmbean.RequiredModelMBean;
-
+import frc.robot.Util;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class BetterKearnyDriving extends Command {
     //Drivetrain drivetrain = Robot.drivetrain;
@@ -40,6 +42,9 @@ public void execute(){
   //System.out.println("mainY = " + mainY);
   //System.out.println("mainX = " + mainX);
   Robot.drivetrain.arcadeDriveVoltage(x,y,-normalSpeed,normalTurn);
+  Util.updateEncoders();
+  SmartDashboard.putNumber("Avg Position in Meters", Util.nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw));
+  SmartDashboard.putNumber("Avg Position RAW", RobotMap.avgPositionRaw);
 }
 @Override
 protected void end() {
