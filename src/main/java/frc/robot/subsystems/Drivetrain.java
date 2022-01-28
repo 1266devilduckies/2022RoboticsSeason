@@ -52,17 +52,8 @@ public class Drivetrain extends Subsystem {
 				}
 		 }
 		 @Override
-		 public void initDefaultCommand(){
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
+		public void initDefaultCommand(){
         }
         public static void tankDrive(double d, double e) {
-			
->>>>>>> Stashed changes
-=======
-        }
-        public static void tankDrive(double d, double e) {
->>>>>>> main
         }   
 	}

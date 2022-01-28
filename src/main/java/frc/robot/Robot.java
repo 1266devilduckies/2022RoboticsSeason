@@ -79,22 +79,8 @@ public void disabledPeriodic(){
 }
 @Override
 public void autonomousInit(){
-<<<<<<< HEAD
-  Auto auto = new Auto(2.0);
-  auto.initialize(); //creates the start time for the dt check
-<<<<<<< Updated upstream
-  Scheduler.getInstance().add(auto);
-=======
 
->>>>>>> main
 }
-=======
-  Scheduler.getInstance().add(auto);*/
-  encoder.setDistancePerPulse(1./256.);
- 
-  }
-
->>>>>>> Stashed changes
 
 
 @Override
@@ -114,20 +100,6 @@ public void teleopPeriodic(){
 
 @Override
 public void autonomousPeriodic(){
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-   Scheduler.getInstance().run();
-=======
-  Scheduler.getInstance().run();
-  if(encoder.getDistance() < 5) {
-    //Drivetrain.tankDrive(0.5, 0.5);
-    Robot.drivetrain.arcadeDriveVoltage(0.5, 0.5,0.75,-0.75);
-} else {
-  Robot.drivetrain.arcadeDriveVoltage(0.0, 0.0,0.75,-0.75);
-    //Drivetrain.tankDrive(0, 0);
-} 
->>>>>>> Stashed changes
-=======
   RobotMap.avgPositionRaw = (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) + 
   RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0)
   )/2.0;
@@ -140,7 +112,6 @@ public void autonomousPeriodic(){
   } else {
     drivetrain.arcadeDriveVoltage(0,0, 0.75, -0.75);
   }
->>>>>>> main
 }
 
 @Override
