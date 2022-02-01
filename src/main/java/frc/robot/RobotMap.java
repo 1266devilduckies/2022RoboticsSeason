@@ -8,6 +8,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 //RobotMap.java just makes the motors through TalonFX (the actual motors)
 //When we start working with a new motor, we basically 'initialize' it here -JM
 
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+
 public class RobotMap{
   
   
@@ -20,6 +24,8 @@ public class RobotMap{
   public static TalonFX PewPewMotor1;
   public static double avgPositionRaw;
   public static double avgPositionInMeters;
+  public static PneumaticsControlModule pcm;
+  public static PowerDistribution pdp;
  
 
   public static void init(){
@@ -27,8 +33,9 @@ public class RobotMap{
     MainLeftMotorFront = new TalonFX(1);
     MainRightMotorBack = new TalonFX(2);
     MainRightMotorFront = new TalonFX(3);
-    IntakeMotor1 = new TalonFX(4);
-    PewPewMotor1 = new TalonFX(5);
-
+    //IntakeMotor1 = new TalonFX(4);
+    //PewPewMotor1 = new TalonFX(5);
+    pcm = new PneumaticsControlModule(6);
+    pdp = new PowerDistribution(7, ModuleType.kCTRE);
   }
 }
