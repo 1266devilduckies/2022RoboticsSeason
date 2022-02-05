@@ -12,11 +12,14 @@ import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.commands.*;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class JoystickController {
   	private final Joystick joystick;
-	public static JoystickController MAIN_JOYSTICK = null;
-  	public static JoystickController COPILOT_JOYSTICK = null;
+	  public static IntakeUpDown intakeUpDown;
+	public static JoystickController MAIN_JOYSTICK;
+  	public static JoystickController COPILOT_JOYSTICK;
+	  public static XboxController copilotXboxController;
 
 	
 	private static JoystickController generateMainJoystick(){
@@ -30,15 +33,21 @@ public class JoystickController {
 
 	private static JoystickController generateCoPilotJoystick(){
 		final Joystick joystick = new Joystick(1);
+		intakeUpDown = new IntakeUpDown();
 		setButtonPressBehavior(joystick, 6, new IntakeStart(), new IntakeStop());
 		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
-		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
-        setButtonPressBehavior(joystick, 4, new IntakeUpDown(), null);
+        //setButtonPressBehavior(joystick, 4, new IntakeUpDown(), null);
 		return new JoystickController(joystick);
 	} 
 	public static void Init(){
 		MAIN_JOYSTICK = generateMainJoystick();
 		COPILOT_JOYSTICK = generateCoPilotJoystick();
+		copilotXboxController = new XboxController(0);
+	}
+	public static void checkForPneumatics() {
+		if (copilotXboxController.getYButtonPressed()) {
+			intakeUpDown.togglePiston();
+		}
 	}
 	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber, final Command whileHeldCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
@@ -49,13 +58,21 @@ public class JoystickController {
 	(final Joystick joystick, final int buttonNumber, 
 										  final Command whileHeldCommand, final Command whenReleasedCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
+		if (whileHeldCommand != null) {
 		button.whileHeld(whileHeldCommand);
+		}
+		if (whenReleasedCommand != null) {
 		button.whenReleased(whenReleasedCommand);
+		}
 	}
 	private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber, final Command whenPressedCommand, final Command whenReleasedCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
+		if (whenPressedCommand != null) {
 		button.whenPressed(whenPressedCommand);
+		}
+		if (whenReleasedCommand != null) {
 		button.whenReleased(whenReleasedCommand);
+		}
 	}
 	/*
 	private static void setButtonPressBehaviorSecondary(final Joystick joystick, final int buttonNumber, final Command whenPressedCommand) {
