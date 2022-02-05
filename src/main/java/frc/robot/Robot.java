@@ -92,11 +92,13 @@ public void teleopInit(){
   RobotMap.MainRightMotorFront.setSelectedSensorPosition(0);
   drivetrain.arcadeDriveVoltage(0.,0., 0.75, -0.75);
   Scheduler.getInstance().add(new BetterKearnyDriving());
-   
 }
 @Override
 public void teleopPeriodic(){
   JoystickController.checkForPneumatics();
+  limeLightDataFetcher.fetchData();
+  SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
+  SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
   Scheduler.getInstance().run();
 }
 
