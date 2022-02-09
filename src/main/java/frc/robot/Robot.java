@@ -7,6 +7,10 @@ import java.nio.file.Path;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+//import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -54,6 +58,7 @@ public void robotInit(){
   RobotMap.init();
   drivetrain = new Drivetrain();
   Util.setEncodersDefaultPhoenixSettings();
+  RobotMap.gyro.calibrate();
   intake = new Intake();
   shooter = new Shooter();
   JoystickController.Init();
@@ -97,6 +102,7 @@ public void teleopInit(){
 public void teleopPeriodic(){
   JoystickController.checkForPneumatics();
   limeLightDataFetcher.fetchData();
+  SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
   SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
   SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
   Scheduler.getInstance().run();
@@ -104,14 +110,15 @@ public void teleopPeriodic(){
 
 @Override
 public void autonomousPeriodic(){
+  double error = -RobotMap.gyro.getRate();
   Util.updateEncoders();
   //https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/encoders-software.html
   //other side is flipped internally
   if (RobotMap.avgPositionInMeters < 2.3) {
     //face of intake direction is negative
-    drivetrain.arcadeDriveVoltage(-0.2,0, 0.75, -0.75);
+    drivetrain.arcadeDriveVoltage(-0.2,.5 - 1 * error, 0.75, -0.75);
   } else {
-    drivetrain.arcadeDriveVoltage(0,0, 0.75, -0.75);
+    drivetrain.arcadeDriveVoltage(0, .5 - 1 * error, 0.75, -0.75);
   }
 }
 

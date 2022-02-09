@@ -1,4 +1,6 @@
 package frc.robot;
+import java.io.IOException;
+
 //import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 //import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -11,6 +13,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.SPI;
 
 public class RobotMap{
   
@@ -26,6 +32,7 @@ public class RobotMap{
   public static double avgPositionInMeters;
   public static PneumaticsControlModule pcm;
   public static PowerDistribution pdp;
+  public static ADXRS450_Gyro gyro;
  
 
   public static void init(){
@@ -37,5 +44,6 @@ public class RobotMap{
     //PewPewMotor1 = new TalonFX(5);
     pcm = new PneumaticsControlModule(6);
     pdp = new PowerDistribution(7, ModuleType.kCTRE);
+    gyro = new ADXRS450_Gyro();
   }
 }

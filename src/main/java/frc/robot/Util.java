@@ -8,6 +8,9 @@ public class Util {
         double positionMeters = wheelRotations * (2 * Math.PI * .0762); //3 inches in meters is .0762 meters. the wheels radius is 3 inches
         return positionMeters;
       }
+      public static void rotateY(double degree) {
+        
+      }
       public static void updateEncoders() {
         RobotMap.avgPositionRaw = (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) + 
         RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0))/2.0;
