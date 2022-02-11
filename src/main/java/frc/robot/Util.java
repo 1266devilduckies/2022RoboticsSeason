@@ -1,6 +1,9 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Util {
       public static double nativeUnitsToDistanceMeters(double sensorCounts) {
         double motorRotations = (double)sensorCounts / 2048; //is units per rotation for the falcons

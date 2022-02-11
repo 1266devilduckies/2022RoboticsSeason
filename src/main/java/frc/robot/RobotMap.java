@@ -22,8 +22,12 @@ public class RobotMap{
   public static TalonFX MainRightMotorFront;
   public static TalonFX IntakeMotor1;
   public static TalonFX PewPewMotor1;
+  public static TalonFX PewPewMotor2;
+  public static double PewPewMotor1RPM;
+  public static double PewPewMotor2RPM;
   public static double avgPositionRaw;
   public static double avgPositionInMeters;
+  public static boolean inSubroutine;
   public static PneumaticsControlModule pcm;
   public static PowerDistribution pdp;
  
@@ -35,6 +39,7 @@ public class RobotMap{
     MainRightMotorFront = new TalonFX(3);
     //IntakeMotor1 = new TalonFX(4);
     //PewPewMotor1 = new TalonFX(5);
+    //PewPewMotor2 = new TalonFX(8);
     pcm = new PneumaticsControlModule(6);
     pdp = new PowerDistribution(7, ModuleType.kCTRE);
   }
