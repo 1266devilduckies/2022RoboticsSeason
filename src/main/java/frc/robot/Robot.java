@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
+import frc.robot.commands.PewPewStart;
 import frc.robot.Util;
 //import edu.wpi.first.hal.simulation.EncoderDataJNI;
 //import edu.wpi.first.hal.EncoderJNI;
@@ -57,7 +58,10 @@ SendableChooser<Command> m_chooser = new SendableChooser<>();
 public void robotInit(){
   RobotMap.init();
   drivetrain = new Drivetrain();
-  Util.setEncodersDefaultPhoenixSettings();
+  Util.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorBack);
+  Util.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorFront);
+  Util.setEncoderDefaultPhoenixSettings(RobotMap.MainRightMotorBack);
+  Util.setEncoderDefaultPhoenixSettings(RobotMap.MainRightMotorFront);
   RobotMap.gyro.calibrate();
   intake = new Intake();
   shooter = new Shooter();
@@ -105,6 +109,8 @@ public void teleopPeriodic(){
   SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
   SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
   SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
+  SmartDashboard.putNumber("PewPewMotor1 RPM", (RobotMap.PewPewMotor1.getSelectedSensorPosition(0)/2048.0)/10.0);
+  SmartDashboard.putBoolean("inSubroutineState", RobotMap.inSubroutine);
   Scheduler.getInstance().run();
 }
 
