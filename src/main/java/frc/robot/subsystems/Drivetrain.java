@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
+import com.ctre.phoenix.Util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.robot.RobotMap;
 //import jdk.jfr.Percentage;
@@ -56,4 +60,21 @@ public class Drivetrain extends Subsystem {
         }
         public static void tankDrive(double d, double e) {
         }   
+		
+	public void tankDriveVoltage(double leftV, double rightV){
+		MainLeftMotor.set(ControlMode.PercentOutput, leftV);
+		MainRightMotor.set(ControlMode.PercentOutput,rightV);
+		SlaveLeftMotor.set(ControlMode.PercentOutput,leftV);
+		SlaveRightMotor.set(ControlMode.PercentOutput,rightV);
 	}
+
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(RobotMap.MainLeftMotorBack.getSelectedSensorVelocity(), RobotMap.MainRightMotorBack.getSelectedSensorVelocity());
+	}
+/*
+	public void resetOdometry(Pose2d pose) {
+		Util.();
+		m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+	}
+	*/
+}

@@ -9,8 +9,6 @@ import frc.robot.RobotMap;
 
 
 public class PewPewStart extends Command {//--------------class--------------
-  final private double targetRPM = 1000.0;
-  final private double bound = 1.0;
   public PewPewStart() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.shooter);
@@ -20,18 +18,20 @@ public class PewPewStart extends Command {//--------------class--------------
   @Override
   protected void initialize() {
   }
-  private void releaseBall() {
-    //moveBallMotor();
-    if (RobotMap.PewPewMotor1RPM < (targetRPM - bound) & RobotMap.PewPewMotor1RPM > (targetRPM + bound)) {
-      //stopBallMotor();
-    }
-  }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (!RobotMap.inSubroutine) {
-      RobotMap.inSubroutine = true; 
+    //velocity in ticks per 100ms divided by 3 cause we want a third of it
+    double vel = RobotMap.PewPewMotor1.getSelectedSensorVelocity(0);
+    
+    //RobotMap.velocityTarget --> target velocity
+    //RobotMap.velocityThreshold --> how far away from the target velocity we are okay with going
+    double PewPewDeltaV = RobotMap.velocityTarget - vel; //DeltaV is the current speed's distance from the target speed
+    if (Math.abs(PewPewDeltaV) > 0.0001) {
+      RobotMap.PewPewMotor1VelocityEstimate += Math.signum(PewPewDeltaV) * 0.001;//just look up what signum (aka sign) does
     }
+    SmartDashboard.putNumber("motor velocity estimate", RobotMap.PewPewMotor1VelocityEstimate);
+    RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, RobotMap.PewPewMotor1VelocityEstimate);
   }
 
   // Make this return true when this Command no longer needs to run execute()

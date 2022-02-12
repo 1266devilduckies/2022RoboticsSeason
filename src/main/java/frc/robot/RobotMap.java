@@ -29,15 +29,14 @@ public class RobotMap{
   public static TalonFX IntakeMotor1;
   public static TalonFX PewPewMotor1;
   public static TalonFX PewPewMotor2;
-  public static double PewPewMotor1RPM;
-  public static double PewPewMotor2RPM;
+  public static double PewPewMotor1VelocityEstimate = 0.5;
   public static double avgPositionRaw;
   public static double avgPositionInMeters;
-  public static boolean inSubroutine;
   public static PneumaticsControlModule pcm;
   public static PowerDistribution pdp;
   public static ADXRS450_Gyro gyro;
- 
+  final public static double velocityTarget = 7250.0;//max velocity is 21750 ticks / 100 ms
+  final public static double velocityThreshold = 10.0; 
 
   public static void init(){
     MainLeftMotorBack = new TalonFX(0);
@@ -45,11 +44,10 @@ public class RobotMap{
     MainRightMotorBack = new TalonFX(2);
     MainRightMotorFront = new TalonFX(3);
     //IntakeMotor1 = new TalonFX(4);
-    //PewPewMotor1 = new TalonFX(5);
+    PewPewMotor1 = new TalonFX(5);
     //PewPewMotor2 = new TalonFX(8);
     pcm = new PneumaticsControlModule(6);
     pdp = new PowerDistribution(7, ModuleType.kCTRE);
     gyro = new ADXRS450_Gyro();
-    inSubroutine = false;
   }
 }

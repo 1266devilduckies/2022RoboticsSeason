@@ -22,10 +22,7 @@ public class PewPewStop extends Command {//--------------class--------------
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-   released++;
-   if (released % 2 == 0) {
-     RobotMap.inSubroutine = false;
-   }
+    RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, 0.0);
   }
 
   // Make this return true when this Command no longer needs to run execute()
