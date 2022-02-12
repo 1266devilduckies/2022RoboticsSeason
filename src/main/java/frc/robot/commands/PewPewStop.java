@@ -8,6 +8,7 @@ import frc.robot.RobotMap;
 
 
 public class PewPewStop extends Command {//--------------class--------------
+  public static int released = 0;
   public PewPewStop() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.shooter);
@@ -21,7 +22,7 @@ public class PewPewStop extends Command {//--------------class--------------
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.PewPewMotor1.set(ControlMode.PercentOutput,0);
+    RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, 0.0);
   }
 
   // Make this return true when this Command no longer needs to run execute()
