@@ -47,11 +47,7 @@ public class RobotMap{
     MainRightMotorFront = new TalonFX(3);
     //IntakeMotor1 = new TalonFX(4);
     PewPewMotor1 = new TalonFX(5);
-<<<<<<< Updated upstream
-    //PewPewMotor2 = new TalonFX(8);
-=======
     PewPewMotor2 = new TalonFX(8);
->>>>>>> Stashed changes
     pcm = new PneumaticsControlModule(6);
     pdp = new PowerDistribution(7, ModuleType.kCTRE);
     gyro = new ADXRS450_Gyro();
