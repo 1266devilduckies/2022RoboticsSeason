@@ -1,14 +1,17 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix.Util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import org.opencv.core.Mat;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-
-
 public class PewPewStart extends Command {//--------------class--------------
+  public static boolean releasingBall = false;
+  public static long timeSinceStartedBeingReleased;
   public PewPewStart() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.shooter);
@@ -21,17 +24,25 @@ public class PewPewStart extends Command {//--------------class--------------
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //velocity in ticks per 100ms divided by 3 cause we want a third of it
-    double vel = RobotMap.PewPewMotor1.getSelectedSensorVelocity(0);
-    
-    //RobotMap.velocityTarget --> target velocity
-    //RobotMap.velocityThreshold --> how far away from the target velocity we are okay with going
-    double PewPewDeltaV = RobotMap.velocityTarget - vel; //DeltaV is the current speed's distance from the target speed
-    if (Math.abs(PewPewDeltaV) > 0.0001) {
-      RobotMap.PewPewMotor1VelocityEstimate += Math.signum(PewPewDeltaV) * 0.001;//just look up what signum (aka sign) does
+    //delta v motor 1
+    double dvm1 = RobotMap.velocityTarget - RobotMap.PewPewMotor1.getSelectedSensorVelocity(0);
+    //delta v motor 2
+    double dvm2 = RobotMap.velocityTarget - RobotMap.PewPewMotor2.getSelectedSensorVelocity(0);
+    if (Math.abs(dvm1) < 10 & Math.abs(dvm2) < 10 & !releasingBall) {
+      //feed into shooter
+      timeSinceStartedBeingReleased = System.currentTimeMillis();
+      releasingBall = true;
     }
-    SmartDashboard.putNumber("motor velocity estimate", RobotMap.PewPewMotor1VelocityEstimate);
+    if (Math.abs(dvm1) > 0.001) {
+      RobotMap.PewPewMotor1VelocityEstimate += Math.signum(dvm1) * 0.0005;
+    }
+    if (Math.abs(dvm2) > 0.001) {
+      RobotMap.PewPewMotor2VelocityEstimate += Math.signum(dvm2) * 0.0005;
+    }
     RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, RobotMap.PewPewMotor1VelocityEstimate);
+    RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, RobotMap.PewPewMotor2VelocityEstimate);
+    SmartDashboard.putBoolean("shooting", releasingBall);
+    SmartDashboard.putNumber("motor velocity estimate", RobotMap.PewPewMotor1VelocityEstimate);
   }
 
   // Make this return true when this Command no longer needs to run execute()

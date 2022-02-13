@@ -29,7 +29,13 @@ public class RobotMap{
   public static TalonFX IntakeMotor1;
   public static TalonFX PewPewMotor1;
   public static TalonFX PewPewMotor2;
+<<<<<<< Updated upstream
   public static double PewPewMotor1VelocityEstimate = 0.5;
+=======
+  //from tests we found that it is around 30% speed, so the closer we can get before iteration the better
+  public static double PewPewMotor1VelocityEstimate = 0.3;
+  public static double PewPewMotor2VelocityEstimate = 0.3;
+>>>>>>> Stashed changes
   public static double avgPositionRaw;
   public static double avgPositionInMeters;
   public static PneumaticsControlModule pcm;
@@ -45,7 +51,11 @@ public class RobotMap{
     MainRightMotorFront = new TalonFX(3);
     //IntakeMotor1 = new TalonFX(4);
     PewPewMotor1 = new TalonFX(5);
+<<<<<<< Updated upstream
     //PewPewMotor2 = new TalonFX(8);
+=======
+    PewPewMotor2 = new TalonFX(8);
+>>>>>>> Stashed changes
     pcm = new PneumaticsControlModule(6);
     pdp = new PowerDistribution(7, ModuleType.kCTRE);
     gyro = new ADXRS450_Gyro();
