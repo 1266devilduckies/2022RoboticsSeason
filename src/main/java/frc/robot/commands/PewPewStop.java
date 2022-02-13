@@ -22,6 +22,11 @@ public class PewPewStop extends Command {//--------------class--------------
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    //motor code to stop for when build implements their design
+    //
+    //motor code to stop for when build implements their design
+    PewPewStart.timeSinceStartedBeingReleased = -1;
+    PewPewStart.releasingBall = false;
     RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, 0.0);
   }
 

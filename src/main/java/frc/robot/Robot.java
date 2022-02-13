@@ -132,12 +132,34 @@ public void teleopInit(){
 
 @Override
 public void teleopPeriodic(){
+  //periodic events
   JoystickController.checkForPneumatics();
   limeLightDataFetcher.fetchData();
+  if (PewPewStart.releasingBall & PewPewStart.timeSinceStartedBeingReleased != -1) {
+    //motor code to go full speed for when build implements their design
+    //
+    //motor code to go full speed for when build implements their design
+
+    //2 seconds was some value i guesssed, trial and error will be needed
+    //this if statement should be ran when both of the balls have been shot out
+    if ((System.currentTimeMillis() - PewPewStart.timeSinceStartedBeingReleased) >= 2000) {
+      //motor code to stop for when build implements their design
+      //
+      //motor code to stop for when build implements their design
+      PewPewStart.releasingBall = false;
+      PewPewStart.timeSinceStartedBeingReleased = -1;
+    }
+  } else {
+    //motor code to stop for when build implements their design
+    //
+    //motor code to stop for when build implements their design
+  }
+
+  //logging data
   SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
   SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
   SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
-  //SmartDashboard.putNumber("PewPewMotor1 RPM", (displacementRotations/RobotMap.deltaTime)*60);
+
   Scheduler.getInstance().run();
 }
 
