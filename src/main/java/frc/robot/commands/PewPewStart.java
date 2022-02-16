@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 public class PewPewStart extends Command {//--------------class--------------
-  public static boolean releasingBall = false;
-  public static long timeSinceStartedBeingReleased;
   public PewPewStart() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.shooter);
@@ -24,24 +22,23 @@ public class PewPewStart extends Command {//--------------class--------------
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //delta v motor 1
-    double dvm1 = RobotMap.velocityTarget - RobotMap.PewPewMotor1.getSelectedSensorVelocity(0);
-    //delta v motor 2
-    double dvm2 = RobotMap.velocityTarget - RobotMap.PewPewMotor2.getSelectedSensorVelocity(0);
-    if (Math.abs(dvm1) < 10 & Math.abs(dvm2) < 10 & !releasingBall) {
+    if (RobotMap.checkerBoardForShooter % 2 == 0) {
+    if (Math.abs(RobotMap.dvm1) < 50 & Math.abs(RobotMap.dvm2) < 50 & !RobotMap.releasingBall) {
       //feed into shooter
-      timeSinceStartedBeingReleased = System.currentTimeMillis();
-      releasingBall = true;
+      RobotMap.timeSinceStartedBeingReleased = System.currentTimeMillis();
+      RobotMap.releasingBall = true;
     }
-    if (Math.abs(dvm1) > 0.001) {
-      RobotMap.PewPewMotor1VelocityEstimate += Math.signum(dvm1) * 0.0005;
+    if (Math.abs(RobotMap.dvm1) > 0.001) {
+      RobotMap.PewPewMotor1VelocityEstimate += Math.signum(RobotMap.dvm1) * 0.0005;
     }
-    if (Math.abs(dvm2) > 0.001) {
-      RobotMap.PewPewMotor2VelocityEstimate += Math.signum(dvm2) * 0.0005;
+    if (Math.abs(RobotMap.dvm2) > 0.001) {
+      RobotMap.PewPewMotor2VelocityEstimate += Math.signum(RobotMap.dvm2) * 0.0005;
     }
     RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, RobotMap.PewPewMotor1VelocityEstimate);
     RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, RobotMap.PewPewMotor2VelocityEstimate);
-    SmartDashboard.putBoolean("shooting", releasingBall);
+  }
+  SmartDashboard.putNumber("dvm1", Math.abs(RobotMap.dvm1));
+    SmartDashboard.putBoolean("shooting", RobotMap.releasingBall);
     SmartDashboard.putNumber("motor velocity estimate", RobotMap.PewPewMotor1VelocityEstimate);
   }
 

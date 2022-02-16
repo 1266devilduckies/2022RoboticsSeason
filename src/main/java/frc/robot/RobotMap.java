@@ -34,9 +34,14 @@ public class RobotMap{
   public static double PewPewMotor2VelocityEstimate = 0.3;
   public static double avgPositionRaw;
   public static double avgPositionInMeters;
+  public static int checkerBoardForShooter = 0;
+  public static boolean releasingBall = false;
+  public static long timeSinceStartedBeingReleased = -1;
   public static PneumaticsControlModule pcm;
   public static PowerDistribution pdp;
   public static ADXRS450_Gyro gyro;
+  public static double dvm1 = 0.0;
+  public static double dvm2 = 0.0;
   final public static double velocityTarget = 7250.0;//max velocity is 21750 ticks / 100 ms
   final public static double velocityThreshold = 10.0; 
 

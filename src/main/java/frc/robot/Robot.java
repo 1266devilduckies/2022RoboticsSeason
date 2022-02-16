@@ -135,19 +135,26 @@ public void teleopPeriodic(){
   //periodic events
   JoystickController.checkForPneumatics();
   limeLightDataFetcher.fetchData();
-  if (PewPewStart.releasingBall & PewPewStart.timeSinceStartedBeingReleased != -1) {
+
+  //delta v motor 1
+  RobotMap.dvm1 = RobotMap.velocityTarget - RobotMap.PewPewMotor1.getSelectedSensorVelocity(0);
+  //delta v motor 2
+  RobotMap.dvm2 = RobotMap.velocityTarget - RobotMap.PewPewMotor2.getSelectedSensorVelocity(0);
+
+  if (RobotMap.releasingBall & RobotMap.timeSinceStartedBeingReleased != -1) {
     //motor code to go full speed for when build implements their design
     //
     //motor code to go full speed for when build implements their design
-
+    
     //2 seconds was some value i guesssed, trial and error will be needed
     //this if statement should be ran when both of the balls have been shot out
-    if ((System.currentTimeMillis() - PewPewStart.timeSinceStartedBeingReleased) >= 2000) {
+    if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 2000) {
       //motor code to stop for when build implements their design
       //
       //motor code to stop for when build implements their design
-      PewPewStart.releasingBall = false;
-      PewPewStart.timeSinceStartedBeingReleased = -1;
+      RobotMap.releasingBall = false;
+      RobotMap.timeSinceStartedBeingReleased = -1;
+      RobotMap.checkerBoardForShooter++;
     }
   } else {
     //motor code to stop for when build implements their design

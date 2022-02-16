@@ -25,8 +25,9 @@ public class PewPewStop extends Command {//--------------class--------------
     //motor code to stop for when build implements their design
     //
     //motor code to stop for when build implements their design
-    PewPewStart.timeSinceStartedBeingReleased = -1;
-    PewPewStart.releasingBall = false;
+    RobotMap.timeSinceStartedBeingReleased = -1;
+    RobotMap.releasingBall = false;
+    RobotMap.checkerBoardForShooter++;
     RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, 0.0);
   }
 
