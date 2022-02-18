@@ -21,6 +21,7 @@ public class Util {
   }
   
   public static void setEncoderDefaultPhoenixSettings(TalonFX motor) {
+    motor.configFactoryDefault();
     motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
     motor.setSelectedSensorPosition(0);
     motor.setInverted(false);

@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
@@ -27,8 +28,9 @@ public class PewPewStop extends Command {//--------------class--------------
     //motor code to stop for when build implements their design
     RobotMap.timeSinceStartedBeingReleased = -1;
     RobotMap.releasingBall = false;
-    RobotMap.checkerBoardForShooter++;
-    RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, 0.0);
+    //RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, 0.0);
+
+    //RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
   }
 
   // Make this return true when this Command no longer needs to run execute()

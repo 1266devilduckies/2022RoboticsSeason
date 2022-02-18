@@ -1,6 +1,7 @@
 package frc.robot;
 import java.io.IOException;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 //import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 //import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -42,8 +43,10 @@ public class RobotMap{
   public static ADXRS450_Gyro gyro;
   public static double dvm1 = 0.0;
   public static double dvm2 = 0.0;
-  final public static double velocityTarget = 7250.0;//max velocity is 21750 ticks / 100 ms
-  final public static double velocityThreshold = 10.0; 
+  public static double velocityTarget = 15026.0;//max velocity is 21750 ticks / 100 ms, target is 7259 but mathmatically it 7250. from tests we found that 11549 worked
+  public static double currentSpeed = 0.0;
+  public static double speed = SmartDashboard.getNumber("shooter motor speed", 0.0);
+  public static double kF = (0.7165 * 1023.0) / velocityTarget;
 
   public static void init(){
     MainLeftMotorBack = new TalonFX(0);
@@ -53,6 +56,9 @@ public class RobotMap{
     //IntakeMotor1 = new TalonFX(4);
     PewPewMotor1 = new TalonFX(5);
     PewPewMotor2 = new TalonFX(8);
+    PewPewMotor1.set(ControlMode.Follower, 8);
+    MainLeftMotorFront.set(ControlMode.Follower, 0);
+    MainRightMotorFront.set(ControlMode.Follower, 2);
     pcm = new PneumaticsControlModule(6);
     pdp = new PowerDistribution(7, ModuleType.kCTRE);
     gyro = new ADXRS450_Gyro();

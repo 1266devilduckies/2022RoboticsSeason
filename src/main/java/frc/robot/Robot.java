@@ -88,6 +88,17 @@ public void robotInit(){
   Util.setEncoderDefaultPhoenixSettings(RobotMap.MainRightMotorBack);
   Util.setEncoderDefaultPhoenixSettings(RobotMap.MainRightMotorFront);
   Util.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor1);
+  Util.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor2);
+  RobotMap.PewPewMotor1.setInverted(true);
+  
+  //configure the PID
+  
+  RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
+  RobotMap.PewPewMotor1.config_kP(0, RobotMap.kF/5);
+  RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
+  RobotMap.PewPewMotor2.config_kP(0, RobotMap.kF/5);
+  //
+
   RobotMap.gyro.calibrate();
   intake = new Intake();
   shooter = new Shooter();
@@ -136,11 +147,6 @@ public void teleopPeriodic(){
   JoystickController.checkForPneumatics();
   limeLightDataFetcher.fetchData();
 
-  //delta v motor 1
-  RobotMap.dvm1 = RobotMap.velocityTarget - RobotMap.PewPewMotor1.getSelectedSensorVelocity(0);
-  //delta v motor 2
-  RobotMap.dvm2 = RobotMap.velocityTarget - RobotMap.PewPewMotor2.getSelectedSensorVelocity(0);
-
   if (RobotMap.releasingBall & RobotMap.timeSinceStartedBeingReleased != -1) {
     //motor code to go full speed for when build implements their design
     //
@@ -154,7 +160,6 @@ public void teleopPeriodic(){
       //motor code to stop for when build implements their design
       RobotMap.releasingBall = false;
       RobotMap.timeSinceStartedBeingReleased = -1;
-      RobotMap.checkerBoardForShooter++;
     }
   } else {
     //motor code to stop for when build implements their design
