@@ -20,15 +20,15 @@ public class PewPewStart extends Command {//--------------class--------------
   protected void initialize() {
     if (!RobotMap.inFiringCoroutine) {
       RobotMap.inFiringCoroutine = true;
-      RobotMap.timeSinceStartedBeingReleased = System.currentTimeMillis();
+      RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
     }
   }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     if (RobotMap.inFiringCoroutine) {
-      long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased;
-      long interval = 1000;
+      long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
+      long interval = 1000; //coroutine lasts interval * 4 (ms)
       if (dt >= interval*4) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);

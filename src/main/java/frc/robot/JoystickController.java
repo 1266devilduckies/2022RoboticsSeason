@@ -16,10 +16,8 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class JoystickController {
   	private final Joystick joystick;
-	  public static IntakeUpDown intakeUpDown;
 	public static JoystickController MAIN_JOYSTICK;
   	public static JoystickController COPILOT_JOYSTICK;
-	  public static XboxController copilotXboxController;
 
 	
 	private static JoystickController generateMainJoystick(){
@@ -33,23 +31,15 @@ public class JoystickController {
 
 	private static JoystickController generateCoPilotJoystick(){
 		final Joystick joystick = new Joystick(1);
-		intakeUpDown = new IntakeUpDown();
 		setButtonPressBehavior(joystick, 6, new IntakeStart(), new IntakeStop());
 		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
 		setButtonPressBehavior(joystick, 8, new PewPewStart(), new PewPewStop());
-		
-        //setButtonPressBehavior(joystick, 4, new IntakeUpDown(), null);
+		setButtonBehavior(joystick, 4, new IntakeUpDown());
 		return new JoystickController(joystick);
 	} 
 	public static void Init(){
 		MAIN_JOYSTICK = generateMainJoystick();
 		COPILOT_JOYSTICK = generateCoPilotJoystick();
-		copilotXboxController = new XboxController(0);
-	}
-	public static void checkForPneumatics() {
-		if (copilotXboxController.getYButtonPressed()) {
-			intakeUpDown.togglePiston();
-		}
 	}
 	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber, final Command whileHeldCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);

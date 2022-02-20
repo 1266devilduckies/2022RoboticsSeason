@@ -92,6 +92,7 @@ public void robotInit(){
   Util.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
   RobotMap.PewPewMotor2.setInverted(true);
   RobotMap.PewPewMotor1.setInverted(false);
+  RobotMap.IntakeMotor1.setInverted(false);
   
   //configure the PID
   
@@ -147,7 +148,6 @@ public void teleopInit(){
 @Override
 public void teleopPeriodic(){
   //periodic events
-  JoystickController.checkForPneumatics();
   limeLightDataFetcher.fetchData();
   
   //logging data

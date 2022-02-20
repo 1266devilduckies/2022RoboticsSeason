@@ -1,6 +1,9 @@
 package frc.robot.commands;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 //import edu.wpi.first.wpilibj.PneumaticsModuleType;
 //import edu.wpi.first.wpilibj.Compressor;
@@ -10,42 +13,28 @@ import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeUpDown extends Command {
-
-  //this is wrong, they are double
-
-  //WPI Docs check double solenoid section for info
-
-  /*the double solenoind MUST have either a public, 
-  protected or package-private (default) access modifier.*/
-  DoubleSolenoid pneumaticDoubleSolenoid = new DoubleSolenoid(6,PneumaticsModuleType.CTREPCM, 1,2);
-  private int count = 0;
-
-  //WPI Docs check Pressure Transducers for info on check pressure (param 1 is module ID)
-  //private final Compressor phCompressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
-  //check pressure with: double current = phCompressor.getPressure();
-
-  //Solenoid pneumaticLeft = new Solenoid(PneumaticsModuleType.REVPH, 1);
-  //Solenoid pneumaticRight = new Solenoid(PneumaticsModuleType.REVPH, 1);
-
   public IntakeUpDown() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
-    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
-  }
-  public void togglePiston() {
-    pneumaticDoubleSolenoid.toggle();
-    count++;
-    SmartDashboard.putNumber("pressed", (double)count);
   }
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
+    RobotMap.pneumaticDoubleSolenoid.toggle();
+    //logic assumes kForward means extended, ready to eat balls
+    if (RobotMap.pneumaticDoubleSolenoid.get() == Value.kForward) {
+      RobotMap.timeSinceStartedBeingReleasedForSolenoids = System.currentTimeMillis();
+    } else if (RobotMap.pneumaticDoubleSolenoid.get() == Value.kReverse) {
+      RobotMap.timeSinceStartedBeingReleasedForSolenoids = -1;
+      RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
+    }
   }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    
+    if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1 & (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
+      RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
+    }
   }
   // Make this return true when this Command no longer needs to run execute()
   @Override

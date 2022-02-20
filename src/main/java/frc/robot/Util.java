@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +35,11 @@ public class Util {
     motor.configFactoryDefault();
     motor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 0, 100);
     motor.setSelectedSensorPosition(0);
+    motor.setInverted(false);
+    motor.setSensorPhase(false);
+  }
+  public static void setEncoderDefaultPhoenixSettings(VictorSPX motor) {
+    motor.configFactoryDefault();
     motor.setInverted(false);
     motor.setSensorPhase(false);
   }
