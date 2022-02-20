@@ -27,30 +27,27 @@ public class PewPewStart extends Command {//--------------class--------------
   @Override
   protected void execute() {
     if (RobotMap.inFiringCoroutine) {
-      long difference = (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased);
-      SmartDashboard.putNumber("difference", difference);
-      SmartDashboard.putNumber("current time", System.currentTimeMillis());
-      SmartDashboard.putNumber("past time", RobotMap.timeSinceStartedBeingReleased);
-      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 4000) {
+      long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased;
+      long interval = 1000;
+      if (dt >= interval*4) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
         RobotMap.inFiringCoroutine = false;
         return;
       }
-      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 3000) {
+      if (dt >= interval*3) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
         return;
       }
-      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 2000) {
+      if (dt >= interval*2) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
         return;
       }
-      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 1000) {
+      if (dt >= interval) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
         return;
       } else {
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
-        RobotMap.inFiringCoroutine = false;
       }
     }
   }
