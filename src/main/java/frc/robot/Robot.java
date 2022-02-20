@@ -89,7 +89,9 @@ public void robotInit(){
   Util.setEncoderDefaultPhoenixSettings(RobotMap.MainRightMotorFront);
   Util.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor1);
   Util.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor2);
-  RobotMap.PewPewMotor1.setInverted(true);
+  Util.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
+  RobotMap.PewPewMotor2.setInverted(true);
+  RobotMap.PewPewMotor1.setInverted(false);
   
   //configure the PID
   
@@ -137,6 +139,7 @@ public void teleopInit(){
   RobotMap.MainLeftMotorFront.setSelectedSensorPosition(0);
   RobotMap.MainRightMotorBack.setSelectedSensorPosition(0);
   RobotMap.MainRightMotorFront.setSelectedSensorPosition(0);
+  RobotMap.FeederMotor.setSelectedSensorPosition(0);
   drivetrain.arcadeDriveVoltage(0.,0., 0.75, -0.75);
   Scheduler.getInstance().add(new BetterKearnyDriving());
 }
@@ -146,28 +149,9 @@ public void teleopPeriodic(){
   //periodic events
   JoystickController.checkForPneumatics();
   limeLightDataFetcher.fetchData();
-
-  if (RobotMap.releasingBall & RobotMap.timeSinceStartedBeingReleased != -1) {
-    //motor code to go full speed for when build implements their design
-    //
-    //motor code to go full speed for when build implements their design
-    
-    //2 seconds was some value i guesssed, trial and error will be needed
-    //this if statement should be ran when both of the balls have been shot out
-    if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 2000) {
-      //motor code to stop for when build implements their design
-      //
-      //motor code to stop for when build implements their design
-      RobotMap.releasingBall = false;
-      RobotMap.timeSinceStartedBeingReleased = -1;
-    }
-  } else {
-    //motor code to stop for when build implements their design
-    //
-    //motor code to stop for when build implements their design
-  }
-
+  
   //logging data
+  SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
   SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
   SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
   SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());

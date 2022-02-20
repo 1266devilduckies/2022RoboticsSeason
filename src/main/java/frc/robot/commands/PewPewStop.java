@@ -9,7 +9,6 @@ import frc.robot.RobotMap;
 
 
 public class PewPewStop extends Command {//--------------class--------------
-  public static int released = 0;
   public PewPewStop() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.shooter);
@@ -18,19 +17,13 @@ public class PewPewStop extends Command {//--------------class--------------
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //motor code to stop for when build implements their design
-    //
-    //motor code to stop for when build implements their design
-    RobotMap.timeSinceStartedBeingReleased = -1;
-    RobotMap.releasingBall = false;
-    //RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, 0.0);
-
-    //RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
+   
   }
 
   // Make this return true when this Command no longer needs to run execute()

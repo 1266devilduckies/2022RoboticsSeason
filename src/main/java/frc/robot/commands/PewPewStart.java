@@ -18,41 +18,41 @@ public class PewPewStart extends Command {//--------------class--------------
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
+    if (!RobotMap.inFiringCoroutine) {
+      RobotMap.inFiringCoroutine = true;
+      RobotMap.timeSinceStartedBeingReleased = System.currentTimeMillis();
+    }
   }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    RobotMap.currentSpeed += 0.0001;
-    RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, RobotMap.currentSpeed);
-
-    //RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
-  //delta v motor 1
-  RobotMap.dvm1 = RobotMap.velocityTarget - RobotMap.PewPewMotor1.getSelectedSensorVelocity(0);
-  //delta v motor 2
-  RobotMap.dvm2 = RobotMap.velocityTarget - RobotMap.PewPewMotor2.getSelectedSensorVelocity(0);
-  if (RobotMap.checkerBoardForShooter % 2 == 0) {
-    if (Math.abs(RobotMap.dvm1) < 50 & Math.abs(RobotMap.dvm2) < 50 & !RobotMap.releasingBall) {
-      //feed into shooter
-      RobotMap.timeSinceStartedBeingReleased = System.currentTimeMillis();
-      RobotMap.releasingBall = true;
-    } 
-    /*
-    if (Math.abs(RobotMap.dvm1) > 50) {
-      RobotMap.PewPewMotor1VelocityEstimate += Math.signum(RobotMap.dvm1) * 0.0005;
+    if (RobotMap.inFiringCoroutine) {
+      long difference = (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased);
+      SmartDashboard.putNumber("difference", difference);
+      SmartDashboard.putNumber("current time", System.currentTimeMillis());
+      SmartDashboard.putNumber("past time", RobotMap.timeSinceStartedBeingReleased);
+      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 4000) {
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+        RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
+        RobotMap.inFiringCoroutine = false;
+        return;
+      }
+      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 3000) {
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+        return;
+      }
+      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 2000) {
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+        return;
+      }
+      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleased) >= 1000) {
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+        return;
+      } else {
+        RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
+        RobotMap.inFiringCoroutine = false;
+      }
     }
-    if (Math.abs(RobotMap.dvm2) > 50) {
-      RobotMap.PewPewMotor2VelocityEstimate += Math.signum(RobotMap.dvm2) * 0.0005;
-    
-    //RobotMap.PewPewMotor1.set(ControlMode.PercentOutput, -RobotMap.PewPewMotor2VelocityEstimate);
-    RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, RobotMap.PewPewMotor2VelocityEstimate);
-    */
-  }
-    SmartDashboard.putNumber("dvm1", Math.abs(RobotMap.dvm1));
-    SmartDashboard.putNumber("dvm2", Math.abs(RobotMap.dvm2));
-    SmartDashboard.putBoolean("shooting", RobotMap.releasingBall);
-    SmartDashboard.putNumber("motor velocity estimate", RobotMap.PewPewMotor1VelocityEstimate);
-    SmartDashboard.putNumber("motor2 velocity estimate", RobotMap.PewPewMotor2VelocityEstimate);
   }
 
   // Make this return true when this Command no longer needs to run execute()
