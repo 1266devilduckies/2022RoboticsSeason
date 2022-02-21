@@ -149,7 +149,33 @@ public void teleopInit(){
 public void teleopPeriodic(){
   //periodic events
   limeLightDataFetcher.fetchData();
-  
+  if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1 & (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
+  }
+  if (RobotMap.inFiringCoroutine) {
+    long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
+    long interval = 1000; //coroutine lasts interval * 4 (ms)
+    if (dt >= interval*4) {
+      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+      RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
+      RobotMap.inFiringCoroutine = false;
+      return;
+    }
+    if (dt >= interval*3) {
+      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+      return;
+    }
+    if (dt >= interval*2) {
+      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+      return;
+    }
+    if (dt >= interval) {
+      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+      return;
+    } else {
+      RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
+    }
+  }
   //logging data
   SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
   SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());

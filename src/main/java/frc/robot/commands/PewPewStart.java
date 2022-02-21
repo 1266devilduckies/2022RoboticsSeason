@@ -26,6 +26,7 @@ public class PewPewStart extends Command {//--------------class--------------
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    /*
     if (RobotMap.inFiringCoroutine) {
       long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
       long interval = 1000; //coroutine lasts interval * 4 (ms)
@@ -49,7 +50,7 @@ public class PewPewStart extends Command {//--------------class--------------
       } else {
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
       }
-    }
+    }*/
   }
 
   // Make this return true when this Command no longer needs to run execute()

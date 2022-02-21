@@ -32,9 +32,10 @@ public class IntakeUpDown extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    /*
     if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1 & (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
       RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
-    }
+    }*/
   }
   // Make this return true when this Command no longer needs to run execute()
   @Override
