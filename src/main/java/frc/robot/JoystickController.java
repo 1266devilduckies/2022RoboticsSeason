@@ -34,7 +34,7 @@ public class JoystickController {
 		setButtonPressBehavior(joystick, 6, new IntakeStart(), new IntakeStop());
 		setButtonPressBehavior(joystick, 5, new IntakeReverse(), new IntakeStop());
 		setButtonPressBehavior(joystick, 8, new PewPewStart(), new PewPewStop());
-		setButtonBehavior(joystick, 4, new IntakeUpDown());
+		setButtonPressBehavior(joystick, 4, new IntakeUpDown(), null);
 		return new JoystickController(joystick);
 	} 
 	public static void Init(){

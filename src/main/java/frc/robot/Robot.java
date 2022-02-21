@@ -92,14 +92,18 @@ public void robotInit(){
   Util.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
   RobotMap.PewPewMotor2.setInverted(true);
   RobotMap.PewPewMotor1.setInverted(false);
-  RobotMap.IntakeMotor1.setInverted(false);
+  //RobotMap.IntakeMotor1.setInverted(false);
   
   //configure the PID
   
   RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
-  RobotMap.PewPewMotor1.config_kP(0, RobotMap.kF/5);
+  RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
+  RobotMap.PewPewMotor1.config_kI(0, RobotMap.kI);
+  RobotMap.PewPewMotor1.config_kD(0, RobotMap.kD);
   RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
-  RobotMap.PewPewMotor2.config_kP(0, RobotMap.kF/5);
+  RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+  RobotMap.PewPewMotor2.config_kI(0, RobotMap.kI);
+  RobotMap.PewPewMotor2.config_kD(0, RobotMap.kD);
   //
 
   RobotMap.gyro.calibrate();
@@ -150,26 +154,26 @@ public void teleopPeriodic(){
   //periodic events
   limeLightDataFetcher.fetchData();
   if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1 & (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
-    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
+    //RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
   }
   if (RobotMap.inFiringCoroutine) {
     long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
-    long interval = 1000; //coroutine lasts interval * 4 (ms)
-    if (dt >= interval*4) {
+    long interval = 1000; //coroutine lasts interval * 5.5 (ms)
+    if (dt >= interval*5.5) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
       RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
       RobotMap.inFiringCoroutine = false;
       return;
     }
-    if (dt >= interval*3) {
+    if (dt >= interval*5) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
       return;
     }
-    if (dt >= interval*2) {
+    if (dt >= interval*3) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
       return;
     }
-    if (dt >= interval) {
+    if (dt >= interval*2.5) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
       return;
     } else {

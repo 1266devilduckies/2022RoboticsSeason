@@ -23,10 +23,12 @@ public class IntakeUpDown extends Command {
     RobotMap.pneumaticDoubleSolenoid.toggle();
     //logic assumes kForward means extended, ready to eat balls
     if (RobotMap.pneumaticDoubleSolenoid.get() == Value.kForward) {
+      SmartDashboard.putNumber("piston value", 0.0);
       RobotMap.timeSinceStartedBeingReleasedForSolenoids = System.currentTimeMillis();
     } else if (RobotMap.pneumaticDoubleSolenoid.get() == Value.kReverse) {
+      SmartDashboard.putNumber("piston value", 1.0);
       RobotMap.timeSinceStartedBeingReleasedForSolenoids = -1;
-      RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
+      //RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
     }
   }
   // Called repeatedly when this Command is scheduled to run

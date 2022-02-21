@@ -29,6 +29,7 @@ public class Util {
     motor.setSelectedSensorPosition(0);
     motor.setInverted(false);
     motor.setSensorPhase(false);
+    motor.enableVoltageCompensation(true);
   }
 
   public static void setEncoderDefaultPhoenixSettings(TalonSRX motor) {
@@ -37,6 +38,7 @@ public class Util {
     motor.setSelectedSensorPosition(0);
     motor.setInverted(false);
     motor.setSensorPhase(false);
+    motor.enableVoltageCompensation(true);
   }
   public static void setEncoderDefaultPhoenixSettings(VictorSPX motor) {
     motor.configFactoryDefault();
