@@ -53,6 +53,7 @@ public class RobotMap{
   final public static double kP = 0.0299999714;
   final public static double kI = 9.98973846E-05;
   final public static double kD = 0.03999996;
+  public static int numOfTogglesOnSolenoids;
 
   public static void init(){
     MainLeftMotorBack = new TalonFX(0);

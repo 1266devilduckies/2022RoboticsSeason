@@ -21,6 +21,7 @@ public class IntakeUpDown extends Command {
   @Override
   protected void initialize() {
     RobotMap.pneumaticDoubleSolenoid.toggle();
+    SmartDashboard.putNumber("toggled solenoids this many times", ++RobotMap.numOfTogglesOnSolenoids);
     //logic assumes kForward means extended, ready to eat balls
     if (RobotMap.pneumaticDoubleSolenoid.get() == Value.kForward) {
       SmartDashboard.putNumber("piston value", 0.0);
@@ -34,10 +35,7 @@ public class IntakeUpDown extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    /*
-    if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1 & (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
-      RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
-    }*/
+    
   }
   // Make this return true when this Command no longer needs to run execute()
   @Override

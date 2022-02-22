@@ -153,12 +153,15 @@ public void teleopInit(){
 public void teleopPeriodic(){
   //periodic events
   limeLightDataFetcher.fetchData();
-  if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1 & (System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
-    //RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
+  if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1) {
+    if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
+      //RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
+    }
   }
+  //the overall interval for this should be adjusted depending on how good the PIDF can recover
   if (RobotMap.inFiringCoroutine) {
     long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
-    long interval = 1000; //coroutine lasts interval * 5.5 (ms)
+    long interval = 1000; 
     if (dt >= interval*5.5) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
       RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
