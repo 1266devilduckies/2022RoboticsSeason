@@ -92,7 +92,7 @@ public void robotInit(){
   Util.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
   RobotMap.PewPewMotor2.setInverted(true);
   RobotMap.PewPewMotor1.setInverted(false);
-  //RobotMap.IntakeMotor1.setInverted(false);
+  RobotMap.IntakeMotor1.setInverted(false);
   
   //configure the PID
   
@@ -145,6 +145,7 @@ public void teleopInit(){
   RobotMap.MainRightMotorBack.setSelectedSensorPosition(0);
   RobotMap.MainRightMotorFront.setSelectedSensorPosition(0);
   RobotMap.FeederMotor.setSelectedSensorPosition(0);
+  
   drivetrain.arcadeDriveVoltage(0.,0., 0.75, -0.75);
   Scheduler.getInstance().add(new BetterKearnyDriving());
 }
@@ -155,7 +156,7 @@ public void teleopPeriodic(){
   limeLightDataFetcher.fetchData();
   if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1) {
     if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
-      //RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
+      RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
     }
   }
   //the overall interval for this should be adjusted depending on how good the PIDF can recover
@@ -166,23 +167,24 @@ public void teleopPeriodic(){
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
       RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
       RobotMap.inFiringCoroutine = false;
-      return;
-    }
-    if (dt >= interval*5) {
+    } else if (dt >= interval*5) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
-      return;
-    }
-    if (dt >= interval*3) {
+    } else if (dt >= interval*3) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
-      return;
-    }
-    if (dt >= interval*2.5) {
+    } else if (dt >= interval*2.5) {
       RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
-      return;
     } else {
       RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
     }
   }
+
+  if (RobotMap.pcmCompressor.getCurrent() > 130.0) {
+    RobotMap.pcmCompressor.disable();
+
+  } else if (RobotMap.pcmCompressor.getCurrent() < 90.0) {
+    RobotMap.pcmCompressor.enableDigital();
+  }
+
   //logging data
   SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
   SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());

@@ -12,25 +12,17 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class IntakeUpDown extends Command {
-  public IntakeUpDown() {
+public class IntakeDownDemo extends Command {
+  public IntakeDownDemo() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
   }
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    RobotMap.pneumaticDoubleSolenoid.toggle();
-    SmartDashboard.putNumber("toggled solenoids this many times", ++RobotMap.numOfTogglesOnSolenoids);
-    //logic assumes kForward means extended, ready to eat balls
-    if (RobotMap.pneumaticDoubleSolenoid.get() == Value.kForward) {
-      SmartDashboard.putNumber("piston value", 0.0);
-      RobotMap.timeSinceStartedBeingReleasedForSolenoids = System.currentTimeMillis();
-    } else if (RobotMap.pneumaticDoubleSolenoid.get() == Value.kReverse) {
-      SmartDashboard.putNumber("piston value", 1.0);
-      RobotMap.timeSinceStartedBeingReleasedForSolenoids = -1;
-      //RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
-    }
+    RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
+    RobotMap.timeSinceStartedBeingReleasedForSolenoids = -1;
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
   }
   // Called repeatedly when this Command is scheduled to run
   @Override

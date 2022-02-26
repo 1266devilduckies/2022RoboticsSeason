@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.commands.*;
 import edu.wpi.first.wpilibj.XboxController;
@@ -31,8 +32,11 @@ public class JoystickController {
 
 	private static JoystickController generateCoPilotJoystick(){
 		final Joystick joystick = new Joystick(1);
-		setButtonBehavior(joystick, 8, new PewPewStart());
-		setButtonBehavior(joystick, 4, new IntakeUpDown());
+		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), new GoBackNormalReverseIntake());
+		setButtonHeldBehavior(joystick, 8, new PewPewStart(), null);
+		setButtonHeldBehavior(joystick, 4, new ReverseIntake(), new GoBackNormalReverseIntake());
+		setButtonHeldBehavior(joystick, 1, new IntakeDownDemo(), null);
+		setButtonHeldBehavior(joystick, 3, new IntakeUpDemo(), null);
 		return new JoystickController(joystick);
 	} 
 	public static void Init(){
@@ -42,6 +46,17 @@ public class JoystickController {
 	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber, final Command whileHeldCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
 		button.whenPressed(whileHeldCommand);
+	}
+
+	private static void setPOVButtonBehavior(final Joystick joystick, final int angle, 
+			final Command whileHeldCommand, final Command whenReleasedCommand) {
+		final POVButton povButton = new POVButton(joystick, angle);
+		if (whileHeldCommand != null) {
+			povButton.whileHeld(whileHeldCommand);
+			}
+		if (whenReleasedCommand != null) {
+			povButton.whenReleased(whenReleasedCommand);
+		}
 	}
 	
 	private static void setButtonHeldBehavior
