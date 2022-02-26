@@ -1,28 +1,28 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix.Util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import org.opencv.core.Mat;
-
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+//import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
+//import edu.wpi.first.wpilibj.PneumaticsModuleType;
+//import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class PewPewStart extends Command {// --------------class--------------
-  public PewPewStart() {
+public class AlignToTarget extends Command {
+  public AlignToTarget() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.shooter);
+    requires(Robot.intake);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (!RobotMap.inFiringCoroutine) {
-      RobotMap.inFiringCoroutine = true;
-      RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
-    }
+    RobotMap.isAligningCoroutine = true;
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -40,6 +40,7 @@ public class PewPewStart extends Command {// --------------class--------------
   // Called once after isFinished returns true
   @Override
   protected void end() {
+
   }
 
   // Called when another command which requires one or more of the same
@@ -48,4 +49,4 @@ public class PewPewStart extends Command {// --------------class--------------
   protected void interrupted() {
   }
 
-}// class PewPewStart
+}// class

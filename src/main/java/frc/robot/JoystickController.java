@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.Trigger;
@@ -16,98 +17,92 @@ import frc.robot.commands.*;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class JoystickController {
-  	private final Joystick joystick;
+	private final Joystick joystick;
 	public static JoystickController MAIN_JOYSTICK;
-  	public static JoystickController COPILOT_JOYSTICK;
+	public static JoystickController COPILOT_JOYSTICK;
 
-	
-	private static JoystickController generateMainJoystick(){
+	// creates Main joystick object
+	private static JoystickController generateMainJoystick() {
 		final Joystick joystick = new Joystick(0);
-	
-		return new JoystickController(joystick);
-		
-		
-		
-	}//JoystickController generateMainJoystick()
 
-	private static JoystickController generateCoPilotJoystick(){
+		return new JoystickController(joystick);
+
+	}
+
+	// create CoPilot joystick object
+	private static JoystickController generateCoPilotJoystick() {
 		final Joystick joystick = new Joystick(1);
 		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), new GoBackNormalReverseIntake());
 		setButtonHeldBehavior(joystick, 8, new PewPewStart(), null);
-		setButtonHeldBehavior(joystick, 4, new ReverseIntake(), new GoBackNormalReverseIntake());
+		setButtonHeldBehavior(joystick, 4, new AlignToTarget(), null);
 		setButtonHeldBehavior(joystick, 1, new IntakeDownDemo(), null);
 		setButtonHeldBehavior(joystick, 3, new IntakeUpDemo(), null);
 		return new JoystickController(joystick);
-	} 
-	public static void Init(){
+	}
+
+	// on init creates joysticks
+	public static void Init() {
 		MAIN_JOYSTICK = generateMainJoystick();
 		COPILOT_JOYSTICK = generateCoPilotJoystick();
 	}
-	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber, final Command whileHeldCommand) {
+
+	// button when pressed run Command
+	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber,
+			final Command whileHeldCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
 		button.whenPressed(whileHeldCommand);
 	}
 
-	private static void setPOVButtonBehavior(final Joystick joystick, final int angle, 
+	// DPad when held run Command, when released run other Command
+	private static void setPOVButtonBehavior(final Joystick joystick, final int angle,
 			final Command whileHeldCommand, final Command whenReleasedCommand) {
 		final POVButton povButton = new POVButton(joystick, angle);
 		if (whileHeldCommand != null) {
 			povButton.whileHeld(whileHeldCommand);
-			}
+		}
 		if (whenReleasedCommand != null) {
 			povButton.whenReleased(whenReleasedCommand);
 		}
 	}
-	
-	private static void setButtonHeldBehavior
-	(final Joystick joystick, final int buttonNumber, 
-										  final Command whileHeldCommand, final Command whenReleasedCommand) {
+
+	// button when held run Command, when released run other Command
+	private static void setButtonHeldBehavior(final Joystick joystick, final int buttonNumber,
+			final Command whileHeldCommand, final Command whenReleasedCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
 		if (whileHeldCommand != null) {
-		button.whileHeld(whileHeldCommand);
+			button.whileHeld(whileHeldCommand);
 		}
 		if (whenReleasedCommand != null) {
-		button.whenReleased(whenReleasedCommand);
+			button.whenReleased(whenReleasedCommand);
 		}
 	}
-	private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber, final Command whenPressedCommand, final Command whenReleasedCommand) {
-		final Button button = new JoystickButton(joystick, buttonNumber);
-		if (whenPressedCommand != null) {
-		button.whenPressed(whenPressedCommand);
-		}
-		if (whenReleasedCommand != null) {
-		button.whenReleased(whenReleasedCommand);
-		}
-	}
-	/*
-	private static void setButtonPressBehaviorSecondary(final Joystick joystick, final int buttonNumber, final Command whenPressedCommand) {
-		final Button button = new JoystickButton(joystick, buttonNumber);
-		button.whenPressed(whenPressedCommand);
-	}*/
-	JoystickController(final Joystick joystick){
+
+	JoystickController(final Joystick joystick) {
 		this.joystick = joystick;
 	}
-	
-	public double getLeftStickX(){
+
+	// Joystick getters
+
+	public double getLeftStickX() {
 		return this.joystick.getRawAxis(0);
 	}
-	
-	public double getLeftStickY(){
+
+	public double getLeftStickY() {
 		return this.joystick.getRawAxis(1);
 	}
-	
-	public double getLeftTrigger(){
+
+	public double getLeftTrigger() {
 		return this.joystick.getRawAxis(2);
 	}
-	
-	public double getRightTrigger(){
+
+	public double getRightTrigger() {
 		return this.joystick.getRawAxis(5);
 	}
-	
+
 	public double getRightStickX() {
 		return this.joystick.getRawAxis(2);
 	}
-	
+
 	public double getRightStickY() {
 		return this.joystick.getRawAxis(3);
 	}
@@ -115,17 +110,15 @@ public class JoystickController {
 	public boolean RightTriggeredPressed() {
 		if (this.joystick.getRawAxis(3) > 0) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
-	
+
 	public boolean LeftTriggeredPressed() {
 		if (this.joystick.getRawAxis(2) > .25) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
