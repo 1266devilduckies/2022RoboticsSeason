@@ -37,13 +37,6 @@ public class DriveSubsystem extends SubsystemBase {
         public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
     }
 
-    // The robot's drive
-    private final DifferentialDrive m_drive = new DifferentialDrive(RobotMap.MainLeftMotorBack,
-            RobotMap.MainRightMotorBack);
-          
-    // The gyro sensor
-    public static Gyro m_gyro = new ADXRS450_Gyro();
-
     // Odometry class for tracking robot pose
     public static DifferentialDriveOdometry m_odometry;
 
@@ -55,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
         RobotMap.MainRightMotorBack.setInverted(true);
 
         resetEncoders();
-        m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+        m_odometry = new DifferentialDriveOdometry(RobotMap.gyro.getRotation2d());
         Robot.m_driveSim.update(0.001);
     }
 
@@ -63,7 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void periodic() {
         // Update the odometry in the periodic block
         m_odometry.update(
-                m_gyro.getRotation2d(),
+                RobotMap.gyro.getRotation2d(),
                 RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) / DriveConstants.kEncoderDistancePerPulse,
                 RobotMap.MainRightMotorBack.getSelectedSensorPosition(0) / DriveConstants.kEncoderDistancePerPulse);
     }
@@ -95,7 +88,7 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
-        m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+        m_odometry.resetPosition(pose, RobotMap.gyro.getRotation2d());
     }
 
     /**
@@ -105,7 +98,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @param rot the commanded rotation
      */
     public void arcadeDrive(double fwd, double rot) {
-        m_drive.arcadeDrive(fwd, rot);
+        RobotMap.m_drive.arcadeDrive(fwd, rot);
     }
 
     /**
@@ -153,7 +146,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public DifferentialDrive getDifferentialDrive() {
         Robot.m_driveSim.update(0.001);
-        return m_drive;
+        return RobotMap.m_drive;
     }
 
     /**
@@ -163,12 +156,12 @@ public class DriveSubsystem extends SubsystemBase {
      * @param maxOutput the maximum output to which the drive will be constrained
      */
     public void setMaxOutput(double maxOutput) {
-        m_drive.setMaxOutput(maxOutput);
+        RobotMap.m_drive.setMaxOutput(maxOutput);
     }
 
     /** Zeroes the heading of the robot. */
     public void zeroHeading() {
-        m_gyro.reset();
+        RobotMap.gyro.reset();
     }
 
     /**
@@ -177,7 +170,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public double getHeading() {
-        return m_gyro.getRotation2d().getDegrees();
+        return RobotMap.gyro.getRotation2d().getDegrees();
     }
 
     /**
@@ -186,12 +179,12 @@ public class DriveSubsystem extends SubsystemBase {
      * @return The turn rate of the robot, in degrees per second
      */
     public double getTurnRate() {
-        return -m_gyro.getRate();
+        return -RobotMap.gyro.getRate();
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         RobotMap.MainLeftMotorBack.setVoltage(leftVolts);
         RobotMap.MainRightMotorBack.setVoltage(rightVolts);
-        m_drive.feed();
+        RobotMap.m_drive.feed();
     }
 }

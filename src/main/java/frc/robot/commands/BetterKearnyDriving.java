@@ -4,7 +4,7 @@ import frc.robot.JoystickController;
 import frc.robot.Robot;
 //import frc.robot.subsystems.Drivetrain;
 import frc.robot.RobotMap;
-
+import frc.robot.subsystems.DriveSubsystem;
 //import javax.management.modelmbean.RequiredModelMBean;
 import frc.robot.EncoderSetter;
 import edu.wpi.first.wpilibj.command.Command;
@@ -46,7 +46,13 @@ public class BetterKearnyDriving extends Command {
 
     // System.out.println("mainY = " + mainY);
     // System.out.println("mainX = " + mainX);
-    Robot.drivetrain.arcadeDriveVoltage(x, y, -normalSpeed, normalTurn);
+    if (x>0.05 || y>0.05) {
+      RobotMap.m_drive.arcadeDrive(x, y);
+    }
+    else {
+     RobotMap.m_drive.arcadeDrive(0, 0);
+    }
+    //Robot.drivetrain.arcadeDriveVoltage(x, y, -normalSpeed, normalTurn);
     EncoderSetter.updateEncoders();
     SmartDashboard.putNumber("Avg Position in Meters",
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw));

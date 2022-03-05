@@ -83,7 +83,7 @@ public class JoystickController {
 	}
 
 	// Joystick getters
-
+    // change when we get new contollers por favor - Benny
 	public double getLeftStickX() {
 		return this.joystick.getRawAxis(0);
 	}
@@ -92,20 +92,20 @@ public class JoystickController {
 		return this.joystick.getRawAxis(1);
 	}
 
-	public double getLeftTrigger() {
+	/*public double getLeftTrigger() {
 		return this.joystick.getRawAxis(2);
 	}
 
 	public double getRightTrigger() {
 		return this.joystick.getRawAxis(5);
-	}
+	}*/
 
 	public double getRightStickX() {
-		return this.joystick.getRawAxis(2);
+		return this.joystick.getRawAxis(4);
 	}
 
 	public double getRightStickY() {
-		return this.joystick.getRawAxis(3);
+		return this.joystick.getRawAxis(5);
 	}
 
 	public boolean RightTriggeredPressed() {

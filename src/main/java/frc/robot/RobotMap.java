@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 //import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 //import edu.wpi.first.wpilibj.Encoder;
-//import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 //RobotMap.java just makes the motors through TalonFX (the actual motors)
 //When we start working with a new motor, we basically 'initialize' it here -JM
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -25,8 +25,8 @@ public class RobotMap {
   public static WPI_TalonFX MainRightMotorBack;
   public static WPI_TalonFX MainRightMotorFront;
   public static VictorSPX IntakeMotor1;
-  public static TalonFX PewPewMotor1;
-  public static TalonFX PewPewMotor2;
+  public static WPI_TalonFX PewPewMotor1;
+  public static WPI_TalonFX PewPewMotor2;
   public static VictorSPX FeederMotor;
   public static VictorSPX Climber1;
   public static VictorSPX Climber2;
@@ -41,6 +41,8 @@ public class RobotMap {
   public static boolean isAligningCoroutine = false;
   public static PIDController alignerPIDController;
   public static boolean fullShooterPower = true;
+  // The robot's drive
+  public static DifferentialDrive m_drive;
   /*
    * to change the kF go in phoenix tuner > control > percent output
    * fiddle with it until when you click self test snapshot the velocity is close
@@ -68,22 +70,24 @@ public class RobotMap {
 
     MainLeftMotorBack = new WPI_TalonFX(0);
     MainLeftMotorFront = new WPI_TalonFX(1);
-    MainRightMotorBack = new WPI_TalonFX(2);
-    MainRightMotorFront = new WPI_TalonFX(3);
+    MainRightMotorBack = new WPI_TalonFX(3);
+    MainRightMotorFront = new WPI_TalonFX(2);
+    m_drive = new DifferentialDrive(RobotMap.MainLeftMotorBack,
+    RobotMap.MainRightMotorBack);
 
     inFiringCoroutine = false;
     IntakeMotor1 = new VictorSPX(4);
     FeederMotor = new VictorSPX(9);
-    PewPewMotor1 = new TalonFX(5);
-    PewPewMotor2 = new TalonFX(8);
-    Climber1 = new VictorSPX(10);
-    Climber2 = new VictorSPX(11);
+    PewPewMotor1 = new WPI_TalonFX(5);
+    PewPewMotor2 = new WPI_TalonFX(8);
+    Climber1 = new VictorSPX(12);
+    Climber2 = new VictorSPX(13);
     PewPewMotor1.set(ControlMode.Follower, 8);
     MainLeftMotorFront.set(ControlMode.Follower, 0);
     MainRightMotorFront.set(ControlMode.Follower, 2);
-    pcmCompressor = new Compressor(6, PneumaticsModuleType.CTREPCM);
+    pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
-    pneumaticDoubleSolenoid = new DoubleSolenoid(6, PneumaticsModuleType.CTREPCM, 6, 7);
+    pneumaticDoubleSolenoid = new DoubleSolenoid(10, PneumaticsModuleType.CTREPCM, 0, 1);
     pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
     gyro = new ADXRS450_Gyro();
     //AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);

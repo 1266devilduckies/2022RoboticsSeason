@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.math.util.Units;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 
 //This is basically our main class, we just don't use Main.java for clarity (i guess) -JM
@@ -99,6 +100,11 @@ public class Robot extends TimedRobot {
     RobotMap.PewPewMotor2.setInverted(true);
     RobotMap.PewPewMotor1.setInverted(false);
     RobotMap.IntakeMotor1.setInverted(false);
+    RobotMap.MainLeftMotorFront.setInverted(true);
+    RobotMap.MainLeftMotorBack.setInverted(true);
+    RobotMap.MainRightMotorFront.setInverted(false);
+    RobotMap.MainRightMotorBack.setInverted(false);
+    RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
 
     SmartDashboard.putData("Field", m_field);
     // configure the PID
@@ -143,7 +149,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    DriveSubsystem.m_odometry.update(DriveSubsystem.m_gyro.getRotation2d(),
+    DriveSubsystem.m_odometry.update(RobotMap.gyro.getRotation2d(),
                       EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
                       EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition()));
     /*
@@ -188,7 +194,8 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorFront.setSelectedSensorPosition(0);
     RobotMap.FeederMotor.setSelectedSensorPosition(0);
 
-    drivetrain.arcadeDriveVoltage(0., 0., 0.75, -0.75);
+    
+    RobotMap.m_drive.arcadeDrive(0.0, 0.0);
     Scheduler.getInstance().add(new BetterKearnyDriving());
 
   }
@@ -198,7 +205,7 @@ public class Robot extends TimedRobot {
     // periodic events
     limeLightDataFetcher.fetchData();
     if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1) {
-      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 1000) {
+      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 0) {
         RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
       }
     }
@@ -217,7 +224,7 @@ public class Robot extends TimedRobot {
       long interval = 1000;
       if (dt >= interval * 5.5) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
-        RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
+        RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, 0.0);
         RobotMap.inFiringCoroutine = false;
         RobotMap.fullShooterPower = true;
       } else if (dt >= interval * 5) {
@@ -238,12 +245,14 @@ public class Robot extends TimedRobot {
       RobotMap.pcmCompressor.enableDigital();
     }
     if (RobotMap.isAligningCoroutine) {
+      /*
       if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
         double pidOutput = RobotMap.alignerPIDController.calculate(limeLightDataFetcher.getdegRotationToTarget(), 0.0);
         drivetrain.arcadeDriveVoltage(0.0, Math.max(-1.0, Math.min(1.0, pidOutput)), 0.0, 1.0);
       } else {
         drivetrain.arcadeDriveVoltage(0.0, 0.0, 0.0, 1.0);
       }
+      */
     }
     // logging data
     SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);

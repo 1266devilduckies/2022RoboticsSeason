@@ -21,8 +21,14 @@ public class Drivetrain extends Subsystem {
 			left /= Math.abs(right);
 			right /= Math.abs(right);
 		}
+		//fix deadband
+		//if (x > 0.05 || y > 0.05) {
 		RobotMap.MainLeftMotorBack.set(ControlMode.PercentOutput, left);
 		RobotMap.MainRightMotorBack.set(ControlMode.PercentOutput, right);
+		//} else {
+		//	RobotMap.MainLeftMotorBack.set(ControlMode.PercentOutput, 0.0);
+		//	RobotMap.MainRightMotorBack.set(ControlMode.PercentOutput, 0.0);
+		//}
 	}
 
 	public double rotateToAngle(double targetAngle, double gyroAngle, double threshold) {
