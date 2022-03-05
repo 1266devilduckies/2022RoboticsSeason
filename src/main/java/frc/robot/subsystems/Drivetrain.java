@@ -1,20 +1,9 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.robot.RobotMap;
-import frc.robot.EncoderSetter;
+
 //import jdk.jfr.Percentage;
 
 public class Drivetrain extends Subsystem {

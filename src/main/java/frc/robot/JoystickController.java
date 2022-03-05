@@ -9,12 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.commands.*;
-import edu.wpi.first.wpilibj.XboxController;
 
 public class JoystickController {
 	private final Joystick joystick;
@@ -33,10 +31,14 @@ public class JoystickController {
 	private static JoystickController generateCoPilotJoystick() {
 		final Joystick joystick = new Joystick(1);
 		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), new GoBackNormalReverseIntake());
+		setButtonHeldBehavior(joystick, 9, new SlowShot(), null);
 		setButtonHeldBehavior(joystick, 8, new PewPewStart(), null);
 		setButtonHeldBehavior(joystick, 4, new AlignToTarget(), null);
 		setButtonHeldBehavior(joystick, 1, new IntakeDownDemo(), null);
 		setButtonHeldBehavior(joystick, 3, new IntakeUpDemo(), null);
+		setButtonHeldBehavior(joystick, 2, new Climbstart(), new Climberstop());
+		setButtonHeldBehavior(joystick, 5, new climbreverse(), new Climberstop());
+		setButtonHeldBehavior(joystick, 6, new climbpart2(), new climbpart2stop());
 		return new JoystickController(joystick);
 	}
 

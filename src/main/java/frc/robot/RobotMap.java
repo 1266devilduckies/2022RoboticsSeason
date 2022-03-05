@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.io.IOException;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 //import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 //import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -11,25 +9,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 //import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 //RobotMap.java just makes the motors through TalonFX (the actual motors)
 //When we start working with a new motor, we basically 'initialize' it here -JM
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.PneumaticsControlModule;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.SPI;
 
 public class RobotMap {
 
@@ -40,7 +27,9 @@ public class RobotMap {
   public static VictorSPX IntakeMotor1;
   public static TalonFX PewPewMotor1;
   public static TalonFX PewPewMotor2;
-  public static TalonSRX FeederMotor;
+  public static VictorSPX FeederMotor;
+  public static VictorSPX Climber1;
+  public static VictorSPX Climber2;
   public static double avgPositionRaw;
   public static double avgPositionInMeters;
   public static boolean inFiringCoroutine;
@@ -51,6 +40,7 @@ public class RobotMap {
   public static Compressor pcmCompressor;
   public static boolean isAligningCoroutine = false;
   public static PIDController alignerPIDController;
+  public static boolean fullShooterPower = true;
   /*
    * to change the kF go in phoenix tuner > control > percent output
    * fiddle with it until when you click self test snapshot the velocity is close
@@ -68,7 +58,7 @@ public class RobotMap {
   public static double kIAligner = 0.0;
   public static double kDAligner = 0.0;
   public static int numOfTogglesOnSolenoids = 0;
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   public static void init() {
 
@@ -76,12 +66,18 @@ public class RobotMap {
     MainLeftMotorFront = new WPI_TalonFX(1);
     MainRightMotorBack = new WPI_TalonFX(2);
     MainRightMotorFront = new WPI_TalonFX(3);
+    MainLeftMotorBack.enableVoltageCompensation(false);
+    MainLeftMotorFront.enableVoltageCompensation(false);
+    MainRightMotorBack.enableVoltageCompensation(false);
+    MainRightMotorFront.enableVoltageCompensation(false);
 
     inFiringCoroutine = false;
     IntakeMotor1 = new VictorSPX(4);
-    FeederMotor = new TalonSRX(9);
+    FeederMotor = new VictorSPX(9);
     PewPewMotor1 = new TalonFX(5);
     PewPewMotor2 = new TalonFX(8);
+    Climber1 = new VictorSPX(10);
+    Climber2 = new VictorSPX(11);
     PewPewMotor1.set(ControlMode.Follower, 8);
     MainLeftMotorFront.set(ControlMode.Follower, 0);
     MainRightMotorFront.set(ControlMode.Follower, 2);
@@ -90,6 +86,15 @@ public class RobotMap {
     pneumaticDoubleSolenoid = new DoubleSolenoid(6, PneumaticsModuleType.CTREPCM, 6, 7);
     pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
     gyro = new ADXRS450_Gyro();
+    //AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);
+    /*TalonFXSimCollection fx_simshooter1 = PewPewMotor1.getSimCollection();
+    TalonFXSimCollection fx_simshooter2 = PewPewMotor2.getSimCollection();
+    VictorSPXSimCollection fx_intake1 = IntakeMotor1.getSimCollection();
+    VictorSPXSimCollection fx_feeder1 = FeederMotor.getSimCollection();*/
+   
+
+
+   
     alignerPIDController = new PIDController(kPAligner, kIAligner, kDAligner);
   }
 }

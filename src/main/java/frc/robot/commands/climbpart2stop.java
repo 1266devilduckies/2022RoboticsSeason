@@ -1,15 +1,20 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
+//import edu.wpi.first.wpilibj.DoubleSolenoid;
+//import edu.wpi.first.wpilibj.PneumaticsModuleType;
+//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 //import edu.wpi.first.wpilibj.PneumaticsModuleType;
 //import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class IntakeUpDemo extends Command {
-  public IntakeUpDemo() {
+public class climbpart2stop extends Command {
+  public climbpart2stop() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
   }
@@ -17,9 +22,9 @@ public class IntakeUpDemo extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
-    RobotMap.timeSinceStartedBeingReleasedForSolenoids = System.currentTimeMillis();
-  }
+    RobotMap.Climber2.set(ControlMode.PercentOutput, 0.0);
+    }
+  
 
   // Called repeatedly when this Command is scheduled to run
   @Override
@@ -46,3 +51,4 @@ public class IntakeUpDemo extends Command {
   }
 
 }// class
+

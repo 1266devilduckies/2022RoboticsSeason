@@ -1,12 +1,6 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix.Util;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import org.opencv.core.Mat;
-
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 

@@ -1,31 +1,15 @@
 package frc.robot.subsystems;
 
-import java.util.List;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -56,11 +40,12 @@ public class DriveSubsystem extends SubsystemBase {
     // The robot's drive
     private final DifferentialDrive m_drive = new DifferentialDrive(RobotMap.MainLeftMotorBack,
             RobotMap.MainRightMotorBack);
+          
     // The gyro sensor
-    private final Gyro m_gyro = new ADXRS450_Gyro();
+    public static Gyro m_gyro = new ADXRS450_Gyro();
 
     // Odometry class for tracking robot pose
-    private final DifferentialDriveOdometry m_odometry;
+    public static DifferentialDriveOdometry m_odometry;
 
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
@@ -71,6 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         resetEncoders();
         m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+        Robot.m_driveSim.update(0.001);
     }
 
     @Override
@@ -99,6 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0),
                 RobotMap.MainRightMotorBack.getSelectedSensorPosition(0));
+               
     }
 
     /**
@@ -165,6 +152,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public DifferentialDrive getDifferentialDrive() {
+        Robot.m_driveSim.update(0.001);
         return m_drive;
     }
 

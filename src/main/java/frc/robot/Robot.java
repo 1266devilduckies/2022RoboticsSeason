@@ -1,42 +1,29 @@
 package frc.robot;
 
-import static edu.wpi.first.wpilibj.CounterBase.EncodingType.k1X;
-
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 //import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
-import frc.robot.commands.PewPewStart;
-import frc.robot.EncoderSetter;
 import frc.robot.subsystems.DriveSubsystem;
 //import edu.wpi.first.hal.simulation.EncoderDataJNI;
 //import edu.wpi.first.hal.EncoderJNI;
@@ -45,18 +32,12 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import frc.robot.RobotMap;
-//import edu.wpi.first.math.trajectory.Trajectory;
-//import edu.wpi.first.math.trajectory.TrajectoryUtil;
-//import edu.wpi.first.wpilibj.drive.*;
-//import frc.robot.subsystems.*;
-//import edu.wpi.first.wpilibj.*;
+import frc.robot.subsystems.Climber;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.math.util.Units;
 
-//import java.io.IOException;
-//import java.nio.file.Path;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 
 //This is basically our main class, we just don't use Main.java for clarity (i guess) -JM
 
@@ -65,15 +46,24 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem m_robotDrive;
   public static Intake intake;
   public static Shooter shooter;
+  public static Climber climber;
   public static double turnY;
   public static double moveX;
   // in milliseconds
   public long startAutoTime;
   public long currentAutoTime = 0;
+  Field2d m_field = new Field2d();
 
   // test trajectory
   Trajectory trajectory = new Trajectory();
-
+  public static DifferentialDrivetrainSim m_driveSim = new DifferentialDrivetrainSim(
+    DCMotor.getFalcon500(2),  //2 Falcon 500s on each side of the drivetrain.
+    10,               //Standard AndyMark Gearing reduction.
+    2.1,                      //MOI of 2.1 kg m^2 (from CAD model).
+    43.01,                     //Mass of the robot is 43.01 kg.
+    Units.inchesToMeters(3),  //Robot uses 3" radius (6" diameter) wheels.
+    0.546,  
+    null );
   /*
    * //CALIBRATE VALUE TO OUR ROBOT LATER
    * public static final double ksVolts = 0.22;
@@ -105,10 +95,12 @@ public class Robot extends TimedRobot {
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor1);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor2);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
+    //EncoderSim simEncoder = new EncoderSim(RobotMap.MainLeftMotorBack);
     RobotMap.PewPewMotor2.setInverted(true);
     RobotMap.PewPewMotor1.setInverted(false);
     RobotMap.IntakeMotor1.setInverted(false);
 
+    SmartDashboard.putData("Field", m_field);
     // configure the PID
 
     RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
@@ -123,6 +115,7 @@ public class Robot extends TimedRobot {
     RobotMap.gyro.calibrate();
     intake = new Intake();
     shooter = new Shooter();
+    climber = new Climber();
     JoystickController.Init();
     // get auto path json
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -150,6 +143,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    DriveSubsystem.m_odometry.update(DriveSubsystem.m_gyro.getRotation2d(),
+                      EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
+                      EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition()));
     /*
      * double sdkP = Preferences.getDouble("kP Aligner PID", RobotMap.kPAligner);
      * double sdkI = Preferences.getDouble("kI Aligner PID", RobotMap.kIAligner);
@@ -209,12 +205,21 @@ public class Robot extends TimedRobot {
     // the overall interval for this should be adjusted depending on how good the
     // PIDF can recover
     if (RobotMap.inFiringCoroutine) {
+      
+      double velocity = 0.0;
+      if(RobotMap.fullShooterPower){
+        velocity = RobotMap.velocityTarget;
+      }else{
+        velocity = RobotMap.velocityTarget / 2; //replace with exact value later
+      }
+
       long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
       long interval = 1000;
       if (dt >= interval * 5.5) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
         RobotMap.inFiringCoroutine = false;
+        RobotMap.fullShooterPower = true;
       } else if (dt >= interval * 5) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
       } else if (dt >= interval * 3) {
@@ -222,7 +227,7 @@ public class Robot extends TimedRobot {
       } else if (dt >= interval * 2.5) {
         RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
       } else {
-        RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
+        RobotMap.PewPewMotor2.set(ControlMode.Velocity, velocity);
       }
     }
 
@@ -247,11 +252,70 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
 
     Scheduler.getInstance().run();
+    
+
+    
+  }
+  @Override 
+  public void simulationPeriodic() {
+    /* Pass the robot battery voltage to the simulated Talon FXs */
+    Scheduler.getInstance().add(new BetterKearnyDriving());
+   //cod 
+    /*
+     * CTRE simulation is low-level, so SimCollection inputs
+     * and outputs are not affected by SetInverted(). Only
+     * the regular user-level API calls are affected.
+     *
+     * WPILib expects +V to be forward.
+     * Positive motor output lead voltage is ccw. We observe
+     * on our physical robot that this is reverse for the
+     * right motor, so negate it.
+     *
+     * We are hard-coding the negation of the values instead of
+     * using getInverted() so we can catch a possible bug in the
+     * robot code where the wrong value is passed to setInverted().
+     */
+    m_driveSim.setInputs(RobotMap.MainRightMotorBack.getMotorOutputPercent(),
+    -RobotMap.MainLeftMotorBack.getMotorOutputPercent());
+
+    /*
+     * Advance the model by 20 ms. Note that if you are running this
+     * subsystem in a separate thread or have changed the nominal
+     * timestep of TimedRobot, this value needs to match it.
+     */
+    m_driveSim.update(0.001);
+
+    /*
+     * Update all of our sensors.
+     *
+     * Since WPILib's simulation class is assuming +V is forward,
+     * but -V is forward for the right motor, we need to negate the
+     * position reported by the simulation class. Basically, we
+     * negated the input, so we need to negate the output.
+     */
+    RobotMap.MainRightMotorBack.setSelectedSensorPosition(
+                    EncoderSetter.nativeUnitsToDistanceMeters(
+                        m_driveSim.getLeftPositionMeters()
+                    ));
+    RobotMap.MainLeftMotorFront.setSelectedSensorPosition(
+                      EncoderSetter.nativeUnitsToDistanceMeters(
+                          m_driveSim.getLeftPositionMeters()
+                      ));
+    RobotMap.MainRightMotorFront.setSelectedSensorPosition(
+                        EncoderSetter.nativeUnitsToDistanceMeters(
+                            m_driveSim.getLeftPositionMeters()
+                        ));
+    RobotMap.MainLeftMotorBack.setSelectedSensorPosition(
+                         EncoderSetter.nativeUnitsToDistanceMeters(
+                                  m_driveSim.getLeftPositionMeters()
+                         ));
+                        
+    
   }
 
   @Override
   public void autonomousPeriodic() {
-    double error = -RobotMap.gyro.getRate();
+    //double error = -RobotMap.gyro.getRate();
 
     /*
      * //https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/
@@ -266,15 +330,37 @@ public class Robot extends TimedRobot {
      */
 
     currentAutoTime = startAutoTime - System.currentTimeMillis();
+    
 
-    /*
-     * if(currentAutoTime >= milliseconds){
-     * //intake
-     * }
-     * else if(currentAutotime >= milliseconds){
-     * //shoot
-     * }
-     */
+    
+      if(currentAutoTime >= 3000){
+        RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
+      }
+      else if(currentAutoTime >=3500){
+        RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 1);
+      }
+       else if(currentAutoTime >= 4500){
+        RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 0); 
+       }
+        else if(currentAutoTime >= 5500){
+        RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
+      }
+      else if(currentAutoTime >= 6200){
+        if (currentAutoTime >= 11700) {
+          RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+          RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
+          RobotMap.inFiringCoroutine = false;
+        } else if (currentAutoTime >= 11200) {
+          RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+        } else if (currentAutoTime >= 9200) {
+          RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+        } else if (currentAutoTime >= 8700) {
+          RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+        } else {
+          RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
+        }
+      }
+     
 
   }
 
