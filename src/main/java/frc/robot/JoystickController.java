@@ -34,8 +34,7 @@ public class JoystickController {
 		setButtonHeldBehavior(joystick, 9, new SlowShot(), null);
 		setButtonHeldBehavior(joystick, 8, new PewPewStart(), null);
 		setButtonHeldBehavior(joystick, 4, new AlignToTarget(), null);
-		setButtonHeldBehavior(joystick, 1, new IntakeDownDemo(), null);
-		setButtonHeldBehavior(joystick, 3, new IntakeUpDemo(), null);
+		setButtonHeldBehavior(joystick, 1, new IntakeDown(), new IntakeUp());
 		setButtonHeldBehavior(joystick, 2, new Climbstart(), new Climberstop());
 		setButtonHeldBehavior(joystick, 5, new climbreverse(), new Climberstop());
 		setButtonHeldBehavior(joystick, 6, new climbpart2(), new climbpart2stop());

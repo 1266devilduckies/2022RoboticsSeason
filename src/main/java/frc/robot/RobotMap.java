@@ -50,10 +50,14 @@ public class RobotMap {
    * set the velocity from self test snapshot into the velocityTarget variable
    */
   public static double velocityTarget = 14300.0;
-  final public static double kF = (0.6343 * 1023.0) / velocityTarget;
-  final public static double kP = 0.0299999714;
-  final public static double kI = 9.98973846E-05;
-  final public static double kD = 0.03999996;
+  public static double kF = (0.6343 * 1023.0) / velocityTarget;
+  public static double kP = 0.0299999714;
+  public static double kI = 9.98973846E-05;
+  public static double kD = 0.03999996;
+  public static double kF2 = (0.6343 * 1023.0) / velocityTarget;
+  public static double kP2 = 0.0299999714;
+  public static double kI2 = 9.98973846E-05;
+  public static double kD2 = 0.03999996;
   public static double kPAligner = 0.02;
   public static double kIAligner = 0.0;
   public static double kDAligner = 0.0;
@@ -66,10 +70,6 @@ public class RobotMap {
     MainLeftMotorFront = new WPI_TalonFX(1);
     MainRightMotorBack = new WPI_TalonFX(2);
     MainRightMotorFront = new WPI_TalonFX(3);
-    MainLeftMotorBack.enableVoltageCompensation(false);
-    MainLeftMotorFront.enableVoltageCompensation(false);
-    MainRightMotorBack.enableVoltageCompensation(false);
-    MainRightMotorFront.enableVoltageCompensation(false);
 
     inFiringCoroutine = false;
     IntakeMotor1 = new VictorSPX(4);
