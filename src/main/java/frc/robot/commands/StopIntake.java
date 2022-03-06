@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 //import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -8,8 +10,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
-public class IntakeDown extends Command {
-  public IntakeDown() {
+public class StopIntake extends Command {
+  public StopIntake() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
   }
@@ -17,8 +19,7 @@ public class IntakeDown extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
-    RobotMap.timeSinceStartedBeingReleasedForSolenoids = System.currentTimeMillis();
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
   }
 
   // Called repeatedly when this Command is scheduled to run

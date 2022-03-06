@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
-public class IntakeUp extends Command {
-  public IntakeUp() {
+public class StartIntake extends Command {
+  public StartIntake() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
   }
@@ -18,9 +18,7 @@ public class IntakeUp extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
-    RobotMap.timeSinceStartedBeingReleasedForSolenoids = -1;
-    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, .8);
   }
 
   // Called repeatedly when this Command is scheduled to run

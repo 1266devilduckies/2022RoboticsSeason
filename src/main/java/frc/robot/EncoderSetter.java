@@ -11,7 +11,7 @@ public class EncoderSetter {
 
   // converts sensor readings to meters
   public static double nativeUnitsToDistanceMeters(double sensorCounts) {
-    double motorRotations = (double) sensorCounts / 2048; // is units per rotation for the falcons
+    double motorRotations = (double) sensorCounts / 2048.0; // is units per rotation for the falcons
     double wheelRotations = motorRotations / 10.0; // 10:1 is gear ratio
     double positionMeters = wheelRotations * (2 * Math.PI * .0762); // 3 inches in meters is .0762 meters. the wheels
                                                                     // radius is 3 inches
@@ -20,8 +20,7 @@ public class EncoderSetter {
 
   // updates the encoders with new positions
   public static void updateEncoders() {
-    RobotMap.avgPositionRaw = (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) +
-        RobotMap.MainLeftMotorFront.getSelectedSensorPosition(0)) / 2.0;
+    RobotMap.avgPositionRaw = RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0);
     RobotMap.avgPositionInMeters = nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw);
   }
 

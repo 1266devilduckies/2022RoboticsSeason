@@ -45,14 +45,9 @@ public class BetterKearnyDriving extends Command {
      */
 
     // System.out.println("mainY = " + mainY);
-    // System.out.println("mainX = " + mainX);
-    if (x>0.05 || y>0.05) {
-      RobotMap.m_drive.arcadeDrive(x, y);
-    }
-    else {
-     RobotMap.m_drive.arcadeDrive(0, 0);
-    }
-    //Robot.drivetrain.arcadeDriveVoltage(x, y, -normalSpeed, normalTurn);
+    // System.out.println("mainX = " + mainX);s
+    RobotMap.m_drive.arcadeDrive(-x, y);
+    // Robot.drivetrain.arcadeDriveVoltage(x, y, -normalSpeed, normalTurn);
     EncoderSetter.updateEncoders();
     SmartDashboard.putNumber("Avg Position in Meters",
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.avgPositionRaw));

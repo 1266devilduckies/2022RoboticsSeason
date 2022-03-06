@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class RobotMap {
 
@@ -64,7 +65,9 @@ public class RobotMap {
   public static double kIAligner = 0.0;
   public static double kDAligner = 0.0;
   public static int numOfTogglesOnSolenoids = 0;
-  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public static boolean reachedGoal = false;
+  public static boolean shotFirstShotInAuto = false;
+  // private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   public static void init() {
 
@@ -73,7 +76,7 @@ public class RobotMap {
     MainRightMotorBack = new WPI_TalonFX(3);
     MainRightMotorFront = new WPI_TalonFX(2);
     m_drive = new DifferentialDrive(RobotMap.MainLeftMotorBack,
-    RobotMap.MainRightMotorBack);
+        RobotMap.MainRightMotorBack);
 
     inFiringCoroutine = false;
     IntakeMotor1 = new VictorSPX(4);
@@ -87,18 +90,17 @@ public class RobotMap {
     MainRightMotorFront.set(ControlMode.Follower, 2);
     pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
-    pneumaticDoubleSolenoid = new DoubleSolenoid(10, PneumaticsModuleType.CTREPCM, 0, 1);
-    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+    pneumaticDoubleSolenoid = new DoubleSolenoid(10, PneumaticsModuleType.CTREPCM, 1, 0);
+    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kOff);
     gyro = new ADXRS450_Gyro();
-    //AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);
-    /*TalonFXSimCollection fx_simshooter1 = PewPewMotor1.getSimCollection();
-    TalonFXSimCollection fx_simshooter2 = PewPewMotor2.getSimCollection();
-    VictorSPXSimCollection fx_intake1 = IntakeMotor1.getSimCollection();
-    VictorSPXSimCollection fx_feeder1 = FeederMotor.getSimCollection();*/
-   
+    // AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);
+    /*
+     * TalonFXSimCollection fx_simshooter1 = PewPewMotor1.getSimCollection();
+     * TalonFXSimCollection fx_simshooter2 = PewPewMotor2.getSimCollection();
+     * VictorSPXSimCollection fx_intake1 = IntakeMotor1.getSimCollection();
+     * VictorSPXSimCollection fx_feeder1 = FeederMotor.getSimCollection();
+     */
 
-
-   
     alignerPIDController = new PIDController(kPAligner, kIAligner, kDAligner);
   }
 }

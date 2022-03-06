@@ -15,6 +15,15 @@ public class PewPewStart extends Command {// --------------class--------------
   protected void initialize() {
     if (!RobotMap.inFiringCoroutine) {
       RobotMap.inFiringCoroutine = true;
+      RobotMap.fullShooterPower = true;
+      RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
+      RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
+      RobotMap.PewPewMotor1.config_kI(0, RobotMap.kI);
+      RobotMap.PewPewMotor1.config_kD(0, RobotMap.kD);
+      RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
+      RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+      RobotMap.PewPewMotor2.config_kI(0, RobotMap.kI);
+      RobotMap.PewPewMotor2.config_kD(0, RobotMap.kD);
       RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
     }
   }
