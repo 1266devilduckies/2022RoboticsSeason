@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import edu.wpi.first.wpilibj.PneumaticsModuleType;
 //import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
@@ -18,7 +19,8 @@ public class StartIntake extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, .8);
+    RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.8);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -30,7 +32,7 @@ public class StartIntake extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true

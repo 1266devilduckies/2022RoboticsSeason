@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import edu.wpi.first.wpilibj.PneumaticsModuleType;
 //import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
@@ -19,7 +20,8 @@ public class StopIntake extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
+    RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, .0);
   }
 
   // Called repeatedly when this Command is scheduled to run

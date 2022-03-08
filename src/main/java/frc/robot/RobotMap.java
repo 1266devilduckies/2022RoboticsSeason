@@ -67,6 +67,7 @@ public class RobotMap {
   public static int numOfTogglesOnSolenoids = 0;
   public static boolean reachedGoal = false;
   public static boolean shotFirstShotInAuto = false;
+  public static boolean isDroppingIntake = false;
   // private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   public static void init() {
@@ -91,7 +92,7 @@ public class RobotMap {
     pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
     pneumaticDoubleSolenoid = new DoubleSolenoid(10, PneumaticsModuleType.CTREPCM, 1, 0);
-    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kOff);
+    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
     gyro = new ADXRS450_Gyro();
     // AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);
     /*
