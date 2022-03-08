@@ -23,13 +23,15 @@ public class JoystickController {
 	private static JoystickController generateMainJoystick() {
 		final Joystick joystick = new Joystick(0);
 		// this is for playstation
-		setButtonHeldBehavior(joystick, 4, new StartIntake(), new StopIntake());
+		//setButtonHeldBehavior(joystick, 4, new StartIntake(), new StopIntake());
 
 		setButtonHeldBehavior(joystick, 1, new pneumaticForward(), null);
 		setButtonHeldBehavior(joystick, 3, new pneumaticReverse(), null);
 		setButtonHeldBehavior(joystick, 1, new StopIntake(), null);
 		setButtonHeldBehavior(joystick, 3, new StartIntake(), null);
-
+		// starts the coroutine to align robot to goal, the robot needs to be generally
+		// facing the goal
+		setButtonHeldBehavior(joystick, 2, new AlignToTarget(), null);
 		// this changes the direction of the intake motor while it is being held
 		// it does not start it but rather it changes the polarity of the motor
 		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), new GoBackNormalReverseIntake());
@@ -46,9 +48,6 @@ public class JoystickController {
 		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
 		// goes for high ball shot
 		setButtonHeldBehavior(joystick, 6, new PewPewStart(), null);
-		// starts the coroutine to align robot to goal, the robot needs to be generally
-		// facing the goal
-		setButtonHeldBehavior(joystick, 1, new AlignToTarget(), null);
 
 		setButtonHeldBehavior(joystick, 2, new Climbstart(), new Climberstop());
 		setButtonHeldBehavior(joystick, 5, new climbreverse(), new Climberstop());
