@@ -102,15 +102,15 @@ public class JoystickController {
 		return this.joystick.getRawAxis(1);
 	}
 
-	/*
-	 * public double getLeftTrigger() {
-	 * return this.joystick.getRawAxis(2);
-	 * }
-	 * 
-	 * public double getRightTrigger() {
-	 * return this.joystick.getRawAxis(5);
-	 * }
-	 */
+	
+	 public double getLeftTrigger() {
+	  return this.joystick.getRawAxis(2);
+	  }
+	  
+	 public double getRightTrigger() {
+	 return this.joystick.getRawAxis(3);
+	 }
+	 
 
 	public double getRightStickX() {
 		return this.joystick.getRawAxis(2);

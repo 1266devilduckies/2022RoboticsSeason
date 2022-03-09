@@ -19,7 +19,7 @@ public class FeederStart extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+    RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
   }
 
   // Called repeatedly when this Command is scheduled to run

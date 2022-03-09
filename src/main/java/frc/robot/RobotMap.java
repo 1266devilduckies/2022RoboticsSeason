@@ -53,20 +53,26 @@ public class RobotMap {
    * the first multiple in front of 1023.0.
    * set the velocity from self test snapshot into the velocityTarget variable
    */
-  public static double velocityTarget = 14300.0;
-  public static double kF = (0.6343 * 1023.0) / velocityTarget;
-  public static double kP = 0.0299999714;
-  public static double kI = 9.98973846E-05;
-  public static double kD = 0.03999996;
+  public static double velocityTarget = 14000.0;
+  public static double velocityFeeder = 69.0;
+  public static double kF = 0.0455;
+  public static double kP = 0.02;
+  public static double kI = 0.0;
+  public static double kD = 0.0;
   public static double kF2 = (0.6343 * 1023.0) / velocityTarget;
   public static double kP2 = 0.0299999714;
   public static double kI2 = 9.98973846E-05;
   public static double kD2 = 0.03999996;
+  public static double curTarAngle = 0.0;
+  public static double targetAngleSetpoint = 5.0;//if you change also change pf constants
+  public static PIDController targetAnglePIDController = new PIDController(0.02,0.0,0.0); //if you change these you gotta change the setpoint
   public static double kPAligner = 0.02;
   public static double kIAligner = 0.0;
   public static double kDAligner = 0.0;
+  public static double angle = 0.0;
   public static int numOfTogglesOnSolenoids = 0;
   public static boolean reachedGoal = false;
+  public static boolean turnedaround = false;
   public static boolean shotFirstShotInAuto = false;
   // private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 

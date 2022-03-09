@@ -14,7 +14,7 @@ public class BetterKearnyDriving extends Command {
   // Drivetrain drivetrain = Robot.drivetrain;
   JoystickController mainJoystick = JoystickController.MAIN_JOYSTICK;
   JoystickController coPilotJoystick = JoystickController.COPILOT_JOYSTICK;
-
+  double threshold = 0.05;
   public BetterKearnyDriving() {
     // requires(Robot.drivetrain);
   }
@@ -26,7 +26,14 @@ public class BetterKearnyDriving extends Command {
   @Override
   public void execute() {
     // ps4 & xbox apis have it so that going forward on the y makes it go negative
-    RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX());
+
+    double lVal = mainJoystick.getLeftStickY();
+    double rVal = mainJoystick.getRightStickX();
+    if (lVal < threshold) {
+      RobotMap.m_drive.tankDrive(rVal, -rVal);
+    } else {
+      RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX());
+    }
     EncoderSetter.updateEncoders();
   }
 

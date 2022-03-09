@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -42,6 +43,7 @@ public class EncoderSetter {
     motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
     motor.setSelectedSensorPosition(0);
     motor.configOpenloopRamp(0.5);
+    motor.setNeutralMode(NeutralMode.Coast);
     motor.setInverted(false);
     motor.setSensorPhase(false);
     motor.enableVoltageCompensation(true);
