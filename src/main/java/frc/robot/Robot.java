@@ -245,17 +245,14 @@ public class Robot extends TimedRobot {
       RobotMap.pcmCompressor.enableDigital();
     }
     if (RobotMap.isAligningCoroutine) {
-      
-        if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
-        double pidOutput =
-        RobotMap.alignerPIDController.calculate(limeLightDataFetcher.
-        getdegRotationToTarget(), 0.0);
-        m_drive.arcadeDrive(0.0, Math.max(-1.0, Math.min(1.0, pidOutput)),
-        0.0, 1.0);
-        } else {
-        m_drive.arcadeDrive(0.0, 0.0);
-        }
-      
+
+      if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
+        double pidOutput = RobotMap.alignerPIDController.calculate(limeLightDataFetcher.getdegRotationToTarget(), 0.0);
+        RobotMap.m_drive.arcadeDrive(0.0, Math.max(-1.0, Math.min(1.0, pidOutput)));
+      } else {
+        RobotMap.m_drive.arcadeDrive(0.0, 0.0);
+      }
+
     }
     // logging data
     SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
