@@ -35,6 +35,8 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.math.util.Units;
+import frc.robot.limeLightDataFetcher;
+
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -105,6 +107,10 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorFront.setInverted(false);
     RobotMap.MainRightMotorBack.setInverted(false);
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
+    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
+    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
+    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
+    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
 
     SmartDashboard.putData("Field", m_field);
     // configure the PID
@@ -124,15 +130,7 @@ public class Robot extends TimedRobot {
     climber = new Climber();
     JoystickController.Init();
     // get auto path json
-    SmartDashboard.putData("Auto mode", m_chooser);
-    String trajectoryJSON = "paths/Auto1.wpilib.json";
-
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+   
 
     /*
      * if (!Preferences.containsKey("kP Aligner PID")) {
@@ -213,6 +211,7 @@ public class Robot extends TimedRobot {
      * m_autonomousCommand.schedule();
      * }
      */
+    RobotMap.gyro.calibrate();
   }
 
   @Override
@@ -245,14 +244,17 @@ public class Robot extends TimedRobot {
       RobotMap.pcmCompressor.enableDigital();
     }
     if (RobotMap.isAligningCoroutine) {
-
-      if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
-        double pidOutput = RobotMap.alignerPIDController.calculate(limeLightDataFetcher.getdegRotationToTarget(), 0.0);
+      
+        if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
+        double pidOutput =
+        RobotMap.alignerPIDController.calculate(limeLightDataFetcher.
+        getdegRotationToTarget(), 0.0);
         RobotMap.m_drive.arcadeDrive(0.0, Math.max(-1.0, Math.min(1.0, pidOutput)));
-      } else {
+        } else {
         RobotMap.m_drive.arcadeDrive(0.0, 0.0);
-      }
-
+        }
+       // 0.0, Math.max(-1.0, Math.min(1.0, pidOutput)),
+       // 0.0, 1.0);
     }
     // logging data
     SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
@@ -345,7 +347,8 @@ public class Robot extends TimedRobot {
         RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
       }
     }
-
+    
+    //double error = -RobotMap.gyro.getRate();
     /*
      * /*
      * // double error = -RobotMap.gyro.getRate();
