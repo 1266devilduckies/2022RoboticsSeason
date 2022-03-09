@@ -23,6 +23,7 @@ public class JoystickController {
 	private static JoystickController generateMainJoystick() {
 		final Joystick joystick = new Joystick(0);
 		// this is for playstation
+		setButtonHeldBehavior(joystick, 1, new FeederStart(), null);
 		setButtonHeldBehavior(joystick, 6, new StartIntake(), new StopIntake());
 
 		// this changes the direction of the intake motor while it is being held

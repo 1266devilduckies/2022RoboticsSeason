@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -28,6 +29,7 @@ public class EncoderSetter {
   public static void setEncoderDefaultPhoenixSettings(TalonFX motor) {
     motor.configFactoryDefault();
     motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
+    motor.configOpenloopRamp(0.5);
     motor.setSelectedSensorPosition(0);
     motor.setInverted(false);
     motor.setSensorPhase(false);
@@ -39,6 +41,7 @@ public class EncoderSetter {
     motor.configFactoryDefault();
     motor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
     motor.setSelectedSensorPosition(0);
+    motor.configOpenloopRamp(0.5);
     motor.setInverted(false);
     motor.setSensorPhase(false);
     motor.enableVoltageCompensation(true);
@@ -49,6 +52,7 @@ public class EncoderSetter {
     motor.configFactoryDefault();
     motor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 0, 100);
     motor.setSelectedSensorPosition(0);
+    motor.configOpenloopRamp(0.5);
     motor.setInverted(false);
     motor.setSensorPhase(false);
     motor.enableVoltageCompensation(true);
@@ -57,6 +61,7 @@ public class EncoderSetter {
   // set default encoder settings needed for operation (VictorSPX)
   public static void setEncoderDefaultPhoenixSettings(VictorSPX motor) {
     motor.configFactoryDefault();
+    motor.configOpenloopRamp(0.5);
     motor.setInverted(false);
     motor.setSensorPhase(false);
   }
