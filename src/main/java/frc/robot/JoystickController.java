@@ -42,9 +42,6 @@ public class JoystickController {
 		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
 		// goes for high ball shot
 		setButtonHeldBehavior(joystick, 6, new PewPewStart(), null);
-		// starts the coroutine to align robot to goal, the robot needs to be generally
-		// facing the goal
-		setButtonHeldBehavior(joystick, 1, new AlignToTarget(), null);
 
 		setButtonHeldBehavior(joystick, 2, new Climbstart(), new Climberstop());
 		setButtonHeldBehavior(joystick, 5, new climbreverse(), new Climberstop());
