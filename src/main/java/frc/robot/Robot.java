@@ -107,10 +107,10 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorFront.setInverted(false);
     RobotMap.MainRightMotorBack.setInverted(false);
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
-    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
-    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
-    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
-    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
+    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
+    RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
+    RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
+    RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
 
     SmartDashboard.putData("Field", m_field);
     // configure the PID
@@ -242,19 +242,6 @@ public class Robot extends TimedRobot {
 
     } else if (RobotMap.pcmCompressor.getCurrent() < 90.0) {
       RobotMap.pcmCompressor.enableDigital();
-    }
-    if (RobotMap.isAligningCoroutine) {
-      
-        if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
-        double pidOutput =
-        RobotMap.alignerPIDController.calculate(limeLightDataFetcher.
-        getdegRotationToTarget(), 0.0);
-        RobotMap.m_drive.arcadeDrive(0.0, Math.max(-1.0, Math.min(1.0, pidOutput)));
-        } else {
-        RobotMap.m_drive.arcadeDrive(0.0, 0.0);
-        }
-       // 0.0, Math.max(-1.0, Math.min(1.0, pidOutput)),
-       // 0.0, 1.0);
     }
     // logging data
     SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);

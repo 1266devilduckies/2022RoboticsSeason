@@ -41,8 +41,10 @@ public class RobotMap {
   public static DoubleSolenoid pneumaticDoubleSolenoid;
   public static Compressor pcmCompressor;
   public static boolean isAligningCoroutine = false;
-  public static PIDController alignerPIDController;
   public static boolean fullShooterPower = true;
+  public static boolean inAutonomous = false;
+  public static double angle = 0.0;//angle for robot to align to when in aligining command
+  public static boolean angleMode = true; // false means to target to the limelight
   // The robot's drive
   public static DifferentialDrive m_drive;
   /*
@@ -63,13 +65,6 @@ public class RobotMap {
   public static double kP2 = 0.0299999714;
   public static double kI2 = 9.98973846E-05;
   public static double kD2 = 0.03999996;
-  public static double curTarAngle = 0.0;
-  public static double targetAngleSetpoint = 5.0;//if you change also change pf constants
-  public static PIDController targetAnglePIDController = new PIDController(0.02,0.0,0.0); //if you change these you gotta change the setpoint
-  public static double kPAligner = 0.02;
-  public static double kIAligner = 0.0;
-  public static double kDAligner = 0.0;
-  public static double angle = 0.0;
   public static int numOfTogglesOnSolenoids = 0;
   public static boolean reachedGoal = false;
   public static boolean turnedaround = false;
@@ -107,7 +102,5 @@ public class RobotMap {
      * VictorSPXSimCollection fx_intake1 = IntakeMotor1.getSimCollection();
      * VictorSPXSimCollection fx_feeder1 = FeederMotor.getSimCollection();
      */
-
-    alignerPIDController = new PIDController(kPAligner, kIAligner, kDAligner);
   }
 }

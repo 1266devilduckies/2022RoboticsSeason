@@ -24,11 +24,12 @@ public class JoystickController {
 		final Joystick joystick = new Joystick(0);
 		// this is for playstation
 		setButtonHeldBehavior(joystick, 1, new FeederStart(), null);
-		setButtonHeldBehavior(joystick, 6, new StartIntake(), new StopIntake());
+		setButtonHeldBehavior(joystick, 6, new StartIntake(), null);
+		setButtonHeldBehavior(joystick, 2, new AlignToTarget(), null);
 
 		// this changes the direction of the intake motor while it is being held
 		// it does not start it but rather it changes the polarity of the motor
-		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), new GoBackNormalReverseIntake());
+		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), null);
 		return new JoystickController(joystick);
 
 	}
