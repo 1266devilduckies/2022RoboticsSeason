@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
-public class StartIntake extends Command {
-  public StartIntake() {
+public class StopIntake extends Command {
+  public StopIntake() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
   }
@@ -19,10 +19,10 @@ public class StartIntake extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    SmartDashboard.putBoolean("reversed", false);
-    RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
-    RobotMap.timeSinceStartedBeingReleasedForSolenoids = System.currentTimeMillis();
-    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, .8);
+    SmartDashboard.putBoolean("reversed", true);
+    RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
+    RobotMap.timeSinceStartedBeingReleasedForSolenoids = -1;
+    RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
   }
 
   // Called repeatedly when this Command is scheduled to run

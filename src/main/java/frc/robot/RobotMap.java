@@ -29,7 +29,7 @@ public class RobotMap {
   public static VictorSPX IntakeMotor1;
   public static WPI_TalonFX PewPewMotor1;
   public static WPI_TalonFX PewPewMotor2;
-  public static VictorSPX FeederMotor;
+  public static WPI_TalonFX FeederMotor;
   public static VictorSPX Climber1;
   public static VictorSPX Climber2;
   public static double avgPositionRaw;
@@ -43,7 +43,7 @@ public class RobotMap {
   public static boolean isAligningCoroutine = false;
   public static boolean fullShooterPower = true;
   public static boolean inAutonomous = false;
-  public static double angle = 0.0;//angle for robot to align to when in aligining command
+  public static double angle = 0.0;// angle for robot to align to when in aligining command
   public static boolean angleMode = true; // false means to target to the limelight
   // The robot's drive
   public static DifferentialDrive m_drive;
@@ -82,7 +82,7 @@ public class RobotMap {
 
     inFiringCoroutine = false;
     IntakeMotor1 = new VictorSPX(4);
-    FeederMotor = new VictorSPX(9);
+    FeederMotor = new WPI_TalonFX(9);
     PewPewMotor1 = new WPI_TalonFX(5);
     PewPewMotor2 = new WPI_TalonFX(8);
     Climber1 = new VictorSPX(12);
@@ -93,7 +93,7 @@ public class RobotMap {
     pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
     pneumaticDoubleSolenoid = new DoubleSolenoid(10, PneumaticsModuleType.CTREPCM, 1, 0);
-    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kOff);
+    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
     gyro = new ADXRS450_Gyro();
     // AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);
     /*

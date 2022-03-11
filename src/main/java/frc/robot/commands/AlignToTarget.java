@@ -13,6 +13,7 @@ public class AlignToTarget extends Command {
   PIDController pController = new PIDController(0.5, 0.0, 0.0);
   double curSpeed = 0.0;
   double calibratedAngle = RobotMap.angle + RobotMap.gyro.getAngle();
+
   public AlignToTarget() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.intake);
@@ -28,17 +29,17 @@ public class AlignToTarget extends Command {
   @Override
   protected void execute() {
     if (RobotMap.angleMode) {
-     curSpeed = pController.calculate(RobotMap.gyro.getAngle(), calibratedAngle);
-     if (Math.abs(calibratedAngle - RobotMap.gyro.getAngle()) > 2.0) {  //hacky way of damping
+      curSpeed = pController.calculate(RobotMap.gyro.getAngle(), calibratedAngle);
+      if (Math.abs(calibratedAngle - RobotMap.gyro.getAngle()) > 2.0) { // hacky way of damping
         RobotMap.m_drive.tankDrive(curSpeed, -curSpeed);
-     }
+      }
     } else {
       if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
-          double pidOutput = pController.calculate(limeLightDataFetcher.getdegRotationToTarget(), 0.0);
-          RobotMap.m_drive.tankDrive(pidOutput, -pidOutput);
-        } else {
-          RobotMap.m_drive.tankDrive(0.0, 0.0);
-        }
+        double pidOutput = pController.calculate(limeLightDataFetcher.getdegRotationToTarget(), 0.0);
+        RobotMap.m_drive.tankDrive(pidOutput, -pidOutput);
+      } else {
+        RobotMap.m_drive.tankDrive(0.0, 0.0);
+      }
     }
   }
 

@@ -15,6 +15,7 @@ public class BetterKearnyDriving extends Command {
   JoystickController mainJoystick = JoystickController.MAIN_JOYSTICK;
   JoystickController coPilotJoystick = JoystickController.COPILOT_JOYSTICK;
   double threshold = 0.05;
+
   public BetterKearnyDriving() {
     // requires(Robot.drivetrain);
   }
@@ -32,6 +33,7 @@ public class BetterKearnyDriving extends Command {
     if (lVal < threshold) {
       RobotMap.m_drive.tankDrive(rVal, -rVal);
     } else {
+      SmartDashboard.putNumber("working working working", 1.0);
       RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX());
     }
     EncoderSetter.updateEncoders();

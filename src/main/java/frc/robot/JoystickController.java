@@ -24,7 +24,7 @@ public class JoystickController {
 		final Joystick joystick = new Joystick(0);
 		// this is for playstation
 		setButtonHeldBehavior(joystick, 1, new FeederStart(), null);
-		setButtonHeldBehavior(joystick, 6, new StartIntake(), null);
+		setButtonHeldBehavior(joystick, 6, new StartIntake(), new StopIntake());
 		setButtonHeldBehavior(joystick, 2, new AlignToTarget(), null);
 
 		// this changes the direction of the intake motor while it is being held
@@ -43,7 +43,6 @@ public class JoystickController {
 		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
 		// goes for high ball shot
 		setButtonHeldBehavior(joystick, 6, new PewPewStart(), null);
-
 		setButtonHeldBehavior(joystick, 2, new Climbstart(), new Climberstop());
 		setButtonHeldBehavior(joystick, 5, new climbreverse(), new Climberstop());
 		setButtonHeldBehavior(joystick, 6, new climbpart2(), new climbpart2stop());
@@ -60,7 +59,7 @@ public class JoystickController {
 	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber,
 			final Command whileHeldCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
-		button.whenPressed(whileHeldCommand);
+		button.whenPressed(whileHeldCommand); // whenPressed
 	}
 
 	// DPad when held run Command, when released run other Command
@@ -103,15 +102,13 @@ public class JoystickController {
 		return this.joystick.getRawAxis(1);
 	}
 
-	
-	 public double getLeftTrigger() {
-	  return this.joystick.getRawAxis(2);
-	  }
-	  
-	 public double getRightTrigger() {
-	 return this.joystick.getRawAxis(3);
-	 }
-	 
+	public double getLeftTrigger() {
+		return this.joystick.getRawAxis(2);
+	}
+
+	public double getRightTrigger() {
+		return this.joystick.getRawAxis(3);
+	}
 
 	public double getRightStickX() {
 		return this.joystick.getRawAxis(2);

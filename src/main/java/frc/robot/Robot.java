@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.math.util.Units;
 import frc.robot.limeLightDataFetcher;
 
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
@@ -130,7 +129,6 @@ public class Robot extends TimedRobot {
     climber = new Climber();
     JoystickController.Init();
     // get auto path json
-   
 
     /*
      * if (!Preferences.containsKey("kP Aligner PID")) {
@@ -230,6 +228,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // periodic events
+
     limeLightDataFetcher.fetchData();
     if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1) {
       if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 0) {
@@ -334,8 +333,8 @@ public class Robot extends TimedRobot {
         RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
       }
     }
-    
-    //double error = -RobotMap.gyro.getRate();
+
+    // double error = -RobotMap.gyro.getRate();
     /*
      * /*
      * // double error = -RobotMap.gyro.getRate();
