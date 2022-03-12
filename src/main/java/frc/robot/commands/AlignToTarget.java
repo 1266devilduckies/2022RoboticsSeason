@@ -10,7 +10,7 @@ import frc.robot.RobotMap;
 import frc.robot.limeLightDataFetcher;
 
 public class AlignToTarget extends Command {
-  PIDController pController = new PIDController(0.5, 0.0, 0.0);
+  PIDController pController = new PIDController(0.04, 0.0, 0.0);
   double curSpeed = 0.0;
   double calibratedAngle = RobotMap.angle + RobotMap.gyro.getAngle();
 
@@ -30,13 +30,13 @@ public class AlignToTarget extends Command {
   protected void execute() {
     if (RobotMap.angleMode) {
       curSpeed = pController.calculate(RobotMap.gyro.getAngle(), calibratedAngle);
-      if (Math.abs(calibratedAngle - RobotMap.gyro.getAngle()) > 2.0) { // hacky way of damping
-        RobotMap.m_drive.tankDrive(curSpeed, -curSpeed);
+      if (Math.abs(calibratedAngle - RobotMap.gyro.getAngle()) < 2.0) { // hacky way of damping
+        RobotMap.m_drive.tankDrive(curSpeed, -curSpeed, false);
       }
     } else {
       if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
         double pidOutput = pController.calculate(limeLightDataFetcher.getdegRotationToTarget(), 0.0);
-        RobotMap.m_drive.tankDrive(pidOutput, -pidOutput);
+        RobotMap.m_drive.tankDrive(-pidOutput, pidOutput, false);
       } else {
         RobotMap.m_drive.tankDrive(0.0, 0.0);
       }
