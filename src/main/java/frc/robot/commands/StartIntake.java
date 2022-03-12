@@ -21,7 +21,6 @@ public class StartIntake extends Command {
   protected void initialize() {
     SmartDashboard.putBoolean("reversed", false);
     RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
-    RobotMap.timeSinceStartedBeingReleasedForSolenoids = System.currentTimeMillis();
     RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, .8);
   }
 

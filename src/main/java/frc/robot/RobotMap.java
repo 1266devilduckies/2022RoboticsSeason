@@ -69,6 +69,7 @@ public class RobotMap {
   public static boolean reachedGoal = false;
   public static boolean turnedaround = false;
   public static boolean shotFirstShotInAuto = false;
+  public static double tankDriveInPlaceError = 0.0;
   // private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   public static void init() {

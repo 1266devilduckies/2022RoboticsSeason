@@ -68,21 +68,21 @@ public class Robot extends TimedRobot {
       Units.inchesToMeters(3), // Robot uses 3" radius (6" diameter) wheels.
       0.546,
       null);
-  
-    //CALIBRATE VALUE TO OUR ROBOT LATER
-    public static final double ksVolts = 0.22;
-    public static final double kvVoltSecondsPerMeter = 1.98;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.2;
-    public static final double kPDriveVel = 8.5;
-    public static final double kTrackwidthMeters = 0.71;
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-    public static final DifferentialDriveKinematics kDriveKinematics = new
-    DifferentialDriveKinematics(kTrackwidthMeters);
-    
-    public static final double kRamseteB = 2;
-    public static final double kRamseteZeta = 0.7;
-    int i =0;
+
+  // CALIBRATE VALUE TO OUR ROBOT LATER
+  public static final double ksVolts = 0.22;
+  public static final double kvVoltSecondsPerMeter = 1.98;
+  public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+  public static final double kPDriveVel = 8.5;
+  public static final double kTrackwidthMeters = 0.71;
+  public static final double kMaxSpeedMetersPerSecond = 3;
+  public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+  public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+
+  public static final double kRamseteB = 2;
+  public static final double kRamseteZeta = 0.7;
+  int i = 0;
+  boolean finished = false;
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
       trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
     } catch (IOException ex) {
-      //whoops
+      // whoops
     }
 
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorBack);
@@ -141,25 +141,24 @@ public class Robot extends TimedRobot {
     // get auto path json
 
     /*
-      if (!Preferences.containsKey("kP Aligner PID")) {
-      Preferences.setDouble("kP Aligner PID", RobotMap.kPAligner);
-      }
-      if (!Preferences.containsKey("kI Aligner PID")) {
-      Preferences.setDouble("kI Aligner PID", RobotMap.kIAligner);
-      }
-      if (!Preferences.containsKey("kD Aligner PID")) {
-      Preferences.setDouble("kD Aligner PID", RobotMap.kDAligner);
-      }
+     * if (!Preferences.containsKey("kP Aligner PID")) {
+     * Preferences.setDouble("kP Aligner PID", RobotMap.kPAligner);
+     * }
+     * if (!Preferences.containsKey("kI Aligner PID")) {
+     * Preferences.setDouble("kI Aligner PID", RobotMap.kIAligner);
+     * }
+     * if (!Preferences.containsKey("kD Aligner PID")) {
+     * Preferences.setDouble("kD Aligner PID", RobotMap.kDAligner);
+     * }
      */
   }
 
   @Override
   public void robotPeriodic() {
-
-    //gyro drift fix
-    if (++i > 3000) {
+    // gyro drift fix
+    if (++i > 3000 & !finished) {
       SmartDashboard.putNumber("gyro error", RobotMap.gyro.getAngle());
-      
+      finished = true;
     }
 
     if (RobotMap.inFiringCoroutine) {
@@ -193,17 +192,17 @@ public class Robot extends TimedRobot {
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition()));
     /*
-      double sdkP = Preferences.getDouble("kP Aligner PID", RobotMap.kPAligner);
-      double sdkI = Preferences.getDouble("kI Aligner PID", RobotMap.kIAligner);
-      double sdKd = Preferences.getDouble("kD Aligner PID", RobotMap.kDAligner);
-      if (RobotMap.kPAligner != sdkP |
-      RobotMap.kIAligner != sdkI |
-      RobotMap.kDAligner != sdKd) {
-      RobotMap.kPAligner = sdkP;
-      RobotMap.kIAligner = sdkI;
-      RobotMap.kDAligner = sdKd;
-      RobotMap.alignerPIDController = new PIDController(sdkP, sdkI, sdKd);
-      }
+     * double sdkP = Preferences.getDouble("kP Aligner PID", RobotMap.kPAligner);
+     * double sdkI = Preferences.getDouble("kI Aligner PID", RobotMap.kIAligner);
+     * double sdKd = Preferences.getDouble("kD Aligner PID", RobotMap.kDAligner);
+     * if (RobotMap.kPAligner != sdkP |
+     * RobotMap.kIAligner != sdkI |
+     * RobotMap.kDAligner != sdKd) {
+     * RobotMap.kPAligner = sdkP;
+     * RobotMap.kIAligner = sdkI;
+     * RobotMap.kDAligner = sdKd;
+     * RobotMap.alignerPIDController = new PIDController(sdkP, sdkI, sdKd);
+     * }
      */
   }
 
@@ -217,15 +216,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    
+
     startAutoTime = System.currentTimeMillis();
-    //SequentialCommandGroup m_autonomousCommand = getAutonoumous(1);
-      
+    // SequentialCommandGroup m_autonomousCommand = getAutonoumous(1);
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-     // m_autonomousCommand.schedule();
+      // m_autonomousCommand.schedule();
     }
-    
+
   }
 
   @Override
@@ -246,18 +245,15 @@ public class Robot extends TimedRobot {
     // periodic events
 
     limeLightDataFetcher.fetchData();
-    if (RobotMap.timeSinceStartedBeingReleasedForSolenoids != -1) {
-      if ((System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForSolenoids) >= 0) {
-        RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
-      }
-    }
 
-    if (RobotMap.pcmCompressor.getCurrent() > 130.0) {
-      RobotMap.pcmCompressor.disable();
-
-    } else if (RobotMap.pcmCompressor.getCurrent() < 90.0) {
-      RobotMap.pcmCompressor.enableDigital();
-    }
+    /*
+     * if (RobotMap.pcmCompressor.getCurrent() > 130.0) {
+     * RobotMap.pcmCompressor.disable();
+     * 
+     * } else if (RobotMap.pcmCompressor.getCurrent() < 90.0) {
+     * RobotMap.pcmCompressor.enableDigital();
+     * }
+     */
     // logging data
     SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
     SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
@@ -270,40 +266,41 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
-    /* Pass the robot battery voltage to the simulated Talon FXs /
-    Scheduler.getInstance().add(new BetterKearnyDriving());
-    // cod
     /*
-      CTRE simulation is low-level, so SimCollection inputs
-      and outputs are not affected by SetInverted(). Only
-      the regular user-level API calls are affected.
-     
-      WPILib expects +V to be forward.
-      Positive motor output lead voltage is ccw. We observe
-      on our physical robot that this is reverse for the
-      right motor, so negate it.
-     
-      We are hard-coding the negation of the values instead of
-      using getInverted() so we can catch a possible bug in the
-      robot code where the wrong value is passed to setInverted().
+     * Pass the robot battery voltage to the simulated Talon FXs /
+     * Scheduler.getInstance().add(new BetterKearnyDriving());
+     * // cod
+     * /*
+     * CTRE simulation is low-level, so SimCollection inputs
+     * and outputs are not affected by SetInverted(). Only
+     * the regular user-level API calls are affected.
+     * 
+     * WPILib expects +V to be forward.
+     * Positive motor output lead voltage is ccw. We observe
+     * on our physical robot that this is reverse for the
+     * right motor, so negate it.
+     * 
+     * We are hard-coding the negation of the values instead of
+     * using getInverted() so we can catch a possible bug in the
+     * robot code where the wrong value is passed to setInverted().
      */
     m_driveSim.setInputs(RobotMap.MainRightMotorBack.getMotorOutputPercent(),
         -RobotMap.MainLeftMotorBack.getMotorOutputPercent());
 
     /*
-      Advance the model by 20 ms. Note that if you are running this
-      subsystem in a separate thread or have changed the nominal
-      timestep of TimedRobot, this value needs to match it.
+     * Advance the model by 20 ms. Note that if you are running this
+     * subsystem in a separate thread or have changed the nominal
+     * timestep of TimedRobot, this value needs to match it.
      */
     m_driveSim.update(0.001);
 
     /*
-      Update all of our sensors.
-     
-      Since WPILib's simulation class is assuming +V is forward,
-      but -V is forward for the right motor, we need to negate the
-      position reported by the simulation class. Basically, we
-      negated the input, so we need to negate the output.
+     * Update all of our sensors.
+     * 
+     * Since WPILib's simulation class is assuming +V is forward,
+     * but -V is forward for the right motor, we need to negate the
+     * position reported by the simulation class. Basically, we
+     * negated the input, so we need to negate the output.
      */
     RobotMap.MainRightMotorBack.setSelectedSensorPosition(
         EncoderSetter.nativeUnitsToDistanceMeters(
@@ -351,96 +348,95 @@ public class Robot extends TimedRobot {
     }
 
     // double error = -RobotMap.gyro.getRate();
-    
-     
+
     // double error = -RobotMap.gyro.getRate();
-    
-    //https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/
-    /*encoders-software.html
-    //other side is flipped internally
-      if (RobotMap.avgPositionInMeters < 2.3) {
-      //face of intake direction is negative
-      drivetrain.arcadeDriveVoltage(-0.2,.5 - 1  error, 0.75, -0.75);
-      } else {
-      drivetrain.arcadeDriveVoltage(0, .5 - 1  error, 0.75, -0.75);
-      }
-    */
-      
-      currentAutoTime = startAutoTime - System.currentTimeMillis();
-      
-      if (currentAutoTime >= 3000) {
+
+    // https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/
+    /*
+     * encoders-software.html
+     * //other side is flipped internally
+     * if (RobotMap.avgPositionInMeters < 2.3) {
+     * //face of intake direction is negative
+     * drivetrain.arcadeDriveVoltage(-0.2,.5 - 1 error, 0.75, -0.75);
+     * } else {
+     * drivetrain.arcadeDriveVoltage(0, .5 - 1 error, 0.75, -0.75);
+     * }
+     */
+
+    currentAutoTime = startAutoTime - System.currentTimeMillis();
+
+    if (currentAutoTime >= 3000) {
       // RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
-      } else if (currentAutoTime >= 3500) {
+    } else if (currentAutoTime >= 3500) {
       RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 1);
-      } else if (currentAutoTime >= 4500) {
+    } else if (currentAutoTime >= 4500) {
       RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 0);
-      } else if (currentAutoTime >= 5500) {
+    } else if (currentAutoTime >= 5500) {
       // RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
-      } else if (currentAutoTime >= 6200) {
+    } else if (currentAutoTime >= 6200) {
       if (currentAutoTime >= 11700) {
-      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
-      RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
-      RobotMap.inFiringCoroutine = false;
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+        RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
+        RobotMap.inFiringCoroutine = false;
       } else if (currentAutoTime >= 11200) {
-      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
       } else if (currentAutoTime >= 9200) {
-      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
       } else if (currentAutoTime >= 8700) {
-      RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
       } else {
-      RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
-        }
+        RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
       }
-      
     }
-    
-      
-    public SequentialCommandGroup getAutonoumous(int num) {
-      // ITZ PATHWEAVER LAND from here on out
-      var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-      new SimpleMotorFeedforward(
-      DriveSubsystem.DriveConstants.ksVolts,
-      DriveSubsystem.DriveConstants.kvVoltSecondsPerMeter,
-      DriveSubsystem.DriveConstants.kaVoltSecondsSquaredPerMeter),
-      DriveSubsystem.DriveConstants.kDriveKinematics,
-      10);
-      
-      TrajectoryConfig config = new TrajectoryConfig(
-      DriveSubsystem.DriveConstants.kMaxSpeedMetersPerSecond,
-      DriveSubsystem.DriveConstants.kMaxAccelerationMetersPerSecondSquared)
-      // Add kinematics to ensure max speed is actually obeyed
-      .setKinematics(DriveSubsystem.DriveConstants.kDriveKinematics)
-      // Apply the voltage constraint
-      .addConstraint(autoVoltageConstraint);
-      
-      RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory,
-      m_robotDrive::getPose,
-      new RamseteController(DriveSubsystem.DriveConstants.kRamseteB,
-      DriveSubsystem.DriveConstants.kRamseteZeta),
-      new SimpleMotorFeedforward(
-      DriveSubsystem.DriveConstants.ksVolts,
-      DriveSubsystem.DriveConstants.kvVoltSecondsPerMeter,
-      DriveSubsystem.DriveConstants.kaVoltSecondsSquaredPerMeter),
-      DriveSubsystem.DriveConstants.kDriveKinematics,
-      m_robotDrive::getWheelSpeeds,
-      new PIDController(DriveSubsystem.DriveConstants.kPDriveVel, 0, 0),
-      new PIDController(DriveSubsystem.DriveConstants.kPDriveVel, 0, 0),
-      // RamseteCommand passes volts to the callback
-      m_robotDrive::tankDriveVolts,
-      m_robotDrive);
-      
-      // Reset odometry to the starting pose of the trajectory.
-      m_robotDrive.resetOdometry(trajectory.getInitialPose());
-      
-      // Run path following command, then stop at the end.
-      return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-    
+
+  }
+
+  public SequentialCommandGroup getAutonoumous(int num) {
+    // ITZ PATHWEAVER LAND from here on out
+    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(
+            DriveSubsystem.DriveConstants.ksVolts,
+            DriveSubsystem.DriveConstants.kvVoltSecondsPerMeter,
+            DriveSubsystem.DriveConstants.kaVoltSecondsSquaredPerMeter),
+        DriveSubsystem.DriveConstants.kDriveKinematics,
+        10);
+
+    TrajectoryConfig config = new TrajectoryConfig(
+        DriveSubsystem.DriveConstants.kMaxSpeedMetersPerSecond,
+        DriveSubsystem.DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(DriveSubsystem.DriveConstants.kDriveKinematics)
+            // Apply the voltage constraint
+            .addConstraint(autoVoltageConstraint);
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory,
+        m_robotDrive::getPose,
+        new RamseteController(DriveSubsystem.DriveConstants.kRamseteB,
+            DriveSubsystem.DriveConstants.kRamseteZeta),
+        new SimpleMotorFeedforward(
+            DriveSubsystem.DriveConstants.ksVolts,
+            DriveSubsystem.DriveConstants.kvVoltSecondsPerMeter,
+            DriveSubsystem.DriveConstants.kaVoltSecondsSquaredPerMeter),
+        DriveSubsystem.DriveConstants.kDriveKinematics,
+        m_robotDrive::getWheelSpeeds,
+        new PIDController(DriveSubsystem.DriveConstants.kPDriveVel, 0, 0),
+        new PIDController(DriveSubsystem.DriveConstants.kPDriveVel, 0, 0),
+        // RamseteCommand passes volts to the callback
+        m_robotDrive::tankDriveVolts,
+        m_robotDrive);
+
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(trajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+
   }
 
   @Override
   public void testPeriodic() {
-  
+
   }
 
 }
