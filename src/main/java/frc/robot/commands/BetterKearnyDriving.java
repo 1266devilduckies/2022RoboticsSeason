@@ -1,10 +1,8 @@
 package frc.robot.commands;
 
 import frc.robot.JoystickController;
-import frc.robot.Robot;
 //import frc.robot.subsystems.Drivetrain;
 import frc.robot.RobotMap;
-import frc.robot.subsystems.DriveSubsystem;
 //import javax.management.modelmbean.RequiredModelMBean;
 import frc.robot.EncoderSetter;
 import edu.wpi.first.wpilibj.command.Command;
@@ -30,7 +28,7 @@ public class BetterKearnyDriving extends Command {
 
     double lVal = mainJoystick.getLeftStickY();
     double rVal = mainJoystick.getRightStickX();
-    if (lVal < threshold) {
+    if (Math.abs(lVal) < threshold) {
       RobotMap.m_drive.tankDrive(rVal, -rVal);
     } else {
       SmartDashboard.putNumber("working working working", 1.0);
@@ -45,6 +43,6 @@ public class BetterKearnyDriving extends Command {
 
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

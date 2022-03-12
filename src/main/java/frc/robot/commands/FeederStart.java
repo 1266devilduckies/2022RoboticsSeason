@@ -1,12 +1,10 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 //import edu.wpi.first.wpilibj.PneumaticsModuleType;
 //import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 

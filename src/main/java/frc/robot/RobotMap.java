@@ -44,7 +44,7 @@ public class RobotMap {
   public static boolean fullShooterPower = true;
   public static boolean inAutonomous = false;
   public static double angle = 0.0;// angle for robot to align to when in aligining command
-  public static boolean angleMode = true; // false means to target to the limelight
+  public static boolean angleMode = false; // false means to target to the limelight
   // The robot's drive
   public static DifferentialDrive m_drive;
   /*

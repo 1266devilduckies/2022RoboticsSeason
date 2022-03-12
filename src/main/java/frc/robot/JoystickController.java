@@ -55,12 +55,12 @@ public class JoystickController {
 		COPILOT_JOYSTICK = generateCoPilotJoystick();
 	}
 
-	// button when pressed run Command
+	/*/ button when pressed run Command
 	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber,
 			final Command whileHeldCommand) {
 		final Button button = new JoystickButton(joystick, buttonNumber);
 		button.whenPressed(whileHeldCommand); // whenPressed
-	}
+	}*/
 
 	// DPad when held run Command, when released run other Command
 	private static void setPOVButtonBehavior(final Joystick joystick, final int angle,
@@ -111,7 +111,7 @@ public class JoystickController {
 	}
 
 	public double getRightStickX() {
-		return this.joystick.getRawAxis(2);
+		return this.joystick.getRawAxis(4);
 	}
 
 	public double getRightStickY() {
