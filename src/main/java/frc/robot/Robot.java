@@ -71,11 +71,11 @@ public class Robot extends TimedRobot {
       null);
 
   // CALIBRATE VALUE TO OUR ROBOT LATER
-  public static final double ksVolts = 0.22;
+  public static final double ksVolts = 0.70039;
   public static final double kvVoltSecondsPerMeter = 1.98;
   public static final double kaVoltSecondsSquaredPerMeter = 0.2;
   public static final double kPDriveVel = 8.5;
-  public static final double kTrackwidthMeters = 0.71;
+  public static final double kTrackwidthMeters = 0.762;
   public static final double kMaxSpeedMetersPerSecond = 3;
   public static final double kMaxAccelerationMetersPerSecondSquared = 3;
   public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
