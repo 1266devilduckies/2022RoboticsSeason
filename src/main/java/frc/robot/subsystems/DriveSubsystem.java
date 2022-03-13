@@ -7,13 +7,14 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.EncoderSetter;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 public class DriveSubsystem extends SubsystemBase {
 
     public static final class DriveConstants {
-        public static final double ksVolts = 0.22;
+        public static final double ksVolts = 0.70039;
         public static final double kvVoltSecondsPerMeter = 1.98;
         public static final double kaVoltSecondsSquaredPerMeter = 0.2;
 
@@ -26,12 +27,12 @@ public class DriveSubsystem extends SubsystemBase {
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
 
-        public static final double kTrackwidthMeters = 0.71;
+        public static final double kTrackwidthMeters = 0.762;
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
                 kTrackwidthMeters);
 
         public static final int kEncoderCPR = 2048;
-        public static final double kWheelDiameterMeters = 0.15;
+        public static final double kWheelDiameterMeters = 0.1524;
         public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
     }
 
@@ -40,14 +41,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
-        // We need to invert one side of the drivetrain so that positive voltages
-        // result in both sides moving forward. Depending on how your robot's
-        // gearbox is constructed, you might have to invert the left side instead.
-        RobotMap.MainRightMotorBack.setInverted(true);
+        RobotMap.MainLeftMotorBack.setInverted(false);
 
         resetEncoders();
         m_odometry = new DifferentialDriveOdometry(RobotMap.gyro.getRotation2d());
-        Robot.m_driveSim.update(0.001);
     }
 
     @Override
@@ -55,8 +52,8 @@ public class DriveSubsystem extends SubsystemBase {
         // Update the odometry in the periodic block
         m_odometry.update(
                 RobotMap.gyro.getRotation2d(),
-                RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0) / DriveConstants.kEncoderDistancePerPulse,
-                RobotMap.MainRightMotorBack.getSelectedSensorPosition(0) / DriveConstants.kEncoderDistancePerPulse);
+                EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0)),
+                EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition(0)));
     }
 
     /**
@@ -74,9 +71,10 @@ public class DriveSubsystem extends SubsystemBase {
      * @return The current wheel speeds.
      */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds(RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0),
-                RobotMap.MainRightMotorBack.getSelectedSensorPosition(0));
-               
+        return new DifferentialDriveWheelSpeeds(
+                EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorVelocity(0)),
+                EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorVelocity(0)));
+
     }
 
     /**
@@ -118,29 +116,20 @@ public class DriveSubsystem extends SubsystemBase {
      * @return the average of the two encoder readings
      */
     public double getAverageEncoderDistance() {
-        return (RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0)
-                + RobotMap.MainRightMotorBack.getSelectedSensorPosition(0)) / 2.0;
+        return (EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0))
+                + EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition(0)))
+                / 2.0;
     }
 
-    /**
-     * Gets the left drive encoder.
-     *
-     * @return the left drive encoder
+    /*
+     * public Encoder getLeftEncoder() {
+     * return RobotMap.MainLeftMotorBack;
+     * }
+     * public Encoder getRightEncoder() {
+     * // return RobotMap.MainRightMotorBack;
+     * return null;
+     * }
      */
-    public Encoder getLeftEncoder() {
-        // return RobotMap.MainLeftMotorBack;
-        return null;
-    }
-
-    /**
-     * Gets the right drive encoder.
-     *
-     * @return the right drive encoder
-     */
-    public Encoder getRightEncoder() {
-        // return RobotMap.MainRightMotorBack;
-        return null;
-    }
 
     public DifferentialDrive getDifferentialDrive() {
         Robot.m_driveSim.update(0.001);

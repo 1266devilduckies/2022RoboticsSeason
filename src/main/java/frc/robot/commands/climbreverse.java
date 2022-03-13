@@ -23,8 +23,8 @@ public class climbreverse extends Command {
   @Override
   protected void initialize() {
     RobotMap.Climber1.set(ControlMode.PercentOutput, -1.0);
-    }
-  
+    RobotMap.Climber2.set(ControlMode.PercentOutput, -1.0);
+  }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
