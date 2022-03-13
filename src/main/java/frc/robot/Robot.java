@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
@@ -128,12 +129,12 @@ public class Robot extends TimedRobot {
 
     RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
     RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
-    RobotMap.PewPewMotor1.config_kI(0, RobotMap.kI);
-    RobotMap.PewPewMotor1.config_kD(0, RobotMap.kD);
+    RobotMap.PewPewMotor1.config_kI(0, 0.0);
+    RobotMap.PewPewMotor1.config_kD(0, 0.0);
     RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
     RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
-    RobotMap.PewPewMotor2.config_kI(0, RobotMap.kI);
-    RobotMap.PewPewMotor2.config_kD(0, RobotMap.kD);
+    RobotMap.PewPewMotor2.config_kI(0, 0.0);
+    RobotMap.PewPewMotor2.config_kD(0, 0.0);
 
     RobotMap.gyro.calibrate();
     intake = new Intake();
@@ -142,17 +143,18 @@ public class Robot extends TimedRobot {
     JoystickController.Init();
     // get auto path json
 
-    /*
-     * if (!Preferences.containsKey("kP Aligner PID")) {
-     * Preferences.setDouble("kP Aligner PID", RobotMap.kPAligner);
-     * }
-     * if (!Preferences.containsKey("kI Aligner PID")) {
-     * Preferences.setDouble("kI Aligner PID", RobotMap.kIAligner);
-     * }
-     * if (!Preferences.containsKey("kD Aligner PID")) {
-     * Preferences.setDouble("kD Aligner PID", RobotMap.kDAligner);
-     * }
-     */
+    if (!Preferences.containsKey("kP Shooter")) {
+      Preferences.setDouble("kP Shooter", RobotMap.kP);
+    }
+    if (!Preferences.containsKey("kF Shooter")) {
+      Preferences.setDouble("kF Shooter", RobotMap.kF);
+    }
+    if (!Preferences.containsKey("kP Feeder")) {
+      Preferences.setDouble("kP Feeder", RobotMap.kP);
+    }
+    if (!Preferences.containsKey("kF Feeder")) {
+      Preferences.setDouble("kF Feeder", RobotMap.kF);
+    }
   }
 
   @Override
@@ -171,8 +173,8 @@ public class Robot extends TimedRobot {
       } else {
         velocity = RobotMap.velocityTarget / 2; // replace with exact value later
       }
-      RobotMap.FeederMotor.config_kF(0, 0.0495);
-      RobotMap.FeederMotor.config_kP(0, 0.02);
+      RobotMap.FeederMotor.config_kF(0, RobotMap.kPIndex);
+      RobotMap.FeederMotor.config_kP(0, RobotMap.kFIndex);
       long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
       long interval = 1000;
       if (dt >= interval * 4.5) {
@@ -196,19 +198,32 @@ public class Robot extends TimedRobot {
     DriveSubsystem.m_odometry.update(RobotMap.gyro.getRotation2d(),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition()));
-    /*
-     * double sdkP = Preferences.getDouble("kP Aligner PID", RobotMap.kPAligner);
-     * double sdkI = Preferences.getDouble("kI Aligner PID", RobotMap.kIAligner);
-     * double sdKd = Preferences.getDouble("kD Aligner PID", RobotMap.kDAligner);
-     * if (RobotMap.kPAligner != sdkP |
-     * RobotMap.kIAligner != sdkI |
-     * RobotMap.kDAligner != sdKd) {
-     * RobotMap.kPAligner = sdkP;
-     * RobotMap.kIAligner = sdkI;
-     * RobotMap.kDAligner = sdKd;
-     * RobotMap.alignerPIDController = new PIDController(sdkP, sdkI, sdKd);
-     * }
-     */
+
+    double sdkP = Preferences.getDouble("kP Shooter", RobotMap.kP);
+    double sdkF = Preferences.getDouble("kF Shooter", RobotMap.kF);
+    if (RobotMap.kP != sdkP |
+        RobotMap.kF != sdkF) {
+      RobotMap.kP = sdkP;
+      RobotMap.kF = sdkF;
+      RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+      RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
+      RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
+      RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
+    }
+    double feederKpInp = Preferences.getDouble("kP Feeder", RobotMap.kPIndex);
+    double feederKfInp = Preferences.getDouble("kF Feeder", RobotMap.kFIndex);
+    if (RobotMap.kPIndex != feederKpInp |
+        RobotMap.kFIndex != feederKfInp) {
+      RobotMap.kPIndex = feederKpInp;
+      RobotMap.kFIndex = feederKfInp;
+      RobotMap.FeederMotor.config_kP(0, RobotMap.kPIndex);
+      RobotMap.FeederMotor.config_kF(0, RobotMap.kFIndex);
+    }
+    double alignerKpInp = Preferences.getDouble("kP Aligner", RobotMap.kPAligner);
+    double alignerKfInp = Preferences.getDouble("kD Aligner", RobotMap.kDAligner);
+    if (RobotMap.kPAligner != alignerKfInp | RobotMap.kDAligner != alignerKfInp) {
+      RobotMap.alignerController = new PIDController(RobotMap.kPAligner, 0.0, RobotMap.kDAligner);
+    }
   }
 
   @Override
@@ -223,11 +238,11 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     startAutoTime = System.currentTimeMillis();
-    // SequentialCommandGroup m_autonomousCommand = getAutonoumous(1);
+    SequentialCommandGroup m_autonomousCommand = getAutonoumous(1);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      // m_autonomousCommand.schedule();
+      m_autonomousCommand.schedule();
     }
 
   }
@@ -328,31 +343,34 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     EncoderSetter.updateEncoders();
     SmartDashboard.putNumber("distance", RobotMap.avgPositionInMeters);
-    if (!RobotMap.reachedGoal) {
-      if (RobotMap.avgPositionInMeters < 1.75) {
-        RobotMap.m_drive.arcadeDrive(0.5, 0.0);
-      } else {
-        RobotMap.reachedGoal = true;
-        RobotMap.m_drive.arcadeDrive(0.0, 0.0);
-      }
-    }
-
-    if (RobotMap.reachedGoal & !RobotMap.shotFirstShotInAuto) {
-      if (!RobotMap.inFiringCoroutine) {
-        RobotMap.inFiringCoroutine = true;
-        RobotMap.fullShooterPower = true;
-        RobotMap.shotFirstShotInAuto = true;
-        RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
-        RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
-        RobotMap.PewPewMotor1.config_kI(0, RobotMap.kI);
-        RobotMap.PewPewMotor1.config_kD(0, RobotMap.kD);
-        RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
-        RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
-        RobotMap.PewPewMotor2.config_kI(0, RobotMap.kI);
-        RobotMap.PewPewMotor2.config_kD(0, RobotMap.kD);
-        RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
-      }
-    }
+    /*
+     * if (!RobotMap.reachedGoal) {
+     * if (RobotMap.avgPositionInMeters < 1.75) {
+     * RobotMap.m_drive.arcadeDrive(0.5, 0.0);
+     * } else {
+     * RobotMap.reachedGoal = true;
+     * RobotMap.m_drive.arcadeDrive(0.0, 0.0);
+     * }
+     * }
+     * 
+     * if (RobotMap.reachedGoal & !RobotMap.shotFirstShotInAuto) {
+     * if (!RobotMap.inFiringCoroutine) {
+     * RobotMap.inFiringCoroutine = true;
+     * RobotMap.fullShooterPower = true;
+     * RobotMap.shotFirstShotInAuto = true;
+     * RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
+     * RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
+     * RobotMap.PewPewMotor1.config_kI(0, RobotMap.kI);
+     * RobotMap.PewPewMotor1.config_kD(0, RobotMap.kD);
+     * RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
+     * RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+     * RobotMap.PewPewMotor2.config_kI(0, RobotMap.kI);
+     * RobotMap.PewPewMotor2.config_kD(0, RobotMap.kD);
+     * RobotMap.timeSinceStartedBeingReleasedForShooter =
+     * System.currentTimeMillis();
+     * }
+     * }
+     */
 
     // double error = -RobotMap.gyro.getRate();
 
@@ -368,8 +386,8 @@ public class Robot extends TimedRobot {
      * } else {
      * drivetrain.arcadeDriveVoltage(0, .5 - 1 error, 0.75, -0.75);
      * }
-     */
-    /*
+     * 
+     * 
      * currentAutoTime = startAutoTime - System.currentTimeMillis();
      * 
      * if (currentAutoTime >= 3000) {
