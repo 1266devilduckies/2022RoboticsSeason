@@ -109,7 +109,9 @@ public class Robot extends TimedRobot {
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
     // EncoderSim simEncoder = new EncoderSim(RobotMap.MainLeftMotorBack);
     RobotMap.PewPewMotor2.setInverted(true);
+    // RobotMap.PewPewMotor2.setSensorPhase(true);
     RobotMap.PewPewMotor1.setInverted(false);
+    RobotMap.PewPewMotor1.setSensorPhase(false);
     RobotMap.IntakeMotor1.setInverted(false);
     RobotMap.MainLeftMotorFront.setInverted(true);
     RobotMap.MainLeftMotorBack.setInverted(true);
@@ -169,22 +171,25 @@ public class Robot extends TimedRobot {
       } else {
         velocity = RobotMap.velocityTarget / 2; // replace with exact value later
       }
-
+      RobotMap.FeederMotor.config_kF(0, 0.0495);
+      RobotMap.FeederMotor.config_kP(0, 0.02);
       long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
       long interval = 1000;
-      if (dt >= interval * 5.5) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
-        RobotMap.PewPewMotor2.set(ControlMode.PercentOutput, 0.0);
+      if (dt >= interval * 4.5) {
+        RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
+        RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
+        RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
         RobotMap.inFiringCoroutine = false;
         RobotMap.reachedGoal = false; // for autonomus
         RobotMap.fullShooterPower = true;
-      } else if (dt >= interval * 5) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
       } else if (dt >= interval * 3) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
-      } else if (dt >= interval * 2.5) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
+        RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
+      } else if (dt >= interval * 2) {
+        RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
+      } else if (dt >= interval * 1.55) {
+        RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
       } else {
+        RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, velocity);
       }
     }
@@ -234,6 +239,8 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorBack.setSelectedSensorPosition(0);
     RobotMap.MainRightMotorFront.setSelectedSensorPosition(0);
     RobotMap.FeederMotor.setSelectedSensorPosition(0);
+    // RobotMap.PewPewMotor2.setSelectedSensorPosition(0);
+    // RobotMap.PewPewMotor1.setSelectedSensorPosition(0);
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
     Scheduler.getInstance().add(new BetterKearnyDriving());
@@ -362,32 +369,33 @@ public class Robot extends TimedRobot {
      * drivetrain.arcadeDriveVoltage(0, .5 - 1 error, 0.75, -0.75);
      * }
      */
-
-    currentAutoTime = startAutoTime - System.currentTimeMillis();
-
-    if (currentAutoTime >= 3000) {
-      // RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
-    } else if (currentAutoTime >= 3500) {
-      RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 1);
-    } else if (currentAutoTime >= 4500) {
-      RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 0);
-    } else if (currentAutoTime >= 5500) {
-      // RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
-    } else if (currentAutoTime >= 6200) {
-      if (currentAutoTime >= 11700) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
-        RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0.0);
-        RobotMap.inFiringCoroutine = false;
-      } else if (currentAutoTime >= 11200) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
-      } else if (currentAutoTime >= 9200) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 0.0);
-      } else if (currentAutoTime >= 8700) {
-        RobotMap.FeederMotor.set(ControlMode.PercentOutput, 1.0);
-      } else {
-        RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
-      }
-    }
+    /*
+     * currentAutoTime = startAutoTime - System.currentTimeMillis();
+     * 
+     * if (currentAutoTime >= 3000) {
+     * // RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
+     * } else if (currentAutoTime >= 3500) {
+     * RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 1.0);
+     * } else if (currentAutoTime >= 4500) {
+     * RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 0.0);
+     * } else if (currentAutoTime >= 5500) {
+     * // RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
+     * } else if (currentAutoTime >= 6200) {
+     * if (currentAutoTime >= 11700) {
+     * RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
+     * RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
+     * RobotMap.inFiringCoroutine = false;
+     * } else if (currentAutoTime >= 11200) {
+     * RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
+     * } else if (currentAutoTime >= 9200) {
+     * RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
+     * } else if (currentAutoTime >= 8700) {
+     * RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
+     * } else {
+     * RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
+     * }
+     * }
+     */
 
   }
 

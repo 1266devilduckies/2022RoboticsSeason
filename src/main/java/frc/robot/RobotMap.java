@@ -55,10 +55,10 @@ public class RobotMap {
    * the first multiple in front of 1023.0.
    * set the velocity from self test snapshot into the velocityTarget variable
    */
-  public static double velocityTarget = 14000.0;
-  public static double velocityFeeder = 69.0;
-  public static double kF = 0.0455;
-  public static double kP = 0.02;
+  public static double velocityTarget = 13250.0;// 14000.0;
+  public static double velocityFeeder = 13250.0;
+  public static double kF = 0.045;// .0455
+  public static double kP = 0.02; // .02
   public static double kI = 0.0;
   public static double kD = 0.0;
   public static double kF2 = (0.6343 * 1023.0) / velocityTarget;

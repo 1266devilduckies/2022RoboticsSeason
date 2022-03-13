@@ -23,7 +23,6 @@ public class JoystickController {
 	private static JoystickController generateMainJoystick() {
 		final Joystick joystick = new Joystick(0);
 		// this is for playstation
-		setButtonHeldBehavior(joystick, 1, new FeederStart(), null);
 		setButtonHeldBehavior(joystick, 6, new StartIntake(), new StopIntake());
 		setButtonHeldBehavior(joystick, 2, new AlignToTarget(), null);
 
@@ -55,12 +54,15 @@ public class JoystickController {
 		COPILOT_JOYSTICK = generateCoPilotJoystick();
 	}
 
-	/*/ button when pressed run Command
-	private static void setButtonBehavior(final Joystick joystick, final int buttonNumber,
-			final Command whileHeldCommand) {
-		final Button button = new JoystickButton(joystick, buttonNumber);
-		button.whenPressed(whileHeldCommand); // whenPressed
-	}*/
+	/*
+	 * / button when pressed run Command
+	 * private static void setButtonBehavior(final Joystick joystick, final int
+	 * buttonNumber,
+	 * final Command whileHeldCommand) {
+	 * final Button button = new JoystickButton(joystick, buttonNumber);
+	 * button.whenPressed(whileHeldCommand); // whenPressed
+	 * }
+	 */
 
 	// DPad when held run Command, when released run other Command
 	private static void setPOVButtonBehavior(final Joystick joystick, final int angle,
