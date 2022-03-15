@@ -158,36 +158,6 @@ public class Robot extends TimedRobot {
       finished = true;
     }
 
-    if (RobotMap.inFiringCoroutine) {
-
-      double velocity = 0.0;
-      if (RobotMap.fullShooterPower) {
-        velocity = RobotMap.velocityTarget;
-      } else {
-        velocity = RobotMap.velocityTarget / 2; // replace with exact value later
-      }
-      RobotMap.FeederMotor.config_kF(0, RobotMap.kPIndex);
-      RobotMap.FeederMotor.config_kP(0, RobotMap.kFIndex);
-      long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
-      long interval = 1000;
-      if (dt >= interval * 4.5) {
-        RobotMap.pneumaticSingleSolenoid.set(false);
-        RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
-        RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
-        RobotMap.inFiringCoroutine = false;
-        RobotMap.reachedGoal = false; // for autonomus
-        RobotMap.fullShooterPower = true;
-      } else if (dt >= interval * 3) {
-        RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
-      } else if (dt >= interval * 2) {
-        RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
-      } else if (dt >= interval * 1.55) {
-        RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
-      } else {
-        RobotMap.pneumaticSingleSolenoid.set(true);
-        RobotMap.PewPewMotor2.set(ControlMode.Velocity, velocity);
-      }
-    }
     DriveSubsystem.m_odometry.update(RobotMap.gyro.getRotation2d(),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition()));
