@@ -54,6 +54,7 @@ public class PewPewStart extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    RobotMap.fullShooterPower = true;
     RobotMap.pneumaticSingleSolenoid.set(false);
     RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
     RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
@@ -63,8 +64,8 @@ public class PewPewStart extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    RobotMap.fullShooterPower = true;
     RobotMap.inFiringCoroutine = false;
-
     RobotMap.pneumaticSingleSolenoid.set(false);
     RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
     RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);

@@ -187,6 +187,8 @@ public class Robot extends TimedRobot {
     if (RobotMap.kPAligner != alignerKfInp | RobotMap.kDAligner != alignerKfInp) {
       RobotMap.alignerController = new PIDController(RobotMap.kPAligner, 0.0, RobotMap.kDAligner);
     }
+
+    Scheduler.getInstance().run();
   }
 
   @Override
@@ -283,22 +285,11 @@ public class Robot extends TimedRobot {
 
     limeLightDataFetcher.fetchData();
 
-    /*
-     * if (RobotMap.pcmCompressor.getCurrent() > 130.0) {
-     * RobotMap.pcmCompressor.disable();
-     * 
-     * } else if (RobotMap.pcmCompressor.getCurrent() < 90.0) {
-     * RobotMap.pcmCompressor.enableDigital();
-     * }
-     */
     // logging data
     SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
     SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
     SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
     SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
-
-    Scheduler.getInstance().run();
-
   }
 
   @Override
