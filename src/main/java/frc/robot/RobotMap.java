@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -38,7 +39,7 @@ public class RobotMap {
   public static long timeSinceStartedBeingReleasedForShooter = -1;
   public static long timeSinceStartedBeingReleasedForSolenoids = -1;
   public static ADXRS450_Gyro gyro;
-  public static DoubleSolenoid pneumaticDoubleSolenoid;
+  public static Solenoid pneumaticSingleSolenoid;
   public static Compressor pcmCompressor;
   public static boolean isAligningCoroutine = false;
   public static boolean fullShooterPower = true;
@@ -73,7 +74,27 @@ public class RobotMap {
   public static boolean turnedaround = false;
   public static boolean shotFirstShotInAuto = false;
   public static double tankDriveInPlaceError = 0.0;
-  // private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+
+  public static final double ksVolts = 0.67766;
+  public static final double kvVoltSecondsPerMeter = 2.2804;
+  public static final double kaVoltSecondsSquaredPerMeter = 0.6814;
+
+  public static final double kMaxSpeedMetersPerSecond = 3;
+  public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+  public static final double kPDriveVel = 3.473;
+
+  // Reasonable baseline values for a RAMSETE follower in units of meters and
+  // seconds
+  public static final double kRamseteB = 2;
+  public static final double kRamseteZeta = 0.7;
+
+  public static final double kTrackwidthMeters = 0.762;
+  public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
+      kTrackwidthMeters);
+
+  public static final int kEncoderCPR = 2048;
+  public static final double kWheelDiameterMeters = 0.1524;
+  public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
 
   public static void init() {
 
@@ -96,8 +117,8 @@ public class RobotMap {
     MainRightMotorFront.set(ControlMode.Follower, 2);
     pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
-    pneumaticDoubleSolenoid = new DoubleSolenoid(10, PneumaticsModuleType.CTREPCM, 1, 0);
-    pneumaticDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+    pneumaticSingleSolenoid = new Solenoid(10, PneumaticsModuleType.CTREPCM, 0);
+    pneumaticSingleSolenoid.set(false);
     gyro = new ADXRS450_Gyro();
     // AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);
     /*

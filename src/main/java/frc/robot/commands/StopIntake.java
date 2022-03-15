@@ -21,7 +21,7 @@ public class StopIntake extends Command {
   protected void initialize() {
     SmartDashboard.putBoolean("reversed", true);
     RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
-    RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
+    RobotMap.pneumaticSingleSolenoid.set(false);
   }
 
   // Called repeatedly when this Command is scheduled to run

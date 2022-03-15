@@ -75,19 +75,6 @@ public class Robot extends TimedRobot {
       Units.inchesToMeters(3), // Robot uses 3" radius (6" diameter) wheels.
       0.546,
       null);
-
-  // CALIBRATE VALUE TO OUR ROBOT LATER
-  public static final double ksVolts = 0.70039;
-  public static final double kvVoltSecondsPerMeter = 1.98;
-  public static final double kaVoltSecondsSquaredPerMeter = 0.2;
-  public static final double kPDriveVel = 8.5;
-  public static final double kTrackwidthMeters = 0.762;
-  public static final double kMaxSpeedMetersPerSecond = 3;
-  public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-  public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
-
-  public static final double kRamseteB = 2;
-  public static final double kRamseteZeta = 0.7;
   int i = 0;
   boolean finished = false;
 
@@ -184,7 +171,7 @@ public class Robot extends TimedRobot {
       long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
       long interval = 1000;
       if (dt >= interval * 4.5) {
-        RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
+        RobotMap.pneumaticSingleSolenoid.set(false);
         RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
         RobotMap.inFiringCoroutine = false;
@@ -197,7 +184,7 @@ public class Robot extends TimedRobot {
       } else if (dt >= interval * 1.55) {
         RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
       } else {
-        RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
+        RobotMap.pneumaticSingleSolenoid.set(true);
         RobotMap.PewPewMotor2.set(ControlMode.Velocity, velocity);
       }
     }
@@ -245,18 +232,18 @@ public class Robot extends TimedRobot {
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
         new SimpleMotorFeedforward(
-            ksVolts,
-            kvVoltSecondsPerMeter,
-            kaVoltSecondsSquaredPerMeter),
-        kDriveKinematics,
+            RobotMap.ksVolts,
+            RobotMap.kvVoltSecondsPerMeter,
+            RobotMap.kaVoltSecondsSquaredPerMeter),
+        RobotMap.kDriveKinematics,
         10);
 
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
-        kMaxSpeedMetersPerSecond,
-        kMaxAccelerationMetersPerSecondSquared)
+        RobotMap.kMaxSpeedMetersPerSecond,
+        RobotMap.kMaxAccelerationMetersPerSecondSquared)
             // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(kDriveKinematics)
+            .setKinematics(RobotMap.kDriveKinematics)
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
@@ -274,15 +261,15 @@ public class Robot extends TimedRobot {
     RamseteCommand ramseteCommand = new RamseteCommand(
         exampleTrajectory,
         m_robotDrive::getPose,
-        new RamseteController(kRamseteB, kRamseteZeta),
+        new RamseteController(RobotMap.kRamseteB, RobotMap.kRamseteZeta),
         new SimpleMotorFeedforward(
-            ksVolts,
-            kvVoltSecondsPerMeter,
-            kaVoltSecondsSquaredPerMeter),
-        kDriveKinematics,
+            RobotMap.ksVolts,
+            RobotMap.kvVoltSecondsPerMeter,
+            RobotMap.kaVoltSecondsSquaredPerMeter),
+        RobotMap.kDriveKinematics,
         m_robotDrive::getWheelSpeeds,
-        new PIDController(kPDriveVel, 0, 0),
-        new PIDController(kPDriveVel, 0, 0),
+        new PIDController(RobotMap.kPDriveVel, 0, 0),
+        new PIDController(RobotMap.kPDriveVel, 0, 0),
         // RamseteCommand passes volts to the callback
         m_robotDrive::tankDriveVolts,
         m_robotDrive);

@@ -13,36 +13,11 @@ import frc.robot.RobotMap;
 
 public class DriveSubsystem extends SubsystemBase {
 
-    public static final class DriveConstants {
-        public static final double ksVolts = 0.70039;
-        public static final double kvVoltSecondsPerMeter = 1.98;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.2;
-
-        public static final double kMaxSpeedMetersPerSecond = 3;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kPDriveVel = 8.5;
-
-        // Reasonable baseline values for a RAMSETE follower in units of meters and
-        // seconds
-        public static final double kRamseteB = 2;
-        public static final double kRamseteZeta = 0.7;
-
-        public static final double kTrackwidthMeters = 0.762;
-        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
-                kTrackwidthMeters);
-
-        public static final int kEncoderCPR = 2048;
-        public static final double kWheelDiameterMeters = 0.1524;
-        public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
-    }
-
     // Odometry class for tracking robot pose
     public static DifferentialDriveOdometry m_odometry;
 
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
-        RobotMap.MainLeftMotorBack.setInverted(false);
-
         resetEncoders();
         m_odometry = new DifferentialDriveOdometry(RobotMap.gyro.getRotation2d());
     }

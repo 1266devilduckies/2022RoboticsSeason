@@ -20,7 +20,7 @@ public class StartIntake extends Command {
   @Override
   protected void initialize() {
     SmartDashboard.putBoolean("reversed", false);
-    RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
+    RobotMap.pneumaticSingleSolenoid.set(true);
     RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 1.0);
   }
 
