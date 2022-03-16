@@ -111,6 +111,10 @@ public class Robot extends TimedRobot {
     RobotMap.MainLeftMotorBack.setInverted(true);
     RobotMap.MainRightMotorFront.setInverted(false);
     RobotMap.MainRightMotorBack.setInverted(false);
+    RobotMap.MainLeftMotorBack.enableVoltageCompensation(false);
+    RobotMap.MainLeftMotorFront.enableVoltageCompensation(false);
+    RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
+    RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
     RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
@@ -183,11 +187,12 @@ public class Robot extends TimedRobot {
       RobotMap.FeederMotor.config_kF(0, RobotMap.kFIndex);
     }
     double alignerKpInp = Preferences.getDouble("kP Aligner", RobotMap.kPAligner);
-    double alignerKfInp = Preferences.getDouble("kD Aligner", RobotMap.kDAligner);
-    if (RobotMap.kPAligner != alignerKfInp | RobotMap.kDAligner != alignerKfInp) {
+    double alignerKdInp = Preferences.getDouble("kD Aligner", RobotMap.kDAligner);
+    if (RobotMap.kPAligner != alignerKpInp | RobotMap.kDAligner != alignerKdInp) {
       RobotMap.alignerController = new PIDController(RobotMap.kPAligner, 0.0, RobotMap.kDAligner);
     }
 
+    CommandScheduler.getInstance().run();
     Scheduler.getInstance().run();
   }
 
@@ -231,7 +236,7 @@ public class Robot extends TimedRobot {
         config);
 
     RamseteCommand ramseteCommand = new RamseteCommand(
-        exampleTrajectory,
+        trajectory,
         m_robotDrive::getPose,
         new RamseteController(RobotMap.kRamseteB, RobotMap.kRamseteZeta),
         new SimpleMotorFeedforward(
@@ -247,7 +252,7 @@ public class Robot extends TimedRobot {
         m_robotDrive);
 
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    m_robotDrive.resetOdometry(trajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
@@ -258,10 +263,8 @@ public class Robot extends TimedRobot {
 
     startAutoTime = System.currentTimeMillis();
     SequentialCommandGroup m_autonomousCommand = getAutonomousCommand();
-
     // schedule the autonomous command (example)
-    m_autonomousCommand.schedule();
-
+    CommandScheduler.getInstance().schedule(m_autonomousCommand);
   }
 
   @Override
@@ -271,8 +274,8 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorBack.setSelectedSensorPosition(0);
     RobotMap.MainRightMotorFront.setSelectedSensorPosition(0);
     RobotMap.FeederMotor.setSelectedSensorPosition(0);
-    // RobotMap.PewPewMotor2.setSelectedSensorPosition(0);
-    // RobotMap.PewPewMotor1.setSelectedSensorPosition(0);
+    RobotMap.PewPewMotor2.setSelectedSensorPosition(0);
+    RobotMap.PewPewMotor1.setSelectedSensorPosition(0);
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
     Scheduler.getInstance().add(new BetterKearnyDriving());
