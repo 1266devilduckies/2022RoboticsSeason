@@ -7,8 +7,9 @@ import frc.robot.RobotMap;
 import frc.robot.EncoderSetter;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class BetterKearnyDriving extends Command {
+public class BetterKearnyDriving extends CommandBase {
   // Drivetrain drivetrain = Robot.drivetrain;
   JoystickController mainJoystick = JoystickController.MAIN_JOYSTICK;
   JoystickController coPilotJoystick = JoystickController.COPILOT_JOYSTICK;
@@ -40,7 +41,7 @@ public class BetterKearnyDriving extends Command {
   }
 
   @Override
-  protected void end() {
+  public void end(boolean interuppted) {
   }
 
   @Override

@@ -5,28 +5,29 @@ import edu.wpi.first.math.controller.PIDController;
 //import edu.wpi.first.wpilibj.PneumaticsModuleType;
 //import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.limeLightDataFetcher;
 
-public class AlignToTarget extends Command {
+public class AlignToTarget extends CommandBase {
   double curSpeed = 0.0;
   double calibratedAngle = RobotMap.angle + RobotMap.gyro.getAngle();
 
   public AlignToTarget() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.intake);
+    addRequirements(Robot.intake);
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
     calibratedAngle = RobotMap.angle + RobotMap.gyro.getAngle();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
     if (RobotMap.angleMode) {
       curSpeed = RobotMap.alignerController.calculate(RobotMap.gyro.getAngle(), calibratedAngle);
       if (Math.abs(calibratedAngle - RobotMap.gyro.getAngle()) < 2.0) { // hacky way of damping
@@ -44,7 +45,7 @@ public class AlignToTarget extends Command {
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     RobotMap.angle = 0;
     calibratedAngle = RobotMap.gyro.getAngle(); // empty product is 0
     return true;
@@ -52,14 +53,8 @@ public class AlignToTarget extends Command {
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
 
-  }
-
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
   }
 
 }// class

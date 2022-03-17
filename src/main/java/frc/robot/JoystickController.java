@@ -8,10 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.buttons.POVButton;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.*;
 import frc.robot.commands.*;
 
 public class JoystickController {
@@ -65,7 +63,7 @@ public class JoystickController {
 
 	// DPad when held run Command, when released run other Command
 	private static void setPOVButtonBehavior(final Joystick joystick, final int angle,
-			final Command whileHeldCommand, final Command whenReleasedCommand) {
+			final CommandBase whileHeldCommand, final CommandBase whenReleasedCommand) {
 		final POVButton povButton = new POVButton(joystick, angle);
 		if (whileHeldCommand != null) {
 			povButton.whileHeld(whileHeldCommand);
@@ -76,9 +74,11 @@ public class JoystickController {
 	}
 
 	// button when held run Command, when released run other Command
+
 	private static void setButtonHeldBehavior(final Joystick joystick, final int buttonNumber,
-			final Command whileHeldCommand, final Command whenReleasedCommand) {
-		final Button button = new JoystickButton(joystick, buttonNumber);
+			final CommandBase whileHeldCommand, final CommandBase whenReleasedCommand) {
+		final Button button = new JoystickButton(
+				joystick, buttonNumber);
 		if (whileHeldCommand != null) {
 			button.whileHeld(whileHeldCommand);
 		}

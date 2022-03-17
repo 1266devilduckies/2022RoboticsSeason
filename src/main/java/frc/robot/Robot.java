@@ -7,14 +7,9 @@ import java.util.List;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -23,7 +18,6 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 //import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
+import frc.robot.commands.PewPewStart;
+import frc.robot.commands.StartIntake;
+import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.DriveSubsystem;
 //import edu.wpi.first.hal.simulation.EncoderDataJNI;
 //import edu.wpi.first.hal.EncoderJNI;
@@ -65,8 +62,8 @@ public class Robot extends TimedRobot {
   Field2d m_field = new Field2d();
 
   // trajectory
-  Trajectory trajectory = new Trajectory();
-  String trajectoryJSON = "paths/Auto1.wpilib.json";
+  // Trajectory trajectory = new Trajectory();
+  // String trajectoryJSON = "paths/Auto1.wpilib.json";
   public static DifferentialDrivetrainSim m_driveSim = new DifferentialDrivetrainSim(
       DCMotor.getFalcon500(2), // 2 Falcon 500s on each side of the drivetrain.
       10, // Standard AndyMark Gearing reduction.
@@ -80,6 +77,12 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+  RamseteCommand auto1Part1;
+  RamseteCommand auto1Part2;
+  RamseteCommand auto1Part3;
+  RamseteCommand auto1Part4;
+  RamseteCommand auto1Part5;
+  RamseteCommand auto1Part6;
 
   @Override
   public void robotInit() {
@@ -88,8 +91,19 @@ public class Robot extends TimedRobot {
     drivetrain = new Drivetrain();
 
     try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      auto1Part1 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part1.wpilib.json")));
+      auto1Part2 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part2.wpilib.json")));
+      auto1Part3 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part3.wpilib.json")));
+      auto1Part4 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part4.wpilib.json")));
+      auto1Part5 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part5.wpilib.json")));
+      auto1Part6 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part6.wpilib.json")));
+
     } catch (IOException ex) {
       // whoops
     }
@@ -193,7 +207,6 @@ public class Robot extends TimedRobot {
     }
 
     CommandScheduler.getInstance().run();
-    Scheduler.getInstance().run();
   }
 
   @Override
@@ -202,6 +215,26 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+  }
+
+  public RamseteCommand generateTrajectoryCommand(Trajectory trajectory) {
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory,
+        m_robotDrive::getPose,
+        new RamseteController(RobotMap.kRamseteB, RobotMap.kRamseteZeta),
+        new SimpleMotorFeedforward(
+            RobotMap.ksVolts,
+            RobotMap.kvVoltSecondsPerMeter,
+            RobotMap.kaVoltSecondsSquaredPerMeter),
+        RobotMap.kDriveKinematics,
+        m_robotDrive::getWheelSpeeds,
+        new PIDController(RobotMap.kPDriveVel, 0, 0),
+        new PIDController(RobotMap.kPDriveVel, 0, 0),
+        // RamseteCommand passes volts to the callback
+        m_robotDrive::tankDriveVolts,
+        m_robotDrive);
+    m_robotDrive.resetOdometry(trajectory.getInitialPose());
+    return ramseteCommand;
   }
 
   public SequentialCommandGroup getAutonomousCommand() {
@@ -224,38 +257,9 @@ public class Robot extends TimedRobot {
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        // Pass config
-        config);
-
-    RamseteCommand ramseteCommand = new RamseteCommand(
-        trajectory,
-        m_robotDrive::getPose,
-        new RamseteController(RobotMap.kRamseteB, RobotMap.kRamseteZeta),
-        new SimpleMotorFeedforward(
-            RobotMap.ksVolts,
-            RobotMap.kvVoltSecondsPerMeter,
-            RobotMap.kaVoltSecondsSquaredPerMeter),
-        RobotMap.kDriveKinematics,
-        m_robotDrive::getWheelSpeeds,
-        new PIDController(RobotMap.kPDriveVel, 0, 0),
-        new PIDController(RobotMap.kPDriveVel, 0, 0),
-        // RamseteCommand passes volts to the callback
-        m_robotDrive::tankDriveVolts,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(trajectory.getInitialPose());
-
     // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    return new SequentialCommandGroup(auto1Part1, new PewPewStart(), auto1Part2, new StartIntake(), auto1Part3,
+        new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart());
   }
 
   @Override
@@ -278,7 +282,7 @@ public class Robot extends TimedRobot {
     RobotMap.PewPewMotor1.setSelectedSensorPosition(0);
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
-    Scheduler.getInstance().add(new BetterKearnyDriving());
+    CommandScheduler.getInstance().schedule(new BetterKearnyDriving());
 
   }
 
