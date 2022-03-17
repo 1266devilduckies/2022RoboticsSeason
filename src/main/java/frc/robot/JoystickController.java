@@ -40,8 +40,9 @@ public class JoystickController {
 		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
 		// goes for high ball shot
 		setButtonHeldBehavior(joystick, 6, new PewPewStart(), null);
-		setButtonHeldBehavior(joystick, 2, new Climbstart(), new Climberstop());
-		setButtonHeldBehavior(joystick, 5, new climbreverse(), new Climberstop());
+		//a climb reverse doesnt neccesarily exist because it's a pulley
+		//if you'd want to reverse it you'd just call it again after it was finished running
+		setButtonPressBehavior(joystick, 2, new Climbstart());
 		return new JoystickController(joystick);
 	}
 
@@ -70,6 +71,15 @@ public class JoystickController {
 		}
 		if (whenReleasedCommand != null) {
 			povButton.whenReleased(whenReleasedCommand);
+		}
+	}
+
+	private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber,
+			final CommandBase whenPressedCommand) {
+		final Button button = new JoystickButton(
+				joystick, buttonNumber);
+		if (whenPressedCommand != null) {
+			button.whenPressed(whenPressedCommand);
 		}
 	}
 

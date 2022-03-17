@@ -115,6 +115,8 @@ public class Robot extends TimedRobot {
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor1);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor2);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
+    EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.Climber1);
+    EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.Climber2);
     // EncoderSim simEncoder = new EncoderSim(RobotMap.MainLeftMotorBack);
     RobotMap.PewPewMotor2.setInverted(true);
     // RobotMap.PewPewMotor2.setSensorPhase(true);
@@ -130,6 +132,9 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
     RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
+    RobotMap.Climber1.setNeutralMode(NeutralMode.Brake);
+    RobotMap.Climber2.setNeutralMode(NeutralMode.Brake);
+    RobotMap.Climber2.setInverted(true);
     RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
     RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
     RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
@@ -283,7 +288,6 @@ public class Robot extends TimedRobot {
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
     CommandScheduler.getInstance().schedule(new BetterKearnyDriving());
-
   }
 
   @Override

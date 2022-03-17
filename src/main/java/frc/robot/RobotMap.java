@@ -38,6 +38,7 @@ public class RobotMap {
   public static boolean inFiringCoroutine;
   public static long timeSinceStartedBeingReleasedForShooter = -1;
   public static long timeSinceStartedBeingReleasedForSolenoids = -1;
+  public static long climberDelay = 1000; //in milliseconds
   public static ADXRS450_Gyro gyro;
   public static Solenoid pneumaticSingleSolenoid;
   public static Compressor pcmCompressor;
@@ -112,6 +113,7 @@ public class RobotMap {
     PewPewMotor2 = new WPI_TalonFX(8);
     Climber1 = new VictorSPX(12);
     Climber2 = new VictorSPX(13);
+    Climber2.set(ControlMode.Follower, 12);
     PewPewMotor1.set(ControlMode.Follower, 8);
     MainLeftMotorFront.set(ControlMode.Follower, 0);
     MainRightMotorFront.set(ControlMode.Follower, 2);
