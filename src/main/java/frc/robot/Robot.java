@@ -77,12 +77,12 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  RamseteCommand auto1Part1;
-  RamseteCommand auto1Part2;
-  RamseteCommand auto1Part3;
-  RamseteCommand auto1Part4;
-  RamseteCommand auto1Part5;
-  RamseteCommand auto1Part6;
+  SequentialCommandGroup auto1Part1;
+  SequentialCommandGroup auto1Part2;
+  SequentialCommandGroup auto1Part3;
+  SequentialCommandGroup auto1Part4;
+  SequentialCommandGroup auto1Part5;
+  SequentialCommandGroup auto1Part6;
 
   @Override
   public void robotInit() {
@@ -217,7 +217,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
   }
 
-  public RamseteCommand generateTrajectoryCommand(Trajectory trajectory) {
+  public SequentialCommandGroup generateTrajectoryCommand(Trajectory trajectory) {
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
         m_robotDrive::getPose,
@@ -234,7 +234,7 @@ public class Robot extends TimedRobot {
         m_robotDrive::tankDriveVolts,
         m_robotDrive);
     m_robotDrive.resetOdometry(trajectory.getInitialPose());
-    return ramseteCommand;
+    return ramseteCommand.andThen(() -> m_robotDrive.arcadeDrive(0.0, 0.0));
   }
 
   public SequentialCommandGroup getAutonomousCommand() {
@@ -258,8 +258,10 @@ public class Robot extends TimedRobot {
             .addConstraint(autoVoltageConstraint);
 
     // Run path following command, then stop at the end.
-    return new SequentialCommandGroup(auto1Part1, new PewPewStart(), auto1Part2, new StartIntake(), auto1Part3,
-        new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart());
+    return new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2,
+        new StartIntake(), auto1Part3,
+        new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6,
+        new PewPewStart(false));
   }
 
   @Override

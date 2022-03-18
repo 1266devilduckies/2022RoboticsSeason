@@ -12,7 +12,7 @@ public class SlowShot extends CommandBase {
     @Override
     public void initialize() {
         RobotMap.fullShooterPower = false;
-        pewpewStartCommand = new PewPewStart();
+        pewpewStartCommand = new PewPewStart(true);
         CommandScheduler.getInstance().schedule(pewpewStartCommand);
     }
 
