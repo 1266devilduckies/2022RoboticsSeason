@@ -30,10 +30,18 @@ public class BetterKearnyDriving extends CommandBase {
     double lVal = mainJoystick.getLeftStickY();
     double rVal = mainJoystick.getRightStickX();
     if (Math.abs(lVal) < threshold) {
+      RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
+    RobotMap.MainLeftMotorBack.configOpenloopRamp(0.0);
+    RobotMap.MainRightMotorFront.configOpenloopRamp(0.0);
+    RobotMap.MainRightMotorBack.configOpenloopRamp(0.0);
       SmartDashboard.putNumber("left wheel speeds", RobotMap.m_drive.tankDriveIK(rVal, -rVal, false).left
           - RobotMap.m_drive.tankDriveIK(rVal, -rVal, false).right);
       RobotMap.m_drive.tankDrive(rVal * 0.8 - RobotMap.tankDriveInPlaceError, -rVal * 0.8, false);
     } else {
+      RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
+    RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
+    RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
+    RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
       SmartDashboard.putNumber("working working working", 1.0);
       RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX(), false);
     }

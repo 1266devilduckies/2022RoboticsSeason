@@ -24,7 +24,8 @@ public class Climbstart extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    RobotMap.Climber1.set(ControlMode.PercentOutput, 1.0);
+    RobotMap.Climber1.set(ControlMode.PercentOutput, -0.25);
+    RobotMap.Climber2.set(ControlMode.PercentOutput, -0.25);
     currentTimeClimber = System.currentTimeMillis();
 
   }
@@ -45,6 +46,7 @@ public class Climbstart extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     if(!interrupted){
+      RobotMap.Climber1.set(ControlMode.PercentOutput, 0);
       RobotMap.Climber1.set(ControlMode.PercentOutput, 0);
     }
   }

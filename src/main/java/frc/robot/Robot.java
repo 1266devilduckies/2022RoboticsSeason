@@ -83,6 +83,7 @@ public class Robot extends TimedRobot {
   SequentialCommandGroup auto1Part4;
   SequentialCommandGroup auto1Part5;
   SequentialCommandGroup auto1Part6;
+  Trajectory initTrajectory;
 
   @Override
   public void robotInit() {
@@ -91,8 +92,9 @@ public class Robot extends TimedRobot {
     drivetrain = new Drivetrain();
 
     try {
-      auto1Part1 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
-          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part1.wpilib.json")));
+      initTrajectory = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part1.wpilib.json"));
+      auto1Part1 = generateTrajectoryCommand(initTrajectory);
       auto1Part2 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part2.wpilib.json")));
       auto1Part3 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
@@ -115,6 +117,8 @@ public class Robot extends TimedRobot {
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor1);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.PewPewMotor2);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.FeederMotor);
+    EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.Climber1);
+    EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.Climber2);
     // EncoderSim simEncoder = new EncoderSim(RobotMap.MainLeftMotorBack);
     RobotMap.PewPewMotor2.setInverted(true);
     // RobotMap.PewPewMotor2.setSensorPhase(true);
@@ -125,15 +129,14 @@ public class Robot extends TimedRobot {
     RobotMap.MainLeftMotorBack.setInverted(true);
     RobotMap.MainRightMotorFront.setInverted(false);
     RobotMap.MainRightMotorBack.setInverted(false);
+    RobotMap.Climber2.setInverted(true);
+    RobotMap.Climber1.setNeutralMode(NeutralMode.Brake);
+    RobotMap.Climber2.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainLeftMotorBack.enableVoltageCompensation(false);
     RobotMap.MainLeftMotorFront.enableVoltageCompensation(false);
     RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
     RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
-    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
-    RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
-    RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
-    RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
 
     SmartDashboard.putData("Field", m_field);
     // configure the PID
@@ -233,7 +236,7 @@ public class Robot extends TimedRobot {
         // RamseteCommand passes volts to the callback
         m_robotDrive::tankDriveVolts,
         m_robotDrive);
-    m_robotDrive.resetOdometry(trajectory.getInitialPose());
+    //m_robotDrive.resetOdometry(trajectory.getInitialPose());
     return ramseteCommand.andThen(() -> m_robotDrive.arcadeDrive(0.0, 0.0));
   }
 
@@ -269,6 +272,7 @@ public class Robot extends TimedRobot {
 
     startAutoTime = System.currentTimeMillis();
     SequentialCommandGroup m_autonomousCommand = getAutonomousCommand();
+    m_robotDrive.resetOdometry(initTrajectory.getInitialPose());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
   }
