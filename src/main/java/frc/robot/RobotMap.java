@@ -112,6 +112,7 @@ public class RobotMap {
     PewPewMotor2 = new WPI_TalonFX(8);
     Climber1 = new VictorSPX(12);
     Climber2 = new VictorSPX(13);
+    Climber2.set(ControlMode.Follower, 12);
     PewPewMotor1.set(ControlMode.Follower, 8);
     MainLeftMotorFront.set(ControlMode.Follower, 0);
     MainRightMotorFront.set(ControlMode.Follower, 2);

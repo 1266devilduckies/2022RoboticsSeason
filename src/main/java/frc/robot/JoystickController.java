@@ -40,8 +40,7 @@ public class JoystickController {
 		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
 		// goes for high ball shot
 		setButtonHeldBehavior(joystick, 6, new PewPewStart(false), null);
-		setButtonHeldBehavior(joystick, 2, new Climbstart(), new Climberstop());
-		setButtonHeldBehavior(joystick, 5, new climbreverse(), new Climberstop());
+		setButtonPressBehavior(joystick, 2, new Climbstart());
 		return new JoystickController(joystick);
 	}
 
@@ -73,6 +72,15 @@ public class JoystickController {
 		}
 	}
 
+private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber,
+			final CommandBase whenPressedCommand) {
+		final Button button = new JoystickButton(
+				joystick, buttonNumber);
+		if (whenPressedCommand != null) {
+			button.whenPressed(whenPressedCommand);
+		}
+	}
+
 	// button when held run Command, when released run other Command
 
 	private static void setButtonHeldBehavior(final Joystick joystick, final int buttonNumber,
@@ -93,11 +101,11 @@ public class JoystickController {
 
 	// Joystick getters
 	// change when we get new contollers por favor - Benny
-	/*
-	 * public double getLeftStickX() {
-	 * return this.joystick.getRawAxis(0);
-	 * }
-	 */
+	
+	  public double getLeftStickX() {
+	  return this.joystick.getRawAxis(0);
+	  }
+	 
 
 	public double getLeftStickY() {
 		return this.joystick.getRawAxis(1);

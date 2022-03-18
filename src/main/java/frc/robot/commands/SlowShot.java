@@ -31,7 +31,7 @@ public class SlowShot extends CommandBase {
     // Called once after isFinished returns true
     @Override
     public void end(boolean interrupted) {
-        CommandScheduler.getInstance().cancel(pewpewStartCommand);
+        //CommandScheduler.getInstance().cancel(pewpewStartCommand);
     }
 
     // Called when another command which requires one or more of the same
