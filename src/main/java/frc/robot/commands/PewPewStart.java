@@ -58,6 +58,7 @@ public class PewPewStart extends CommandBase {
   // Called once after isFinished returns true
   @Override
   public void end(boolean interrupted) {
+    RobotMap.inFiringCoroutine = false;
     RobotMap.fullShooterPower = true;
     RobotMap.pneumaticSingleSolenoid.set(false);
     RobotMap.FeederMotor.set(ControlMode.Velocity, 0);

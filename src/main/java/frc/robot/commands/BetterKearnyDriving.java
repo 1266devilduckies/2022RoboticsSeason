@@ -53,22 +53,7 @@ public class BetterKearnyDriving extends CommandBase {
      * mainJoystick.getRightStickX(), false);
      * }
      */
-    double x = rVal;
-    double y = lVal;
-    x *= 1;
-    y *= -1;
-    x *= -1;
-    double left = y + x;
-    double right = y - x;
-    if (Math.abs(left) > 1) {
-      left /= Math.abs(left);
-      right /= Math.abs(left);
-    } else if (Math.abs(right) > 1) {
-      left /= Math.abs(right);
-      right /= Math.abs(right);
-    }
-    RobotMap.MainLeftMotorBack.set(ControlMode.PercentOutput, left);
-    RobotMap.MainRightMotorBack.set(ControlMode.PercentOutput, right);
+     RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX());
     EncoderSetter.updateEncoders();
   }
 

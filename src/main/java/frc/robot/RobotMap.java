@@ -79,8 +79,8 @@ public class RobotMap {
   public static final double kvVoltSecondsPerMeter = 2.2804;
   public static final double kaVoltSecondsSquaredPerMeter = 0.6814;
 
-  public static final double kMaxSpeedMetersPerSecond = 3;
-  public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+  public static final double kMaxSpeedMetersPerSecond = 1.75;
+  public static final double kMaxAccelerationMetersPerSecondSquared = 1.75;
   public static final double kPDriveVel = 3.473;
 
   // Reasonable baseline values for a RAMSETE follower in units of meters and
