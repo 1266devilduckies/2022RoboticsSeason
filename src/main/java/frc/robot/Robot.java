@@ -133,6 +133,7 @@ public class Robot extends TimedRobot {
     RobotMap.MainLeftMotorBack.setInverted(true);
     RobotMap.MainRightMotorFront.setInverted(false);
     RobotMap.MainRightMotorBack.setInverted(false);
+
     RobotMap.Climber2.setInverted(true);
     RobotMap.Climber1.setNeutralMode(NeutralMode.Brake);
     RobotMap.Climber2.setNeutralMode(NeutralMode.Brake);
@@ -140,6 +141,13 @@ public class Robot extends TimedRobot {
     RobotMap.MainLeftMotorFront.enableVoltageCompensation(false);
     RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
     RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
+
+    
+    RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Brake);
+     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Brake);
+     RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Brake);
+     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Brake);
+     
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
 
     SmartDashboard.putData("Field", m_field);
@@ -271,7 +279,7 @@ public class Robot extends TimedRobot {
         //new PewPewStart(false));
         SequentialCommandGroup pathToGo = new SequentialCommandGroup();
         if(num == 1){
-          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false));
+          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2);
         }
         else if(num == 3){
           pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2, new StartIntake(), auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart(false));
