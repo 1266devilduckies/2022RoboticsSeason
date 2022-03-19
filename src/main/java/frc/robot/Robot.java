@@ -292,7 +292,7 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand = getAutonomousCommand(1);
     m_robotDrive.resetOdometry(initTrajectory.getInitialPose());
     // schedule the autonomous command (example)
-    CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    CommandScheduler.getInstance().schedule(autoRoutines.getSelected());
   }
 
   @Override

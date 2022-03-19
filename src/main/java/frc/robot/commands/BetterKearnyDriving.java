@@ -53,9 +53,11 @@ public class BetterKearnyDriving extends CommandBase {
      * mainJoystick.getRightStickX(), false);
      * }
      */
-     RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getLeftStickX());
-		
 
+    // change 3rd param to a button/trigger the can return true/false, this controls
+    // wether the robot turns in place
+    RobotMap.m_drive.curvatureDrive(-mainJoystick.getLeftStickY(), mainJoystick.getLeftStickX(),
+        mainJoystick.LeftTriggeredPressed());
 
     EncoderSetter.updateEncoders();
   }
