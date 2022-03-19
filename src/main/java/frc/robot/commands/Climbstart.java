@@ -47,7 +47,7 @@ public class Climbstart extends CommandBase {
   public void end(boolean interrupted) {
     if(!interrupted){
       RobotMap.Climber1.set(ControlMode.PercentOutput, 0);
-      RobotMap.Climber1.set(ControlMode.PercentOutput, 0);
+      RobotMap.Climber2.set(ControlMode.PercentOutput, 0);
     }
   }
 

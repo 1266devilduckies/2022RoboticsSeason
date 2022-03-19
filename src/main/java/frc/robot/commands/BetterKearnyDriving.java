@@ -29,7 +29,7 @@ public class BetterKearnyDriving extends CommandBase {
 
     double lVal = mainJoystick.getLeftStickY();
     double rVal = mainJoystick.getRightStickX();
-    if (Math.abs(lVal) < threshold) {
+    /*if (Math.abs(lVal) < threshold) {
       RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
     RobotMap.MainLeftMotorBack.configOpenloopRamp(0.0);
     RobotMap.MainRightMotorFront.configOpenloopRamp(0.0);
@@ -44,7 +44,24 @@ public class BetterKearnyDriving extends CommandBase {
     RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
       SmartDashboard.putNumber("working working working", 1.0);
       RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX(), false);
-    }
+    }*/
+    double x = rVal;
+    double y = lVal;
+		x *= 1;
+		y *= -1;
+		x *= -1;
+		double left = y + x;
+		double right = y - x;
+		if(Math.abs(left) > 1){
+			left /= Math.abs(left);
+			right /= Math.abs(left);
+		}
+		else if(Math.abs(right) > 1){
+			left /= Math.abs(right);
+            right /= Math.abs(right);
+		}
+		RobotMap.MainLeftMotorBack.set(ControlMode.PercentOutput,left);
+		RobotMap.MainRightMotorBack.set(ControlMode.PercentOutput,right);
     EncoderSetter.updateEncoders();
   }
 
