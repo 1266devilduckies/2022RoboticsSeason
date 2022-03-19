@@ -75,8 +75,8 @@ public class Robot extends TimedRobot {
   int i = 0;
   boolean finished = false;
 
-  Command m_autonomousCommand;
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  SequentialCommandGroup m_autonomousCommand;
+  SendableChooser<Command> autoRoutines = new SendableChooser<>();
   SequentialCommandGroup auto1Part1;
   SequentialCommandGroup auto1Part2;
   SequentialCommandGroup auto1Part3;
@@ -109,6 +109,10 @@ public class Robot extends TimedRobot {
     } catch (IOException ex) {
       // whoops
     }
+ 
+    /*.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
+    autoRoutines.addOption("3 Ball Auto", getAutonomousCommand(3));
+    SmartDashboard.putData(autoRoutines);*/
 
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorBack);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorFront);
@@ -240,7 +244,7 @@ public class Robot extends TimedRobot {
     return ramseteCommand.andThen(() -> m_robotDrive.arcadeDrive(0.0, 0.0));
   }
 
-  public SequentialCommandGroup getAutonomousCommand() {
+  public SequentialCommandGroup getAutonomousCommand(int num) {
 
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
@@ -261,17 +265,26 @@ public class Robot extends TimedRobot {
             .addConstraint(autoVoltageConstraint);
 
     // Run path following command, then stop at the end.
-    return new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2,
-        new StartIntake(), auto1Part3,
-        new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6,
-        new PewPewStart(false));
-  }
+    //return new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2,
+        //new StartIntake(), auto1Part3,
+        //new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6,
+        //new PewPewStart(false));
+        SequentialCommandGroup pathToGo = new SequentialCommandGroup();
+        if(num == 1){
+          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false));
+        }
+        else if(num == 3){
+          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2, new StartIntake(), auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart(false));
+        }
+
+        return pathToGo;
+    }
 
   @Override
   public void autonomousInit() {
 
     startAutoTime = System.currentTimeMillis();
-    SequentialCommandGroup m_autonomousCommand = getAutonomousCommand();
+    m_autonomousCommand = getAutonomousCommand(1);
     m_robotDrive.resetOdometry(initTrajectory.getInitialPose());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);

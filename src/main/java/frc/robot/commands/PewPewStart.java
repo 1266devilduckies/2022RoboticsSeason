@@ -24,6 +24,8 @@ public class PewPewStart extends CommandBase {
     RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
     RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
     RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+    RobotMap.PewPewMotor2.config_kD(0, 0.01);
+    RobotMap.PewPewMotor1.config_kD(0, 0.01);
     RobotMap.FeederMotor.config_kF(0, RobotMap.kPIndex);
     RobotMap.FeederMotor.config_kP(0, RobotMap.kFIndex);
     RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
