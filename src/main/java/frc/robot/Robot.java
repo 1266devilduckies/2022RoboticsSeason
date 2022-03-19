@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -76,7 +77,7 @@ public class Robot extends TimedRobot {
   boolean finished = false;
 
   SequentialCommandGroup m_autonomousCommand;
-  SendableChooser<Command> autoRoutines = new SendableChooser<>();
+  SendableChooser<SequentialCommandGroup> autoRoutines = new SendableChooser<SequentialCommandGroup>();
   SequentialCommandGroup auto1Part1;
   SequentialCommandGroup auto1Part2;
   SequentialCommandGroup auto1Part3;
@@ -109,10 +110,10 @@ public class Robot extends TimedRobot {
     } catch (IOException ex) {
       // whoops
     }
- 
-    /*.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
+
+    autoRoutines.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
     autoRoutines.addOption("3 Ball Auto", getAutonomousCommand(3));
-    SmartDashboard.putData(autoRoutines);*/
+    SmartDashboard.putData(autoRoutines);
 
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorBack);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorFront);
@@ -240,7 +241,7 @@ public class Robot extends TimedRobot {
         // RamseteCommand passes volts to the callback
         m_robotDrive::tankDriveVolts,
         m_robotDrive);
-    //m_robotDrive.resetOdometry(trajectory.getInitialPose());
+    // m_robotDrive.resetOdometry(trajectory.getInitialPose());
     return ramseteCommand.andThen(() -> m_robotDrive.arcadeDrive(0.0, 0.0));
   }
 
@@ -265,26 +266,30 @@ public class Robot extends TimedRobot {
             .addConstraint(autoVoltageConstraint);
 
     // Run path following command, then stop at the end.
-    //return new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2,
-        //new StartIntake(), auto1Part3,
-        //new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6,
-        //new PewPewStart(false));
-        SequentialCommandGroup pathToGo = new SequentialCommandGroup();
-        if(num == 1){
-          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false));
-        }
-        else if(num == 3){
-          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2, new StartIntake(), auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart(false));
-        }
-
-        return pathToGo;
+    // return new SequentialCommandGroup(auto1Part1, new PewPewStart(false),
+    // auto1Part2,
+    // new StartIntake(), auto1Part3,
+    // new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new
+    // StopIntake(), auto1Part6,
+    // new PewPewStart(false));
+    SequentialCommandGroup pathToGo = new SequentialCommandGroup();
+    if (num == 1) {
+      pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false));
+    } else if (num == 3) {
+      pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2, new StartIntake(),
+          auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6,
+          new PewPewStart(false));
     }
+
+    return pathToGo;
+  }
 
   @Override
   public void autonomousInit() {
 
     startAutoTime = System.currentTimeMillis();
-    m_autonomousCommand = getAutonomousCommand(1);
+
+    // m_autonomousCommand = getAutonomousCommand(1);
     m_robotDrive.resetOdometry(initTrajectory.getInitialPose());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
