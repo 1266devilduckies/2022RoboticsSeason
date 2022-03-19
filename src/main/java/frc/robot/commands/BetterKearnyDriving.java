@@ -5,6 +5,9 @@ import frc.robot.JoystickController;
 import frc.robot.RobotMap;
 //import javax.management.modelmbean.RequiredModelMBean;
 import frc.robot.EncoderSetter;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -29,39 +32,43 @@ public class BetterKearnyDriving extends CommandBase {
 
     double lVal = mainJoystick.getLeftStickY();
     double rVal = mainJoystick.getRightStickX();
-    /*if (Math.abs(lVal) < threshold) {
-      RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
-    RobotMap.MainLeftMotorBack.configOpenloopRamp(0.0);
-    RobotMap.MainRightMotorFront.configOpenloopRamp(0.0);
-    RobotMap.MainRightMotorBack.configOpenloopRamp(0.0);
-      SmartDashboard.putNumber("left wheel speeds", RobotMap.m_drive.tankDriveIK(rVal, -rVal, false).left
-          - RobotMap.m_drive.tankDriveIK(rVal, -rVal, false).right);
-      RobotMap.m_drive.tankDrive(rVal * 0.8 - RobotMap.tankDriveInPlaceError, -rVal * 0.8, false);
-    } else {
-      RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
-    RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
-    RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
-    RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
-      SmartDashboard.putNumber("working working working", 1.0);
-      RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX(), false);
-    }*/
+    /*
+     * if (Math.abs(lVal) < threshold) {
+     * RobotMap.MainLeftMotorFront.configOpenloopRamp(0.0);
+     * RobotMap.MainLeftMotorBack.configOpenloopRamp(0.0);
+     * RobotMap.MainRightMotorFront.configOpenloopRamp(0.0);
+     * RobotMap.MainRightMotorBack.configOpenloopRamp(0.0);
+     * SmartDashboard.putNumber("left wheel speeds",
+     * RobotMap.m_drive.tankDriveIK(rVal, -rVal, false).left
+     * - RobotMap.m_drive.tankDriveIK(rVal, -rVal, false).right);
+     * RobotMap.m_drive.tankDrive(rVal * 0.8 - RobotMap.tankDriveInPlaceError, -rVal
+     * * 0.8, false);
+     * } else {
+     * RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
+     * RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
+     * RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
+     * RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
+     * SmartDashboard.putNumber("working working working", 1.0);
+     * RobotMap.m_drive.arcadeDrive(-mainJoystick.getLeftStickY(),
+     * mainJoystick.getRightStickX(), false);
+     * }
+     */
     double x = rVal;
     double y = lVal;
-		x *= 1;
-		y *= -1;
-		x *= -1;
-		double left = y + x;
-		double right = y - x;
-		if(Math.abs(left) > 1){
-			left /= Math.abs(left);
-			right /= Math.abs(left);
-		}
-		else if(Math.abs(right) > 1){
-			left /= Math.abs(right);
-            right /= Math.abs(right);
-		}
-		RobotMap.MainLeftMotorBack.set(ControlMode.PercentOutput,left);
-		RobotMap.MainRightMotorBack.set(ControlMode.PercentOutput,right);
+    x *= 1;
+    y *= -1;
+    x *= -1;
+    double left = y + x;
+    double right = y - x;
+    if (Math.abs(left) > 1) {
+      left /= Math.abs(left);
+      right /= Math.abs(left);
+    } else if (Math.abs(right) > 1) {
+      left /= Math.abs(right);
+      right /= Math.abs(right);
+    }
+    RobotMap.MainLeftMotorBack.set(ControlMode.PercentOutput, left);
+    RobotMap.MainRightMotorBack.set(ControlMode.PercentOutput, right);
     EncoderSetter.updateEncoders();
   }
 
