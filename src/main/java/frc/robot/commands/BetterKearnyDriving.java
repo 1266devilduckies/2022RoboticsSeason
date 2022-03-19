@@ -58,11 +58,10 @@ public class BetterKearnyDriving extends CommandBase {
      RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
      RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
      if (Math.abs(mainJoystick.getLeftStickY()) < 0.05) {
-      RobotMap.m_drive.curvatureDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX(), true);
+      RobotMap.m_drive.curvatureDrive(-mainJoystick.getLeftStickY(), rVal, true);
      } else {
-       RobotMap.m_drive.curvatureDrive(-mainJoystick.getLeftStickY(), mainJoystick.getRightStickX()*0.5,false);
+       RobotMap.m_drive.curvatureDrive(-mainJoystick.getLeftStickY(), rVal*0.5,false);
      }
-
     EncoderSetter.updateEncoders();
   }
 
