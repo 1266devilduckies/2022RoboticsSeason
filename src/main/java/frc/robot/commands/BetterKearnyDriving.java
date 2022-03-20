@@ -30,7 +30,7 @@ public class BetterKearnyDriving extends CommandBase {
   public void execute() {
     // ps4 & xbox apis have it so that going forward on the y makes it go negative
 
-    double lVal = -(mainJoystick.getLeftStickY());
+    double lVal = mainJoystick.getLeftStickY();
     double rVal = mainJoystick.getRightStickX();
     /*
      * if (Math.abs(lVal) < threshold) {
@@ -53,10 +53,11 @@ public class BetterKearnyDriving extends CommandBase {
      * mainJoystick.getRightStickX(), false);
      * }
      */
-     RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
-     RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
-     RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
-     RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
+     RobotMap.MainLeftMotorBack.configOpenloopRamp(0.2);
+     RobotMap.MainLeftMotorFront.configOpenloopRamp(0.2);
+     RobotMap.MainRightMotorBack.configOpenloopRamp(0.2);
+     RobotMap.MainRightMotorFront.configOpenloopRamp(0.2);
+     
      if (Math.abs(mainJoystick.getLeftStickY()) < 0.05) {
       RobotMap.m_drive.curvatureDrive(-mainJoystick.getLeftStickY(), rVal, true);
      } else {

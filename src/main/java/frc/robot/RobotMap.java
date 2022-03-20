@@ -115,7 +115,7 @@ public class RobotMap {
     Climber2.set(ControlMode.Follower, 12);
     PewPewMotor1.set(ControlMode.Follower, 8);
     MainLeftMotorFront.set(ControlMode.Follower, 0);
-    MainRightMotorFront.set(ControlMode.Follower, 2);
+    MainRightMotorFront.set(ControlMode.Follower, 3);
     pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
     pneumaticSingleSolenoid = new Solenoid(10, PneumaticsModuleType.CTREPCM, 0);

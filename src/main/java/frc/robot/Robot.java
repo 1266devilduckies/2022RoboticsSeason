@@ -131,7 +131,10 @@ public class Robot extends TimedRobot {
     RobotMap.IntakeMotor1.setInverted(false);
     RobotMap.MainLeftMotorFront.setInverted(true);
     RobotMap.MainLeftMotorBack.setInverted(true);
+    //they were false.....hjssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0p'
+    
     RobotMap.MainRightMotorFront.setInverted(false);
+    //
     RobotMap.MainRightMotorBack.setInverted(false);
 
     RobotMap.Climber2.setInverted(true);
@@ -143,10 +146,10 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
 
     
-    RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Brake);
-     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Brake);
-     RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Brake);
-     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Brake);
+    RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Coast);
+     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
+     RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Coast);
+     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
      
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
 
