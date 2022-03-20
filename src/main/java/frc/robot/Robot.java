@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 //import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
+import frc.robot.commands.Climbstart;
 import frc.robot.commands.PewPewStart;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopIntake;
@@ -313,7 +314,7 @@ public class Robot extends TimedRobot {
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
     CommandScheduler.getInstance().schedule(new BetterKearnyDriving());
-
+    CommandScheduler.getInstance().schedule(new Climbstart());
   }
 
   @Override

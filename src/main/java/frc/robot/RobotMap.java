@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class RobotMap {
-
+  //in ms
+public static double climberUpperBoundTime = 1000;
+public static double climberLowerBoundTime = 0;
   public static WPI_TalonFX MainLeftMotorBack;
   public static WPI_TalonFX MainLeftMotorFront;
   public static WPI_TalonFX MainRightMotorBack;
@@ -44,6 +46,7 @@ public class RobotMap {
   public static boolean isAligningCoroutine = false;
   public static boolean fullShooterPower = true;
   public static boolean inAutonomous = false;
+  public static double climberOverallTime = 0.0;
   public static double angle = 0.0;// angle for robot to align to when in aligining command
   public static boolean angleMode = false; // false means to target to the limelight
   // The robot's drive

@@ -63,7 +63,7 @@ public class BetterKearnyDriving extends CommandBase {
      double errR = 0.0;
     
      if (Math.abs(lVal) < 0.05) {
-      RobotMap.m_drive.curvatureDrive(0.0, rVal, true);
+      RobotMap.m_drive.curvatureDrive(0.0, rVal*0.5, true);
      } else {
        RobotMap.m_drive.curvatureDrive(-lVal, rVal*0.5,false);
      }
