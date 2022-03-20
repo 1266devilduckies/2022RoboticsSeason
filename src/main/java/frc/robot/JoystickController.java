@@ -111,13 +111,13 @@ private static void setButtonPressBehavior(final Joystick joystick, final int bu
 		return this.joystick.getRawAxis(1);
 	}
 
-	/*public double getLeftTrigger() {
-		return this.joystick.getRawAxis(2);
-	}*/
+	public boolean getLeftTrigger() {
+		return this.joystick.getRawButton(7);
+	}
 
-	/*public double getRightTrigger() {
-		return this.joystick.getRawAxis(3);
-	}*/
+	public boolean getRightTrigger() {
+		return this.joystick.getRawButton(8);
+	}
 
 	public double getRightStickX() {
 		return this.joystick.getRawAxis(2);

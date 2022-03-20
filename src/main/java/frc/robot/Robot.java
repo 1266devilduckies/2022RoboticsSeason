@@ -76,13 +76,14 @@ public class Robot extends TimedRobot {
   boolean finished = false;
 
   SequentialCommandGroup m_autonomousCommand;
-  SendableChooser<Command> autoRoutines = new SendableChooser<>();
+  SendableChooser<SequentialCommandGroup> autoRoutines = new SendableChooser<>();
   SequentialCommandGroup auto1Part1;
   SequentialCommandGroup auto1Part2;
   SequentialCommandGroup auto1Part3;
   SequentialCommandGroup auto1Part4;
   SequentialCommandGroup auto1Part5;
   SequentialCommandGroup auto1Part6;
+  SequentialCommandGroup auto2Part1;
   Trajectory initTrajectory;
 
   @Override
@@ -105,14 +106,16 @@ public class Robot extends TimedRobot {
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part5.wpilib.json")));
       auto1Part6 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part6.wpilib.json")));
+      auto2Part1 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2part1.wpilib.json")));
 
     } catch (IOException ex) {
       // whoops
     }
  
-    /*.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
+    autoRoutines.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
     autoRoutines.addOption("3 Ball Auto", getAutonomousCommand(3));
-    SmartDashboard.putData(autoRoutines);*/
+    SmartDashboard.putData(autoRoutines);
 
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorBack);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorFront);
@@ -283,6 +286,8 @@ public class Robot extends TimedRobot {
         SequentialCommandGroup pathToGo = new SequentialCommandGroup();
         if(num == 1){
           pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2);
+        } else if (num == 2) {
+          pathToGo = new SequentialCommandGroup(new PewPewStart(false), auto2Part1);
         }
         else if(num == 3){
           pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2, new StartIntake(), auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart(false));
@@ -295,7 +300,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     startAutoTime = System.currentTimeMillis();
-    m_autonomousCommand = getAutonomousCommand(1);
+    m_autonomousCommand = autoRoutines.getSelected();
     m_robotDrive.resetOdometry(initTrajectory.getInitialPose());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
