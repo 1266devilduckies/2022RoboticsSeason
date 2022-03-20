@@ -14,7 +14,7 @@ import frc.robot.RobotMap;
 public class StartIntake extends CommandBase {
   public StartIntake() {
     // Use requires() here to declare subsystem dependencies
-    addRequirements(Robot.intake);
+    //addRequirements(Robot.intake);
   }
 
   // Called just before this Command runs the first time

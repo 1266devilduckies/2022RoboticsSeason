@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -76,13 +77,16 @@ public class Robot extends TimedRobot {
   boolean finished = false;
 
   SequentialCommandGroup m_autonomousCommand;
-  SendableChooser<Command> autoRoutines = new SendableChooser<>();
+  SendableChooser<SequentialCommandGroup> autoRoutines = new SendableChooser<>();
   SequentialCommandGroup auto1Part1;
   SequentialCommandGroup auto1Part2;
   SequentialCommandGroup auto1Part3;
   SequentialCommandGroup auto1Part4;
   SequentialCommandGroup auto1Part5;
   SequentialCommandGroup auto1Part6;
+  SequentialCommandGroup auto2Part1;
+  SequentialCommandGroup auto2Part2;
+  PewPewStart shootHigh;
   Trajectory initTrajectory;
 
   @Override
@@ -105,15 +109,14 @@ public class Robot extends TimedRobot {
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part5.wpilib.json")));
       auto1Part6 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part6.wpilib.json")));
-
+      auto2Part1 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part1.wpilib.json")));
+      auto2Part2 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part2.wpilib.json")));
     } catch (IOException ex) {
       // whoops
     }
- 
-    /*.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
-    autoRoutines.addOption("3 Ball Auto", getAutonomousCommand(3));
-    SmartDashboard.putData(autoRoutines);*/
-
+    shootHigh = new PewPewStart(false);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorBack);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorFront);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainRightMotorBack);
@@ -171,6 +174,11 @@ public class Robot extends TimedRobot {
     climber = new Climber();
     JoystickController.Init();
     // get auto path json
+    autoRoutines.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
+    autoRoutines.addOption("1 Ball Auto Defense", getAutonomousCommand(2));
+    autoRoutines.addOption("3 Ball Auto", getAutonomousCommand(3));
+    SmartDashboard.putData(autoRoutines);
+    SmartDashboard.putNumber("test", 1);
 
     if (!Preferences.containsKey("kP Shooter")) {
       Preferences.setDouble("kP Shooter", RobotMap.kP);
@@ -283,9 +291,10 @@ public class Robot extends TimedRobot {
         SequentialCommandGroup pathToGo = new SequentialCommandGroup();
         if(num == 1){
           pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2);
-        }
-        else if(num == 3){
-          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2, new StartIntake(), auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart(false));
+        } else if (num == 2) {
+          pathToGo = new SequentialCommandGroup(new PewPewStart(false), auto2Part1);
+        } else if(num == 3){
+          pathToGo = new SequentialCommandGroup(auto1Part1, shootHigh, auto1Part2, new StartIntake(), auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, shootHigh);
         }
 
         return pathToGo;
@@ -295,7 +304,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     startAutoTime = System.currentTimeMillis();
-    m_autonomousCommand = getAutonomousCommand(1);
+    m_autonomousCommand = autoRoutines.getSelected();
     m_robotDrive.resetOdometry(initTrajectory.getInitialPose());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);

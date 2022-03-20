@@ -11,7 +11,7 @@ public class PewPewStart extends CommandBase {
   public PewPewStart(boolean slowShot) {
     RobotMap.fullShooterPower = !slowShot;
     // Use requires() here to declare subsystem dependencies
-    addRequirements(Robot.shooter);
+    //addRequirements(Robot.shooter);
   }
 
   double velocity = 0.0;
