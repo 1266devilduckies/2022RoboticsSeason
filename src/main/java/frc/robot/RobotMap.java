@@ -74,6 +74,7 @@ public class RobotMap {
   public static boolean turnedaround = false;
   public static boolean shotFirstShotInAuto = false;
   public static double tankDriveInPlaceError = 0.0;
+  public static boolean pilotDisabled = false;
 
   public static final double ksVolts = 0.67766;
   public static final double kvVoltSecondsPerMeter = 2.2804;

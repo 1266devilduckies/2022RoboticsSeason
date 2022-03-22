@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
     RobotMap.IntakeMotor1.setInverted(false);
     RobotMap.MainLeftMotorFront.setInverted(true);
     RobotMap.MainLeftMotorBack.setInverted(true);
-    //they were false.....hjssxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0p'
+    //they were false
     
     RobotMap.MainRightMotorFront.setInverted(false);
     //

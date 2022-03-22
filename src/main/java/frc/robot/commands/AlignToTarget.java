@@ -12,49 +12,37 @@ import frc.robot.limeLightDataFetcher;
 
 public class AlignToTarget extends CommandBase {
   double curSpeed = 0.0;
-  double calibratedAngle = RobotMap.angle + RobotMap.gyro.getAngle();
 
-  public AlignToTarget() {
-    // Use requires() here to declare subsystem dependencies
-    addRequirements(Robot.intake);
-  }
+  public AlignToTarget() {}
 
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    calibratedAngle = RobotMap.angle + RobotMap.gyro.getAngle();
+    RobotMap.pilotDisabled = true;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-    if (RobotMap.angleMode) {
-      curSpeed = RobotMap.alignerController.calculate(RobotMap.gyro.getAngle(), calibratedAngle);
-      if (Math.abs(calibratedAngle - RobotMap.gyro.getAngle()) < 2.0) { // hacky way of damping
-        RobotMap.m_drive.tankDrive(curSpeed, -curSpeed, false);
-      }
-    } else {
       if (limeLightDataFetcher.seeIfTargetsExist() == 1.0) {
         double pidOutput = RobotMap.alignerController.calculate(limeLightDataFetcher.getdegRotationToTarget(), 0.0);
         RobotMap.m_drive.tankDrive(-pidOutput, pidOutput, false);
       } else {
         RobotMap.m_drive.tankDrive(0.0, 0.0);
       }
-    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   public boolean isFinished() {
-    RobotMap.angle = 0;
-    calibratedAngle = RobotMap.gyro.getAngle(); // empty product is 0
-    return true;
+    return Math.abs(limeLightDataFetcher.getdegRotationToTarget()) < 0.1;
   }
 
   // Called once after isFinished returns true
   @Override
   public void end(boolean interrupted) {
-
+    RobotMap.pilotDisabled = false;
+    RobotMap.m_drive.tankDrive(0.0, 0.0);
   }
 
 }// class
