@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -75,14 +76,18 @@ public class Robot extends TimedRobot {
   int i = 0;
   boolean finished = false;
 
-  Command m_autonomousCommand;
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
-  RamseteCommand auto1Part1;
-  RamseteCommand auto1Part2;
-  RamseteCommand auto1Part3;
-  RamseteCommand auto1Part4;
-  RamseteCommand auto1Part5;
-  RamseteCommand auto1Part6;
+  SequentialCommandGroup m_autonomousCommand;
+  SendableChooser<SequentialCommandGroup> autoRoutines = new SendableChooser<>();
+  SequentialCommandGroup auto1Part1;
+  SequentialCommandGroup auto1Part2;
+  SequentialCommandGroup auto1Part3;
+  SequentialCommandGroup auto1Part4;
+  SequentialCommandGroup auto1Part5;
+  SequentialCommandGroup auto1Part6;
+  SequentialCommandGroup auto2Part1;
+  SequentialCommandGroup auto2Part2;
+  PewPewStart shootHigh;
+  Trajectory initTrajectory;
 
   @Override
   public void robotInit() {
@@ -91,8 +96,9 @@ public class Robot extends TimedRobot {
     drivetrain = new Drivetrain();
 
     try {
-      auto1Part1 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
-          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part1.wpilib.json")));
+      initTrajectory = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part1.wpilib.json"));
+      auto1Part1 = generateTrajectoryCommand(initTrajectory);
       auto1Part2 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part2.wpilib.json")));
       auto1Part3 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
@@ -103,11 +109,14 @@ public class Robot extends TimedRobot {
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part5.wpilib.json")));
       auto1Part6 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part6.wpilib.json")));
-
+      auto2Part1 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part1.wpilib.json")));
+      auto2Part2 = generateTrajectoryCommand(TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part2.wpilib.json")));
     } catch (IOException ex) {
       // whoops
     }
-
+    shootHigh = new PewPewStart(false);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorBack);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainLeftMotorFront);
     EncoderSetter.setEncoderDefaultPhoenixSettings(RobotMap.MainRightMotorBack);
@@ -125,20 +134,27 @@ public class Robot extends TimedRobot {
     RobotMap.IntakeMotor1.setInverted(false);
     RobotMap.MainLeftMotorFront.setInverted(true);
     RobotMap.MainLeftMotorBack.setInverted(true);
+    //they were false
+    
     RobotMap.MainRightMotorFront.setInverted(false);
+    //
     RobotMap.MainRightMotorBack.setInverted(false);
+
+    RobotMap.Climber2.setInverted(true);
+    RobotMap.Climber1.setNeutralMode(NeutralMode.Brake);
+    RobotMap.Climber2.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainLeftMotorBack.enableVoltageCompensation(false);
     RobotMap.MainLeftMotorFront.enableVoltageCompensation(false);
     RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
     RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
+
+    
+    RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Coast);
+     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
+     RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Coast);
+     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
+     
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
-    RobotMap.Climber1.setNeutralMode(NeutralMode.Brake);
-    RobotMap.Climber2.setNeutralMode(NeutralMode.Brake);
-    RobotMap.Climber2.setInverted(true);
-    RobotMap.MainLeftMotorFront.configOpenloopRamp(0.5);
-    RobotMap.MainLeftMotorBack.configOpenloopRamp(0.5);
-    RobotMap.MainRightMotorFront.configOpenloopRamp(0.5);
-    RobotMap.MainRightMotorBack.configOpenloopRamp(0.5);
 
     SmartDashboard.putData("Field", m_field);
     // configure the PID
@@ -158,6 +174,11 @@ public class Robot extends TimedRobot {
     climber = new Climber();
     JoystickController.Init();
     // get auto path json
+    autoRoutines.setDefaultOption("1 Ball Auto", getAutonomousCommand(1));
+    autoRoutines.addOption("1 Ball Auto Defense", getAutonomousCommand(2));
+    autoRoutines.addOption("3 Ball Auto", getAutonomousCommand(3));
+    SmartDashboard.putData(autoRoutines);
+    SmartDashboard.putNumber("test", 1);
 
     if (!Preferences.containsKey("kP Shooter")) {
       Preferences.setDouble("kP Shooter", RobotMap.kP);
@@ -222,7 +243,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
   }
 
-  public RamseteCommand generateTrajectoryCommand(Trajectory trajectory) {
+  public SequentialCommandGroup generateTrajectoryCommand(Trajectory trajectory) {
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
         m_robotDrive::getPose,
@@ -238,11 +259,11 @@ public class Robot extends TimedRobot {
         // RamseteCommand passes volts to the callback
         m_robotDrive::tankDriveVolts,
         m_robotDrive);
-    m_robotDrive.resetOdometry(trajectory.getInitialPose());
-    return ramseteCommand;
+    //m_robotDrive.resetOdometry(trajectory.getInitialPose());
+    return ramseteCommand.andThen(() -> m_robotDrive.arcadeDrive(0.0, 0.0));
   }
 
-  public SequentialCommandGroup getAutonomousCommand() {
+  public SequentialCommandGroup getAutonomousCommand(int num) {
 
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
@@ -262,16 +283,31 @@ public class Robot extends TimedRobot {
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
-    // Run path following command, then stop at the end.
-    return new SequentialCommandGroup(auto1Part1, new PewPewStart(), auto1Part2, new StartIntake(), auto1Part3,
-        new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, new PewPewStart());
-  }
+        SequentialCommandGroup pathToGo = new SequentialCommandGroup();
+        if(num == 1){
+          pathToGo = new SequentialCommandGroup(auto1Part1, new PewPewStart(false), auto1Part2);
+        } else if (num == 2) {
+          pathToGo = new SequentialCommandGroup(new PewPewStart(false), auto2Part1);
+        } else if(num == 3){
+          pathToGo = new SequentialCommandGroup(auto1Part1, shootHigh, auto1Part2, new StartIntake(), auto1Part3, new StopIntake(), auto1Part4, new StartIntake(), auto1Part5, new StopIntake(), auto1Part6, shootHigh);
+        }
+
+        return pathToGo;
+    }
 
   @Override
   public void autonomousInit() {
-
+    RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
+    RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
+    RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
+    RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+    RobotMap.PewPewMotor2.config_kD(0, 0.01);
+    RobotMap.PewPewMotor1.config_kD(0, 0.01);
+    RobotMap.FeederMotor.config_kF(0, RobotMap.kPIndex);
+    RobotMap.FeederMotor.config_kP(0, RobotMap.kFIndex);
     startAutoTime = System.currentTimeMillis();
-    SequentialCommandGroup m_autonomousCommand = getAutonomousCommand();
+    m_autonomousCommand = autoRoutines.getSelected();
+    m_robotDrive.resetOdometry(initTrajectory.getInitialPose());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
   }
@@ -360,78 +396,6 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     EncoderSetter.updateEncoders();
     SmartDashboard.putNumber("distance", RobotMap.avgPositionInMeters);
-    /*
-     * if (!RobotMap.reachedGoal) {
-     * if (RobotMap.avgPositionInMeters < 1.75) {
-     * RobotMap.m_drive.arcadeDrive(0.5, 0.0);
-     * } else {
-     * RobotMap.reachedGoal = true;
-     * RobotMap.m_drive.arcadeDrive(0.0, 0.0);
-     * }
-     * }
-     * 
-     * if (RobotMap.reachedGoal & !RobotMap.shotFirstShotInAuto) {
-     * if (!RobotMap.inFiringCoroutine) {
-     * RobotMap.inFiringCoroutine = true;
-     * RobotMap.fullShooterPower = true;
-     * RobotMap.shotFirstShotInAuto = true;
-     * RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
-     * RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
-     * RobotMap.PewPewMotor1.config_kI(0, RobotMap.kI);
-     * RobotMap.PewPewMotor1.config_kD(0, RobotMap.kD);
-     * RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
-     * RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
-     * RobotMap.PewPewMotor2.config_kI(0, RobotMap.kI);
-     * RobotMap.PewPewMotor2.config_kD(0, RobotMap.kD);
-     * RobotMap.timeSinceStartedBeingReleasedForShooter =
-     * System.currentTimeMillis();
-     * }
-     * }
-     */
-
-    // double error = -RobotMap.gyro.getRate();
-
-    // double error = -RobotMap.gyro.getRate();
-
-    // https://docs.wpilib.org/en/latest/docs/software/hardware-apis/sensors/
-    /*
-     * encoders-software.html
-     * //other side is flipped internally
-     * if (RobotMap.avgPositionInMeters < 2.3) {
-     * //face of intake direction is negative
-     * drivetrain.arcadeDriveVoltage(-0.2,.5 - 1 error, 0.75, -0.75);
-     * } else {
-     * drivetrain.arcadeDriveVoltage(0, .5 - 1 error, 0.75, -0.75);
-     * }
-     * 
-     * 
-     * currentAutoTime = startAutoTime - System.currentTimeMillis();
-     * 
-     * if (currentAutoTime >= 3000) {
-     * // RobotMap.pneumaticDoubleSolenoid.set(Value.kReverse);
-     * } else if (currentAutoTime >= 3500) {
-     * RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 1.0);
-     * } else if (currentAutoTime >= 4500) {
-     * RobotMap.IntakeMotor1.set(VictorSPXControlMode.PercentOutput, 0.0);
-     * } else if (currentAutoTime >= 5500) {
-     * // RobotMap.pneumaticDoubleSolenoid.set(Value.kForward);
-     * } else if (currentAutoTime >= 6200) {
-     * if (currentAutoTime >= 11700) {
-     * RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
-     * RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
-     * RobotMap.inFiringCoroutine = false;
-     * } else if (currentAutoTime >= 11200) {
-     * RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
-     * } else if (currentAutoTime >= 9200) {
-     * RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
-     * } else if (currentAutoTime >= 8700) {
-     * RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
-     * } else {
-     * RobotMap.PewPewMotor2.set(ControlMode.Velocity, RobotMap.velocityTarget);
-     * }
-     * }
-     */
-
   }
 
   @Override

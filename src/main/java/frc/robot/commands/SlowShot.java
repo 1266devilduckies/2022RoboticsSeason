@@ -7,13 +7,10 @@ import frc.robot.RobotMap;
 public class SlowShot extends CommandBase {
 
     // Called just before this Command runs the first time
-    CommandBase pewpewStartCommand;
 
     @Override
     public void initialize() {
-        RobotMap.fullShooterPower = false;
-        pewpewStartCommand = new PewPewStart();
-        CommandScheduler.getInstance().schedule(pewpewStartCommand);
+        CommandScheduler.getInstance().schedule(new PewPewStart(true));
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -30,9 +27,7 @@ public class SlowShot extends CommandBase {
 
     // Called once after isFinished returns true
     @Override
-    public void end(boolean interrupted) {
-        CommandScheduler.getInstance().cancel(pewpewStartCommand);
-    }
+    public void end(boolean interrupted) {}
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run

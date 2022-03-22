@@ -7,15 +7,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
-public class ReverseIntake extends CommandBase {
-  public ReverseIntake() {
+public class ReverseIntakeReleased extends CommandBase {
+  public ReverseIntakeReleased() {
     // Use requires() here to declare subsystem dependencies
     addRequirements(Robot.intake);
   }
 
   // Called just before this Command runs the first time
   @Override
-  public void initialize() {RobotMap.IntakeMotor1.setInverted(true);}
+  public void initialize() {RobotMap.IntakeMotor1.setInverted(false);}
 
   // Called repeatedly when this Command is scheduled to run
   @Override

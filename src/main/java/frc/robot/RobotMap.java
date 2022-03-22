@@ -75,13 +75,16 @@ public class RobotMap {
   public static boolean turnedaround = false;
   public static boolean shotFirstShotInAuto = false;
   public static double tankDriveInPlaceError = 0.0;
+  public static boolean pilotDisabled = false;
+  public static double overrideVelocity;
+  public static double limeLightDistance;
 
   public static final double ksVolts = 0.67766;
   public static final double kvVoltSecondsPerMeter = 2.2804;
   public static final double kaVoltSecondsSquaredPerMeter = 0.6814;
 
-  public static final double kMaxSpeedMetersPerSecond = 3;
-  public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+  public static final double kMaxSpeedMetersPerSecond = 1.75;
+  public static final double kMaxAccelerationMetersPerSecondSquared = 1.75;
   public static final double kPDriveVel = 3.473;
 
   // Reasonable baseline values for a RAMSETE follower in units of meters and
@@ -116,7 +119,7 @@ public class RobotMap {
     Climber2.set(ControlMode.Follower, 12);
     PewPewMotor1.set(ControlMode.Follower, 8);
     MainLeftMotorFront.set(ControlMode.Follower, 0);
-    MainRightMotorFront.set(ControlMode.Follower, 2);
+    MainRightMotorFront.set(ControlMode.Follower, 3);
     pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
     pneumaticSingleSolenoid = new Solenoid(10, PneumaticsModuleType.CTREPCM, 0);

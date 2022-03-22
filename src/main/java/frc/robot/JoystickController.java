@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.*;
 import frc.robot.commands.*;
 
@@ -22,11 +23,12 @@ public class JoystickController {
 		final Joystick joystick = new Joystick(0);
 		// this is for playstation
 		setButtonHeldBehavior(joystick, 6, new StartIntake(), new StopIntake());
-		setButtonHeldBehavior(joystick, 2, new AlignToTarget(), null);
+		setButtonHeldBehavior(joystick, 2, new SequentialCommandGroup(new AlignToTarget()).andThen(() -> RobotMap.pilotDisabled = false), null);
+		setButtonHeldBehavior(joystick, 3, new SequentialCommandGroup(new AlignToTarget(), new PositionRobotForShooter(), new PewPewStart(false, RobotMap.overrideVelocity)).andThen(() -> RobotMap.pilotDisabled = false), null);
 
 		// this changes the direction of the intake motor while it is being held
 		// it does not start it but rather it changes the polarity of the motor
-		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), null);
+		setPOVButtonBehavior(joystick, 0, new ReverseIntake(), new ReverseIntakeReleased());
 		return new JoystickController(joystick);
 
 	}
@@ -39,10 +41,8 @@ public class JoystickController {
 		// goes for low ball shot
 		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
 		// goes for high ball shot
-		setButtonHeldBehavior(joystick, 6, new PewPewStart(), null);
-		//a climb reverse doesnt neccesarily exist because it's a pulley
-		//if you'd want to reverse it you'd just call it again after it was finished running
-		setButtonPressBehavior(joystick, 2, new Climbstart());
+		setButtonHeldBehavior(joystick, 6, new PewPewStart(false), null);
+		//setButtonPressBehavior(joystick, 2, new Climbstart());
 		return new JoystickController(joystick);
 	}
 
@@ -74,7 +74,7 @@ public class JoystickController {
 		}
 	}
 
-	private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber,
+private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber,
 			final CommandBase whenPressedCommand) {
 		final Button button = new JoystickButton(
 				joystick, buttonNumber);
@@ -103,26 +103,26 @@ public class JoystickController {
 
 	// Joystick getters
 	// change when we get new contollers por favor - Benny
-	/*
-	 * public double getLeftStickX() {
-	 * return this.joystick.getRawAxis(0);
-	 * }
-	 */
+	
+	  public double getLeftStickX() {
+	  return this.joystick.getRawAxis(0);
+	  }
+	 
 
 	public double getLeftStickY() {
 		return this.joystick.getRawAxis(1);
 	}
 
-	public double getLeftTrigger() {
+	/*public double getLeftTrigger() {
 		return this.joystick.getRawAxis(2);
-	}
+	}*/
 
-	public double getRightTrigger() {
+	/*public double getRightTrigger() {
 		return this.joystick.getRawAxis(3);
-	}
+	}*/
 
 	public double getRightStickX() {
-		return this.joystick.getRawAxis(4);
+		return this.joystick.getRawAxis(2);
 	}
 
 	public double getRightStickY() {

@@ -15,8 +15,7 @@ import frc.robot.RobotMap;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climbstart extends CommandBase {
-  long timeSinceStartedClimber;
-
+  long currentTimeClimber;
   public Climbstart() {
     // Use requires() here to declare subsystem dependencies
     addRequirements(Robot.intake);
@@ -26,8 +25,9 @@ public class Climbstart extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    timeSinceStartedClimber = System.currentTimeMillis();
-    RobotMap.Climber1.set(ControlMode.PercentOutput, 1.0);
+    RobotMap.Climber1.set(ControlMode.PercentOutput, -0.25);
+    currentTimeClimber = System.currentTimeMillis();
+
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -39,13 +39,15 @@ public class Climbstart extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   public boolean isFinished() {
-    return (System.currentTimeMillis() - timeSinceStartedClimber) >= RobotMap.climberDelay;
+    return (System.currentTimeMillis() - currentTimeClimber) >= 1000;
   }
 
   // Called once after isFinished returns true
   @Override
   public void end(boolean interrupted) {
-    RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
+    if(!interrupted){
+      RobotMap.Climber1.set(ControlMode.PercentOutput, 0);
+    }
   }
 
 }// class
