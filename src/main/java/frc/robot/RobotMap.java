@@ -59,17 +59,14 @@ public class RobotMap {
    */
   public static double velocityTarget = 13250.0;// 14000.0;
   public static double velocityFeeder = 13250.0;
-  public static double kF = 0.045;// .0455
+  public static double kD = 0.045;// .0455
   public static double kP = 0.02; // .02
-  public static double kFIndex = 0.045;
+  public static double kDIndex = 0.045;
   public static double kPIndex = 0.02;
   public static double kPAligner = 0.04;
-  public static double kDAligner = 0.0;
+  public static double kDAligner = 0.02;
   public static PIDController alignerController = new PIDController(kPAligner, 0.0, kDAligner);
-  public static double kF2 = (0.6343 * 1023.0) / velocityTarget;
-  public static double kP2 = 0.0299999714;
-  public static double kI2 = 9.98973846E-05;
-  public static double kD2 = 0.03999996;
+  public static boolean isOneBall = false;
   public static int numOfTogglesOnSolenoids = 0;
   public static boolean reachedGoal = false;
   public static boolean turnedaround = false;

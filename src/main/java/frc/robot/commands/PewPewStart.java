@@ -12,6 +12,10 @@ public class PewPewStart extends CommandBase {
   public PewPewStart(boolean slowShot) {
     RobotMap.fullShooterPower = !slowShot;
   }
+  public PewPewStart(boolean slowShot, boolean oneBall) {
+    RobotMap.fullShooterPower = !slowShot;
+    RobotMap.isOneBall = oneBall;
+  }
   public PewPewStart(boolean slowShot, double overrideVelocity) {
     RobotMap.fullShooterPower = !slowShot;
     velocity = overrideVelocity;
@@ -33,6 +37,7 @@ public class PewPewStart extends CommandBase {
   public void execute() {
     long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
     // delay is measured in milliseconds
+    if (!RobotMap.isOneBall) {
     if (dt >= 4500) {
       RobotMap.inFiringCoroutine = false;
     } else if (dt >= 3000) {
@@ -45,6 +50,15 @@ public class PewPewStart extends CommandBase {
       RobotMap.pneumaticSingleSolenoid.set(true);
       RobotMap.PewPewMotor2.set(ControlMode.Velocity, velocity);
     }
+  } else {
+    if (dt >= 1000) {
+      RobotMap.inFiringCoroutine = false;
+    } else if (dt >= 500) {
+      RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
+    } else {
+      RobotMap.PewPewMotor2.set(ControlMode.Velocity, velocity);
+    }
+  }
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -58,6 +72,7 @@ public class PewPewStart extends CommandBase {
   public void end(boolean interrupted) {
     RobotMap.inFiringCoroutine = false;
     RobotMap.fullShooterPower = true;
+    RobotMap.isOneBall = false;
     RobotMap.pneumaticSingleSolenoid.set(false);
     RobotMap.overrideVelocity = -1.0;
     RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
