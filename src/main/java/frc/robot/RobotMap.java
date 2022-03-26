@@ -47,6 +47,13 @@ public class RobotMap {
   public static boolean inAutonomous = false;
   public static double angle = 0.0;// angle for robot to align to when in aligining command
   public static boolean angleMode = false; // false means to target to the limelight
+
+  //1 = passes lower bound, 0 = in range, -1 = passes upper bound
+  public static int climberFlag1 = 0;
+  public static int climberFlag2 = 0;
+  public static double upperBoundClimbers = 100000;
+  public static double lowerBoundClimber = -1000;
+  public static double climberSpeed = 0.25;
   // The robot's drive
   public static DifferentialDrive m_drive;
   /*
@@ -59,9 +66,9 @@ public class RobotMap {
    */
   public static double velocityTarget = 13250.0;// 14000.0;
   public static double velocityFeeder = 13250.0;
-  public static double kD = 0.045;// .0455
+  public static double kF = 0.045;// .0455
   public static double kP = 0.02; // .02
-  public static double kDIndex = 0.045;
+  public static double kFIndex = 0.045;
   public static double kPIndex = 0.02;
   public static double kPAligner = 0.04;
   public static double kDAligner = 0.02;

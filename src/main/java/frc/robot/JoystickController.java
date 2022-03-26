@@ -17,14 +17,15 @@ public class JoystickController {
 	private final Joystick joystick;
 	public static JoystickController MAIN_JOYSTICK;
 	public static JoystickController COPILOT_JOYSTICK;
-
+	private static final int pilotPort = 0;
+	private static final int operatorPort = 1;
 	// creates Main joystick object
 	private static JoystickController generateMainJoystick() {
-		final Joystick joystick = new Joystick(0);
+		final Joystick joystick = new Joystick(pilotPort);
 		// this is for playstation
 		setButtonHeldBehavior(joystick, 6, new StartIntake(), new StopIntake());
 		setButtonHeldBehavior(joystick, 2, new SequentialCommandGroup(new AlignToTarget()).andThen(() -> RobotMap.pilotDisabled = false), null);
-		setButtonHeldBehavior(joystick, 3, new SequentialCommandGroup(new AlignToTarget(), new PositionRobotForShooter(), new PewPewStart(false, RobotMap.overrideVelocity)).andThen(() -> RobotMap.pilotDisabled = false), null);
+		//setButtonHeldBehavior(joystick, 3, new SequentialCommandGroup(new AlignToTarget(), new PositionRobotForShooter(), new PewPewStart(false, RobotMap.overrideVelocity)).andThen(() -> RobotMap.pilotDisabled = false), null);
 
 		// this changes the direction of the intake motor while it is being held
 		// it does not start it but rather it changes the polarity of the motor
@@ -35,7 +36,7 @@ public class JoystickController {
 
 	// create CoPilot joystick object
 	private static JoystickController generateCoPilotJoystick() {
-		final Joystick joystick = new Joystick(1);
+		final Joystick joystick = new Joystick(operatorPort);
 		// this is for xbox
 
 		// goes for low ball shot
@@ -110,7 +111,13 @@ private static void setButtonPressBehavior(final Joystick joystick, final int bu
 	 
 
 	public double getLeftStickY() {
-		return this.joystick.getRawAxis(1);
+		double yAxis = 0.0;
+		if (this.joystick.getPort() == pilotPort) {
+			yAxis = this.joystick.getRawAxis(1);
+		} else if (this.joystick.getPort() == operatorPort) {
+			yAxis = this.joystick.getRawAxis(1);
+		}
+		return yAxis;
 	}
 
 	/*public double getLeftTrigger() {
