@@ -1,25 +1,12 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import edu.wpi.first.math.controller.PIDController;
-//import edu.wpi.first.wpilibj.DoubleSolenoid;
-//import edu.wpi.first.wpilibj.PneumaticsModuleType;
-//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-//import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
-//import edu.wpi.first.wpilibj.PneumaticsModuleType;
-//import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.JoystickController;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climber extends CommandBase {
   JoystickController coPilotJoystick = JoystickController.COPILOT_JOYSTICK;
-  
   public Climber() {
     // Use requires() here to declare subsystem dependencies
     
@@ -27,15 +14,39 @@ public class Climber extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
+    RobotMap.Climber1.config_kP(0, 0.02);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
     double lVal = -coPilotJoystick.getLeftStickY();
-
-    if (RobotMap.climberFlag1 == 0 && RobotMap.climberFlag2 == 0 && Math.abs(lVal) > 0.5) {
-    RobotMap.Climber1.set(ControlMode.PercentOutput, Math.signum(lVal) * RobotMap.climberSpeed);
+    double ticks = -RobotMap.Climber1.getSelectedSensorPosition();
+    double direction = Math.signum(lVal);
+    if (RobotMap.operatorIsControlling) {
+    if (ticks > RobotMap.upperBoundClimber /*|| ticks2 > RobotMap.upperBoundClimber*/) {
+      RobotMap.climberFlag = 1;
+      
+    } else if (ticks < RobotMap.lowerBoundClimber /*|| ticks2 > RobotMap.lowerBoundClimber*/) {
+      RobotMap.climberFlag = -1;
+    } else {
+      RobotMap.climberFlag = 0;
+    }
+    if (RobotMap.climberFlag == 1) {
+      if (direction < 0) {
+      RobotMap.Climber1.set(ControlMode.PercentOutput, -1*-RobotMap.climberSpeed);
+      } else {
+        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
+      }
+    } else if (RobotMap.climberFlag == -1) {
+      if (direction > 0) {
+      RobotMap.Climber1.set(ControlMode.PercentOutput, -1*RobotMap.climberSpeed);
+      } else {
+        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
+      }
+    } else {
+      RobotMap.Climber1.set(ControlMode.PercentOutput, -1*direction * RobotMap.climberSpeed);
+    }
     }
   }
 

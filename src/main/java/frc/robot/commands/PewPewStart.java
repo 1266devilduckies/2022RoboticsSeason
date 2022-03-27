@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
@@ -16,8 +15,9 @@ public class PewPewStart extends CommandBase {
     RobotMap.fullShooterPower = !slowShot;
     RobotMap.isOneBall = oneBall;
   }
-  public PewPewStart(boolean slowShot, double overrideVelocity) {
+  public PewPewStart(boolean slowShot, boolean oneBall, double overrideVelocity) {
     RobotMap.fullShooterPower = !slowShot;
+    RobotMap.isOneBall = oneBall;
     velocity = overrideVelocity;
   }
 
@@ -27,7 +27,7 @@ public class PewPewStart extends CommandBase {
   public void initialize() {
     RobotMap.inFiringCoroutine = true;
     RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
-    if (velocity < 0) {
+    if (velocity == -1.0) {
     velocity = RobotMap.fullShooterPower ? RobotMap.velocityFeeder : RobotMap.velocityTarget / 2.0;
     }
   }
@@ -38,13 +38,13 @@ public class PewPewStart extends CommandBase {
     long dt = System.currentTimeMillis() - RobotMap.timeSinceStartedBeingReleasedForShooter;
     // delay is measured in milliseconds
     if (!RobotMap.isOneBall) {
-    if (dt >= 4500) {
+    if (dt >= 3000) {
       RobotMap.inFiringCoroutine = false;
-    } else if (dt >= 3000) {
-      RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
     } else if (dt >= 2000) {
+      RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
+    } else if (dt >= 1000) {
       RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
-    } else if (dt >= 1550) {
+    } else if (dt >= 500) {
       RobotMap.FeederMotor.set(ControlMode.Velocity, RobotMap.velocityFeeder);
     } else {
       RobotMap.pneumaticSingleSolenoid.set(true);
@@ -64,7 +64,7 @@ public class PewPewStart extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   public boolean isFinished() {
-    return !RobotMap.inFiringCoroutine || (RobotMap.overrideVelocity > 0 & RobotMap.limeLightDistance < 0);
+    return !RobotMap.inFiringCoroutine;
   }
 
   // Called once after isFinished returns true

@@ -31,6 +31,7 @@ import frc.robot.commands.PewPewStart;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.commands.Climber;
 //import edu.wpi.first.hal.simulation.EncoderDataJNI;
 //import edu.wpi.first.hal.EncoderJNI;
 //import edu.wpi.first.wpilibj.simulation.EncoderSim;
@@ -38,7 +39,6 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.math.util.Units;
 import frc.robot.limeLightDataFetcher;
@@ -54,13 +54,12 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem m_robotDrive;
   public static Intake intake;
   public static Shooter shooter;
-  public static Climber climber;
   public static double turnY;
   public static double moveX;
   // in milliseconds
-  public long startAutoTime;
-  public long currentAutoTime = 0;
-  Field2d m_field = new Field2d();
+  //public long startAutoTime;
+  //public long currentAutoTime = 0;
+  //Field2d m_field = new Field2d();
 
   // trajectory
   // Trajectory trajectory = new Trajectory();
@@ -112,7 +111,6 @@ public class Robot extends TimedRobot {
   Trajectory auto8Part6;
   Trajectory auto8Part7;
 
-  PewPewStart shootHigh;
   Trajectory initTrajectory;
 
   @Override
@@ -217,18 +215,17 @@ public class Robot extends TimedRobot {
 
     
     RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Coast);
-     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
-     RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Coast);
-     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
+    RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
+    RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Coast);
+    RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
      
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
 
-    SmartDashboard.putData("Field", m_field);
+    //SmartDashboard.putData("Field", m_field);
 
     RobotMap.gyro.calibrate();
     intake = new Intake();
     shooter = new Shooter();
-    climber = new Climber();
     JoystickController.Init();
     // get auto path json
     autoRoutines.setDefaultOption("Auto Defense", 1);
@@ -252,42 +249,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    if (RobotMap.Climber1.getSelectedSensorPosition() > RobotMap.upperBoundClimbers) {
-      RobotMap.climberFlag1 = 1;
-    } else if (RobotMap.Climber1.getSelectedSensorPosition() < RobotMap.lowerBoundClimber) {
-      RobotMap.climberFlag1 = -1;
-    } else {
-      RobotMap.climberFlag1 = 0;
-    }
-
-    if (RobotMap.Climber2.getSelectedSensorPosition() > RobotMap.upperBoundClimbers) {
-      RobotMap.climberFlag2 = 1;
-    } else if (RobotMap.Climber2.getSelectedSensorPosition() < RobotMap.lowerBoundClimber) {
-      RobotMap.climberFlag2 = -1;
-    } else {
-      RobotMap.climberFlag2 = 0;
-    }
-
-    if (RobotMap.climberFlag1 == -1) {
-      RobotMap.Climber1.set(ControlMode.PercentOutput, -1.0);
-    } else if (RobotMap.climberFlag1 == 1) {
-      RobotMap.Climber1.set(ControlMode.PercentOutput, 1.0);
-    } else {
-      RobotMap.Climber2.follow(RobotMap.Climber1);
-    }
-
-    if (RobotMap.climberFlag2 == -1) {
-      RobotMap.Climber2.set(ControlMode.PercentOutput, -1.0);
-    } else if (RobotMap.climberFlag2 == 1) {
-      RobotMap.Climber2.set(ControlMode.PercentOutput, 1.0);
-    } else {
-      RobotMap.Climber2.follow(RobotMap.Climber1);
-    }
     // gyro drift fix
-    if (++i > 3000 & !finished) {
-      SmartDashboard.putNumber("gyro error", RobotMap.gyro.getAngle());
-      finished = true;
-    }
+   // if (++i > 3000 & !finished) {
+     // SmartDashboard.putNumber("gyro error", RobotMap.gyro.getAngle());
+      //finished = true;
+    //}
 
     DriveSubsystem.m_odometry.update(RobotMap.gyro.getRotation2d(),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
@@ -420,7 +386,7 @@ public class Robot extends TimedRobot {
     RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
     RobotMap.FeederMotor.config_kP(0, RobotMap.kPIndex);
     RobotMap.FeederMotor.config_kF(0, RobotMap.kFIndex);
-    startAutoTime = System.currentTimeMillis();
+    //startAutoTime = System.currentTimeMillis();
     m_autonomousCommand = getAutonomousCommand(autoRoutines.getSelected());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
@@ -437,20 +403,25 @@ public class Robot extends TimedRobot {
     RobotMap.PewPewMotor1.setSelectedSensorPosition(0);
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
-    CommandScheduler.getInstance().schedule(new BetterKearnyDriving());
+    RobotMap.Climber1.setSelectedSensorPosition(0);
+    //bind driver controls to the drivetrain
+    //bind operator controls to climber
+    CommandScheduler.getInstance().schedule(new BetterKearnyDriving(), new Climber());
   }
 
   @Override
   public void teleopPeriodic() {
     // periodic events
-
+    SmartDashboard.putNumber("climber one ticks", -RobotMap.Climber1.getSelectedSensorPosition());
     limeLightDataFetcher.fetchData();
 
     // logging data
+    /*
     SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
     SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
     SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
     SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
+    */
   }
 
   @Override
@@ -509,7 +480,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     EncoderSetter.updateEncoders();
-    SmartDashboard.putNumber("distance", RobotMap.avgPositionInMeters);
   }
 
   @Override

@@ -26,7 +26,6 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Update the odometry in the periodic block
-        SmartDashboard.putNumber("testing periodic", System.currentTimeMillis());
         m_odometry.update(
                 RobotMap.gyro.getRotation2d(),
                 EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition(0)),

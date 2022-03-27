@@ -20,7 +20,6 @@ public class StopIntake extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    SmartDashboard.putBoolean("reversed", true);
     RobotMap.IntakeMotor1.set(ControlMode.PercentOutput, 0.0);
     RobotMap.pneumaticSingleSolenoid.set(false);
   }

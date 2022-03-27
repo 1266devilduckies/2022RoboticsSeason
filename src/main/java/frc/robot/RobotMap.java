@@ -31,8 +31,8 @@ public class RobotMap {
   public static WPI_TalonFX PewPewMotor1;
   public static WPI_TalonFX PewPewMotor2;
   public static WPI_TalonFX FeederMotor;
-  public static VictorSPX Climber1;
-  public static VictorSPX Climber2;
+  public static WPI_TalonFX Climber1;
+  public static WPI_TalonFX Climber2;
   public static double avgPositionRaw;
   public static double avgPositionInMeters;
   public static boolean inFiringCoroutine;
@@ -48,12 +48,11 @@ public class RobotMap {
   public static double angle = 0.0;// angle for robot to align to when in aligining command
   public static boolean angleMode = false; // false means to target to the limelight
 
-  //1 = passes lower bound, 0 = in range, -1 = passes upper bound
-  public static int climberFlag1 = 0;
-  public static int climberFlag2 = 0;
-  public static double upperBoundClimbers = 100000;
-  public static double lowerBoundClimber = -1000;
-  public static double climberSpeed = 0.25;
+  //-1 = passes lower bound, 0 = in range, 1 = passes upper bound
+  public static int climberFlag = 0;
+  public static double upperBoundClimber = 200000.0;
+  public static double lowerBoundClimber = 0.0;
+  public static double climberSpeed = 0.5;
   // The robot's drive
   public static DifferentialDrive m_drive;
   /*
@@ -82,6 +81,7 @@ public class RobotMap {
   public static boolean pilotDisabled = false;
   public static double overrideVelocity;
   public static double limeLightDistance;
+  public static boolean operatorIsControlling = true;
 
   public static final double ksVolts = 0.67766;
   public static final double kvVoltSecondsPerMeter = 2.2804;
@@ -118,12 +118,12 @@ public class RobotMap {
     FeederMotor = new WPI_TalonFX(9);
     PewPewMotor1 = new WPI_TalonFX(5);
     PewPewMotor2 = new WPI_TalonFX(8);
-    Climber1 = new VictorSPX(12);
-    Climber2 = new VictorSPX(13);
-    Climber2.set(ControlMode.Follower, 12);
-    PewPewMotor1.set(ControlMode.Follower, 8);
-    MainLeftMotorFront.set(ControlMode.Follower, 0);
-    MainRightMotorFront.set(ControlMode.Follower, 3);
+    Climber1 = new WPI_TalonFX(12);
+    Climber2 = new WPI_TalonFX(13);
+    //Climber2.follow(Climber1);
+    PewPewMotor1.follow(PewPewMotor2);
+    MainLeftMotorFront.follow(MainLeftMotorBack);
+    MainRightMotorFront.follow(MainRightMotorBack);
     pcmCompressor = new Compressor(10, PneumaticsModuleType.CTREPCM);
     pcmCompressor.enableDigital();
     pneumaticSingleSolenoid = new Solenoid(10, PneumaticsModuleType.CTREPCM, 0);

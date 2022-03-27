@@ -43,7 +43,8 @@ public class JoystickController {
 		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
 		// goes for high ball shot
 		setButtonHeldBehavior(joystick, 6, new PewPewStart(false), null);
-		//setButtonPressBehavior(joystick, 2, new Climbstart());
+		setButtonHeldBehavior(joystick, 2, new ClimberUp(), null);
+		setButtonHeldBehavior(joystick, 3, new ClimberDown(), null);
 		return new JoystickController(joystick);
 	}
 
