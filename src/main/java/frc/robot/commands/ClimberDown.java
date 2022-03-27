@@ -19,9 +19,14 @@ public class ClimberDown extends CommandBase {
     RobotMap.Climber1.configReverseSoftLimitThreshold(-RobotMap.upperBoundClimber, 0);
     RobotMap.Climber1.configForwardSoftLimitEnable(true, 0);
     RobotMap.Climber1.configReverseSoftLimitEnable(true, 0);
+    RobotMap.Climber2.config_kP(0, 0.02);
+    RobotMap.Climber2.configForwardSoftLimitThreshold(0, 0);
+    RobotMap.Climber2.configReverseSoftLimitThreshold(-RobotMap.upperBoundClimber, 0);
+    RobotMap.Climber2.configForwardSoftLimitEnable(true, 0);
+    RobotMap.Climber2.configReverseSoftLimitEnable(true, 0);
 
-    //obotMap.Climber1.configClosedloopRamp(1);
     RobotMap.Climber1.set(ControlMode.Position, 0);
+    RobotMap.Climber2.set(ControlMode.Position, 0);
     RobotMap.operatorIsControlling = false;
   }
 

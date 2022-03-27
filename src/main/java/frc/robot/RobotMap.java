@@ -50,7 +50,7 @@ public class RobotMap {
 
   //-1 = passes lower bound, 0 = in range, 1 = passes upper bound
   public static int climberFlag = 0;
-  public static double upperBoundClimber = 200000.0;
+  public static double upperBoundClimber = 50000.0;
   public static double lowerBoundClimber = 0.0;
   public static double climberSpeed = 0.5;
   // The robot's drive
@@ -120,7 +120,6 @@ public class RobotMap {
     PewPewMotor2 = new WPI_TalonFX(8);
     Climber1 = new WPI_TalonFX(12);
     Climber2 = new WPI_TalonFX(13);
-    //Climber2.follow(Climber1);
     PewPewMotor1.follow(PewPewMotor2);
     MainLeftMotorFront.follow(MainLeftMotorBack);
     MainRightMotorFront.follow(MainRightMotorBack);
