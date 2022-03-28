@@ -15,13 +15,13 @@ public class ClimberDown extends CommandBase {
   @Override
   public void initialize() {
     RobotMap.Climber1.config_kP(0, 0.1);
-    RobotMap.Climber1.configForwardSoftLimitThreshold(0, 0);
-    RobotMap.Climber1.configReverseSoftLimitThreshold(-RobotMap.upperBoundClimber, 0);
+    RobotMap.Climber1.configForwardSoftLimitThreshold(RobotMap.lowerBoundClimber, 0);
+    RobotMap.Climber1.configReverseSoftLimitThreshold(RobotMap.upperBoundClimber, 0);
     RobotMap.Climber1.configForwardSoftLimitEnable(true, 0);
     RobotMap.Climber1.configReverseSoftLimitEnable(true, 0);
     RobotMap.Climber2.config_kP(0, 0.1);
-    RobotMap.Climber2.configForwardSoftLimitThreshold(0, 0);
-    RobotMap.Climber2.configReverseSoftLimitThreshold(-RobotMap.upperBoundClimber, 0);
+    RobotMap.Climber2.configForwardSoftLimitThreshold(RobotMap.lowerBoundClimber, 0);
+    RobotMap.Climber2.configReverseSoftLimitThreshold(RobotMap.upperBoundClimber, 0);
     RobotMap.Climber2.configForwardSoftLimitEnable(true, 0);
     RobotMap.Climber2.configReverseSoftLimitEnable(true, 0);
 
