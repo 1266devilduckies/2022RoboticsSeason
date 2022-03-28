@@ -1,11 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-//import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-//import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-//import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-//import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 //RobotMap.java just makes the motors through TalonFX (the actual motors)
 //When we start working with a new motor, we basically 'initialize' it here -JM
@@ -13,11 +7,9 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -38,7 +30,7 @@ public class RobotMap {
   public static boolean inFiringCoroutine;
   public static long timeSinceStartedBeingReleasedForShooter = -1;
   public static long timeSinceStartedBeingReleasedForSolenoids = -1;
-  public static long climberDelay = 1000; //in milliseconds
+  public static long climberDelay = 1000; // in milliseconds
   public static ADXRS450_Gyro gyro;
   public static Solenoid pneumaticSingleSolenoid;
   public static Compressor pcmCompressor;
@@ -48,7 +40,7 @@ public class RobotMap {
   public static double angle = 0.0;// angle for robot to align to when in aligining command
   public static boolean angleMode = false; // false means to target to the limelight
 
-  //-1 = passes lower bound, 0 = in range, 1 = passes upper bound
+  // -1 = passes lower bound, 0 = in range, 1 = passes upper bound
   public static int climberFlag = 0;
   public static double upperBoundClimber = 100000.0;
   public static double lowerBoundClimber = 0.0;
@@ -128,12 +120,5 @@ public class RobotMap {
     pneumaticSingleSolenoid = new Solenoid(10, PneumaticsModuleType.CTREPCM, 0);
     pneumaticSingleSolenoid.set(false);
     gyro = new ADXRS450_Gyro();
-    // AnalogGyroSim gyroSim = new AnalogGyroSim(gyro);
-    /*
-     * TalonFXSimCollection fx_simshooter1 = PewPewMotor1.getSimCollection();
-     * TalonFXSimCollection fx_simshooter2 = PewPewMotor2.getSimCollection();
-     * VictorSPXSimCollection fx_intake1 = IntakeMotor1.getSimCollection();
-     * VictorSPXSimCollection fx_feeder1 = FeederMotor.getSimCollection();
-     */
   }
 }

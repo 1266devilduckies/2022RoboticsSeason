@@ -7,10 +7,12 @@ import frc.robot.RobotMap;
 
 public class Climber extends CommandBase {
   JoystickController coPilotJoystick = JoystickController.COPILOT_JOYSTICK;
+
   public Climber() {
     // Use requires() here to declare subsystem dependencies
-    
+
   }
+
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
@@ -30,53 +32,54 @@ public class Climber extends CommandBase {
   @Override
   public void execute() {
 
-    //RobotMap.Climber2.set(ControlMode.Position, RobotMap.Climber1.getSelectedSensorPosition());
+    // RobotMap.Climber2.set(ControlMode.Position,
+    // RobotMap.Climber1.getSelectedSensorPosition());
 
     double lVal = -coPilotJoystick.getLeftStickY();
-    
-    if(RobotMap.operatorIsControlling){
-      if(lVal > 0.1){
+
+    if (RobotMap.operatorIsControlling) {
+      if (lVal > 0.1) {
         RobotMap.Climber1.set(ControlMode.PercentOutput, -0.2);
         RobotMap.Climber2.set(ControlMode.PercentOutput, -0.2);
-      }
-      else if(lVal < -0.1){
+      } else if (lVal < -0.1) {
         RobotMap.Climber1.set(ControlMode.PercentOutput, 0.2);
         RobotMap.Climber2.set(ControlMode.PercentOutput, 0.2);
-      }
-      else{
+      } else {
         RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
         RobotMap.Climber2.set(ControlMode.PercentOutput, 0.0);
       }
     }
 
     /*
-    double ticks = -RobotMap.Climber1.getSelectedSensorPosition();
-    double direction = Math.signum(lVal);
-    if (RobotMap.operatorIsControlling) {
-    if (ticks > RobotMap.upperBoundClimber) {
-      RobotMap.climberFlag = 1;
-      
-    } else if (ticks < RobotMap.lowerBoundClimber) {
-      RobotMap.climberFlag = -1;
-    } else {
-      RobotMap.climberFlag = 0;
-    }
-    if (RobotMap.climberFlag == 1) {
-      if (direction < 0) {
-      RobotMap.Climber1.set(ControlMode.PercentOutput, -1*-RobotMap.climberSpeed);
-      } else {
-        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
-      }
-    } else if (RobotMap.climberFlag == -1) {
-      if (direction > 0) {
-      RobotMap.Climber1.set(ControlMode.PercentOutput, -1*RobotMap.climberSpeed);
-      } else {
-        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
-      }
-    } else {
-      RobotMap.Climber1.set(ControlMode.PercentOutput, -1*direction * RobotMap.climberSpeed);
-    }
-    }*/
+     * double ticks = -RobotMap.Climber1.getSelectedSensorPosition();
+     * double direction = Math.signum(lVal);
+     * if (RobotMap.operatorIsControlling) {
+     * if (ticks > RobotMap.upperBoundClimber) {
+     * RobotMap.climberFlag = 1;
+     * 
+     * } else if (ticks < RobotMap.lowerBoundClimber) {
+     * RobotMap.climberFlag = -1;
+     * } else {
+     * RobotMap.climberFlag = 0;
+     * }
+     * if (RobotMap.climberFlag == 1) {
+     * if (direction < 0) {
+     * RobotMap.Climber1.set(ControlMode.PercentOutput, -1*-RobotMap.climberSpeed);
+     * } else {
+     * RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
+     * }
+     * } else if (RobotMap.climberFlag == -1) {
+     * if (direction > 0) {
+     * RobotMap.Climber1.set(ControlMode.PercentOutput, -1*RobotMap.climberSpeed);
+     * } else {
+     * RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
+     * }
+     * } else {
+     * RobotMap.Climber1.set(ControlMode.PercentOutput, -1*direction *
+     * RobotMap.climberSpeed);
+     * }
+     * }
+     */
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -88,7 +91,7 @@ public class Climber extends CommandBase {
   // Called once after isFinished returns true
   @Override
   public void end(boolean interrupted) {
-    
+
   }
 
 }// class

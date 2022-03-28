@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.RobotMap;
 
 public class SlowShot extends CommandBase {
 
@@ -27,7 +26,8 @@ public class SlowShot extends CommandBase {
 
     // Called once after isFinished returns true
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+    }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run

@@ -15,7 +15,7 @@ public class EncoderSetter {
     double motorRotations = (double) sensorCounts / 2048.0; // is units per rotation for the falcons
     double wheelRotations = motorRotations / 8.333; // 8.333:1 is gear ratio
     double positionMeters = wheelRotations * (2 * Math.PI * 0.0508); // 2 inches in meters is 0.0508 meters. the wheels
-                                                                    // radius is 2 inches
+                                                                     // radius is 2 inches
     return positionMeters;
   }
 

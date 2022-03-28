@@ -2,15 +2,15 @@ package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.JoystickController;
 import frc.robot.RobotMap;
 
 public class ClimberDown extends CommandBase {
 
   public ClimberDown() {
     // Use requires() here to declare subsystem dependencies
-    
+
   }
+
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
@@ -33,7 +33,7 @@ public class ClimberDown extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
-    
+
   }
 
   // Make this return true when this Command no longer needs to run execute()

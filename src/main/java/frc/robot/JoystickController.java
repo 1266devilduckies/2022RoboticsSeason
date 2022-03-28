@@ -19,13 +19,18 @@ public class JoystickController {
 	public static JoystickController COPILOT_JOYSTICK;
 	private static final int pilotPort = 0;
 	private static final int operatorPort = 1;
+
 	// creates Main joystick object
 	private static JoystickController generateMainJoystick() {
 		final Joystick joystick = new Joystick(pilotPort);
 		// this is for playstation
 		setButtonHeldBehavior(joystick, 6, new StartIntake(), new StopIntake());
-		setButtonHeldBehavior(joystick, 2, new SequentialCommandGroup(new AlignToTarget()).andThen(() -> RobotMap.pilotDisabled = false), null);
-		//setButtonHeldBehavior(joystick, 3, new SequentialCommandGroup(new AlignToTarget(), new PositionRobotForShooter(), new PewPewStart(false, RobotMap.overrideVelocity)).andThen(() -> RobotMap.pilotDisabled = false), null);
+		setButtonHeldBehavior(joystick, 2,
+				new SequentialCommandGroup(new AlignToTarget()).andThen(() -> RobotMap.pilotDisabled = false), null);
+		// setButtonHeldBehavior(joystick, 3, new SequentialCommandGroup(new
+		// AlignToTarget(), new PositionRobotForShooter(), new PewPewStart(false,
+		// RobotMap.overrideVelocity)).andThen(() -> RobotMap.pilotDisabled = false),
+		// null);
 
 		// this changes the direction of the intake motor while it is being held
 		// it does not start it but rather it changes the polarity of the motor
@@ -76,7 +81,7 @@ public class JoystickController {
 		}
 	}
 
-private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber,
+	private static void setButtonPressBehavior(final Joystick joystick, final int buttonNumber,
 			final CommandBase whenPressedCommand) {
 		final Button button = new JoystickButton(
 				joystick, buttonNumber);
@@ -105,11 +110,10 @@ private static void setButtonPressBehavior(final Joystick joystick, final int bu
 
 	// Joystick getters
 	// change when we get new contollers por favor - Benny
-	
-	  public double getLeftStickX() {
-	  return this.joystick.getRawAxis(0);
-	  }
-	 
+
+	public double getLeftStickX() {
+		return this.joystick.getRawAxis(0);
+	}
 
 	public double getLeftStickY() {
 		double yAxis = 0.0;
@@ -121,13 +125,17 @@ private static void setButtonPressBehavior(final Joystick joystick, final int bu
 		return yAxis;
 	}
 
-	/*public double getLeftTrigger() {
-		return this.joystick.getRawAxis(2);
-	}*/
+	/*
+	 * public double getLeftTrigger() {
+	 * return this.joystick.getRawAxis(2);
+	 * }
+	 */
 
-	/*public double getRightTrigger() {
-		return this.joystick.getRawAxis(3);
-	}*/
+	/*
+	 * public double getRightTrigger() {
+	 * return this.joystick.getRawAxis(3);
+	 * }
+	 */
 
 	public double getRightStickX() {
 		return this.joystick.getRawAxis(2);

@@ -1,8 +1,6 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
@@ -12,40 +10,26 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-//import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-//import frc.robot.commands.Auto;
 import frc.robot.commands.BetterKearnyDriving;
 import frc.robot.commands.PewPewStart;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.commands.Climber;
-//import edu.wpi.first.hal.simulation.EncoderDataJNI;
-//import edu.wpi.first.hal.EncoderJNI;
-//import edu.wpi.first.wpilibj.simulation.EncoderSim;
-//import edu.wpi.first.wpilibj.drive.;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.math.util.Units;
-import frc.robot.limeLightDataFetcher;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 
 //This is basically our main class, we just don't use Main.java for clarity (i guess) -JM
 
@@ -57,9 +41,9 @@ public class Robot extends TimedRobot {
   public static double turnY;
   public static double moveX;
   // in milliseconds
-  //public long startAutoTime;
-  //public long currentAutoTime = 0;
-  //Field2d m_field = new Field2d();
+  // public long startAutoTime;
+  // public long currentAutoTime = 0;
+  // Field2d m_field = new Field2d();
 
   // trajectory
   // Trajectory trajectory = new Trajectory();
@@ -125,58 +109,58 @@ public class Robot extends TimedRobot {
       auto1Part1 = initTrajectory;
 
       auto2Part1 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part1.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part1.wpilib.json"));
       auto2Part2 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part2.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part2.wpilib.json"));
       auto2Part3 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part3.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part3.wpilib.json"));
 
       auto3Part1 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto3Part1.wpilib.json"));
       auto3Part2 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto3Part2.wpilib.json"));
-        
+
       auto4Part1 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto4Part1.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto4Part1.wpilib.json"));
       auto4Part2 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto4Part2.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto4Part2.wpilib.json"));
       auto4Part3 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto4Part3.wpilib.json"));
-        
+
       auto5Part1 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part1.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part1.wpilib.json"));
       auto5Part2 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part2.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part2.wpilib.json"));
       auto5Part3 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part3.wpilib.json"));
       auto5Part4 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part4.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part4.wpilib.json"));
       auto5Part5 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part5.wpilib.json"));
-        
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto5Part5.wpilib.json"));
+
       auto6Part1 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto6Part1.wpilib.json"));
       auto6Part2 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto6Part2.wpilib.json"));
       auto6Part3 = TrajectoryUtil.fromPathweaverJson(
-            Filesystem.getDeployDirectory().toPath().resolve("paths/auto6Part3.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto6Part3.wpilib.json"));
 
       auto7Part1 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto7Part1.wpilib.json"));
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto7Part1.wpilib.json"));
 
       auto8Part1 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part1.wpilib.json"));
-        auto8Part2 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part2.wpilib.json"));
-        auto8Part3 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part3.wpilib.json"));
-        auto8Part4 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part4.wpilib.json"));
-        auto8Part5 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part5.wpilib.json"));
-        auto8Part6 = TrajectoryUtil.fromPathweaverJson(
-        Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part6.wpilib.json"));
-        auto8Part7 = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part1.wpilib.json"));
+      auto8Part2 = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part2.wpilib.json"));
+      auto8Part3 = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part3.wpilib.json"));
+      auto8Part4 = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part4.wpilib.json"));
+      auto8Part5 = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part5.wpilib.json"));
+      auto8Part6 = TrajectoryUtil.fromPathweaverJson(
+          Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part6.wpilib.json"));
+      auto8Part7 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto8Part7.wpilib.json"));
     } catch (IOException ex) {
       // whoops
@@ -199,8 +183,8 @@ public class Robot extends TimedRobot {
     RobotMap.IntakeMotor1.setInverted(false);
     RobotMap.MainLeftMotorFront.setInverted(true);
     RobotMap.MainLeftMotorBack.setInverted(true);
-    //they were false
-    
+    // they were false
+
     RobotMap.MainRightMotorFront.setInverted(false);
     //
     RobotMap.MainRightMotorBack.setInverted(false);
@@ -213,15 +197,14 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
     RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
 
-    
     RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Coast);
     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
     RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Coast);
     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
-     
+
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
 
-    //SmartDashboard.putData("Field", m_field);
+    // SmartDashboard.putData("Field", m_field);
 
     RobotMap.gyro.calibrate();
     intake = new Intake();
@@ -250,10 +233,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // gyro drift fix
-   // if (++i > 3000 & !finished) {
-     // SmartDashboard.putNumber("gyro error", RobotMap.gyro.getAngle());
-      //finished = true;
-    //}
+    // if (++i > 3000 & !finished) {
+    // SmartDashboard.putNumber("gyro error", RobotMap.gyro.getAngle());
+    // finished = true;
+    // }
 
     DriveSubsystem.m_odometry.update(RobotMap.gyro.getRotation2d(),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
@@ -290,7 +273,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
- 
+
   }
 
   @Override
@@ -313,7 +296,7 @@ public class Robot extends TimedRobot {
         // RamseteCommand passes volts to the callback
         m_robotDrive::tankDriveVolts,
         m_robotDrive);
-    //m_robotDrive.resetOdometry(trajectory.getInitialPose());
+    // m_robotDrive.resetOdometry(trajectory.getInitialPose());
     return ramseteCommand.andThen(() -> m_robotDrive.arcadeDrive(0.0, 0.0));
   }
 
@@ -332,34 +315,34 @@ public class Robot extends TimedRobot {
     TrajectoryConfig config = new TrajectoryConfig(
         RobotMap.kMaxSpeedMetersPerSecond,
         RobotMap.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(RobotMap.kDriveKinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(RobotMap.kDriveKinematics)
+        // Apply the voltage constraint
+        .addConstraint(autoVoltageConstraint);
 
-        SequentialCommandGroup pathToGo = new SequentialCommandGroup();
-        if(num == 1){
-          Trajectory init = auto1Part1;
-          m_robotDrive.resetOdometry(init.getInitialPose());
-          //move back and play defense
-          pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto1Part1));
-        } else if (num == 2) {
-          Trajectory init = auto2Part1;
-          m_robotDrive.resetOdometry(init.getInitialPose());
-          //2 ball auto
-          pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto2Part1), 
-          new StartIntake(), 
-          generateTrajectoryCommand(auto2Part2), 
-          new StopIntake(), 
-          generateTrajectoryCommand(auto2Part3), 
+    SequentialCommandGroup pathToGo = new SequentialCommandGroup();
+    if (num == 1) {
+      Trajectory init = auto1Part1;
+      m_robotDrive.resetOdometry(init.getInitialPose());
+      // move back and play defense
+      pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto1Part1));
+    } else if (num == 2) {
+      Trajectory init = auto2Part1;
+      m_robotDrive.resetOdometry(init.getInitialPose());
+      // 2 ball auto
+      pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto2Part1),
+          new StartIntake(),
+          generateTrajectoryCommand(auto2Part2),
+          new StopIntake(),
+          generateTrajectoryCommand(auto2Part3),
           new PewPewStart(false));
-        } else if (num == 3) {
-          //4 ball auto
-          Trajectory init = auto8Part1;
-          m_robotDrive.resetOdometry(init.getInitialPose());
-          pathToGo = new SequentialCommandGroup(new StartIntake(), 
-          generateTrajectoryCommand(init), 
-          new StopIntake(), 
+    } else if (num == 3) {
+      // 4 ball auto
+      Trajectory init = auto8Part1;
+      m_robotDrive.resetOdometry(init.getInitialPose());
+      pathToGo = new SequentialCommandGroup(new StartIntake(),
+          generateTrajectoryCommand(init),
+          new StopIntake(),
           generateTrajectoryCommand(auto8Part2),
           new PewPewStart(false),
           generateTrajectoryCommand(auto8Part3),
@@ -371,12 +354,11 @@ public class Robot extends TimedRobot {
           generateTrajectoryCommand(auto8Part6),
           new StopIntake(),
           generateTrajectoryCommand(auto8Part7),
-          new PewPewStart(false)
-          );
-        }
-
-        return pathToGo;
+          new PewPewStart(false));
     }
+
+    return pathToGo;
+  }
 
   @Override
   public void autonomousInit() {
@@ -386,7 +368,7 @@ public class Robot extends TimedRobot {
     RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
     RobotMap.FeederMotor.config_kP(0, RobotMap.kPIndex);
     RobotMap.FeederMotor.config_kF(0, RobotMap.kFIndex);
-    //startAutoTime = System.currentTimeMillis();
+    // startAutoTime = System.currentTimeMillis();
     m_autonomousCommand = getAutonomousCommand(autoRoutines.getSelected());
     // schedule the autonomous command (example)
     CommandScheduler.getInstance().schedule(m_autonomousCommand);
@@ -404,8 +386,8 @@ public class Robot extends TimedRobot {
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
     RobotMap.Climber1.setSelectedSensorPosition(0);
-    //bind driver controls to the drivetrain
-    //bind operator controls to climber
+    // bind driver controls to the drivetrain
+    // bind operator controls to climber
     CommandScheduler.getInstance().schedule(new BetterKearnyDriving(), new Climber());
   }
 
@@ -417,11 +399,13 @@ public class Robot extends TimedRobot {
 
     // logging data
     /*
-    SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
-    SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
-    SmartDashboard.putNumber("diffrence x", limeLightDataFetcher.getdegRotationToTarget());
-    SmartDashboard.putNumber("difference y", limeLightDataFetcher.getdegVerticalToTarget());
-    */
+     * SmartDashboard.putBoolean("in coroutine", RobotMap.inFiringCoroutine);
+     * SmartDashboard.putNumber("gyro rotation", RobotMap.gyro.getAngle());
+     * SmartDashboard.putNumber("diffrence x",
+     * limeLightDataFetcher.getdegRotationToTarget());
+     * SmartDashboard.putNumber("difference y",
+     * limeLightDataFetcher.getdegVerticalToTarget());
+     */
   }
 
   @Override
@@ -489,5 +473,4 @@ public class Robot extends TimedRobot {
     RobotMap.Climber2.configForwardSoftLimitEnable(false, 0);
     RobotMap.Climber2.configReverseSoftLimitEnable(false, 0);
   }
-
 }
