@@ -14,20 +14,49 @@ public class Climber extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    RobotMap.Climber1.config_kP(0, 0.02);
+    RobotMap.Climber1.config_kP(0, 0.1);
+    RobotMap.Climber1.configForwardSoftLimitThreshold(0, 0);
+    RobotMap.Climber1.configReverseSoftLimitThreshold(-RobotMap.upperBoundClimber, 0);
+    RobotMap.Climber1.configForwardSoftLimitEnable(true, 0);
+    RobotMap.Climber1.configReverseSoftLimitEnable(true, 0);
+    RobotMap.Climber2.config_kP(0, 0.1);
+    RobotMap.Climber2.configForwardSoftLimitThreshold(0, 0);
+    RobotMap.Climber2.configReverseSoftLimitThreshold(-RobotMap.upperBoundClimber, 0);
+    RobotMap.Climber2.configForwardSoftLimitEnable(true, 0);
+    RobotMap.Climber2.configReverseSoftLimitEnable(true, 0);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   public void execute() {
+
+    //RobotMap.Climber2.set(ControlMode.Position, RobotMap.Climber1.getSelectedSensorPosition());
+
     double lVal = -coPilotJoystick.getLeftStickY();
+    
+    if(RobotMap.operatorIsControlling){
+      if(lVal > 0.1){
+        RobotMap.Climber1.set(ControlMode.PercentOutput, -0.2);
+        RobotMap.Climber2.set(ControlMode.PercentOutput, -0.2);
+      }
+      else if(lVal < -0.1){
+        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.2);
+        RobotMap.Climber2.set(ControlMode.PercentOutput, 0.2);
+      }
+      else{
+        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
+        RobotMap.Climber2.set(ControlMode.PercentOutput, 0.0);
+      }
+    }
+
+    /*
     double ticks = -RobotMap.Climber1.getSelectedSensorPosition();
     double direction = Math.signum(lVal);
     if (RobotMap.operatorIsControlling) {
-    if (ticks > RobotMap.upperBoundClimber /*|| ticks2 > RobotMap.upperBoundClimber*/) {
+    if (ticks > RobotMap.upperBoundClimber) {
       RobotMap.climberFlag = 1;
       
-    } else if (ticks < RobotMap.lowerBoundClimber /*|| ticks2 > RobotMap.lowerBoundClimber*/) {
+    } else if (ticks < RobotMap.lowerBoundClimber) {
       RobotMap.climberFlag = -1;
     } else {
       RobotMap.climberFlag = 0;
@@ -47,7 +76,7 @@ public class Climber extends CommandBase {
     } else {
       RobotMap.Climber1.set(ControlMode.PercentOutput, -1*direction * RobotMap.climberSpeed);
     }
-    }
+    }*/
   }
 
   // Make this return true when this Command no longer needs to run execute()

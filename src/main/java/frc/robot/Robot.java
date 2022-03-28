@@ -412,7 +412,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // periodic events
-    SmartDashboard.putNumber("climber one ticks", -RobotMap.Climber1.getSelectedSensorPosition());
+    SmartDashboard.putNumber("climber one ticks", RobotMap.Climber1.getSelectedSensorPosition());
     limeLightDataFetcher.fetchData();
 
     // logging data
