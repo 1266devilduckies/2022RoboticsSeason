@@ -302,24 +302,6 @@ public class Robot extends TimedRobot {
 
   public SequentialCommandGroup getAutonomousCommand(int num) {
 
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        new SimpleMotorFeedforward(
-            RobotMap.ksVolts,
-            RobotMap.kvVoltSecondsPerMeter,
-            RobotMap.kaVoltSecondsSquaredPerMeter),
-        RobotMap.kDriveKinematics,
-        10);
-
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        RobotMap.kMaxSpeedMetersPerSecond,
-        RobotMap.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(RobotMap.kDriveKinematics)
-        // Apply the voltage constraint
-        .addConstraint(autoVoltageConstraint);
-
     SequentialCommandGroup pathToGo = new SequentialCommandGroup();
     if (num == 1) {
       Trajectory init = auto1Part1;
