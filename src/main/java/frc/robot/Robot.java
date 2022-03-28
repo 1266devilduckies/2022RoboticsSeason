@@ -484,7 +484,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-
+    RobotMap.Climber1.configForwardSoftLimitEnable(false, 0);
+    RobotMap.Climber1.configReverseSoftLimitEnable(false, 0);
+    RobotMap.Climber2.configForwardSoftLimitEnable(false, 0);
+    RobotMap.Climber2.configReverseSoftLimitEnable(false, 0);
   }
 
 }
