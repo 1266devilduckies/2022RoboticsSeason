@@ -6,19 +6,20 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotMap;
 
 public class PewPewStart extends CommandBase {
+  boolean fullShooterPower;
   double velocity = -1.0;
 
   public PewPewStart(boolean slowShot) {
-    RobotMap.fullShooterPower = !slowShot;
+    fullShooterPower = !slowShot;
   }
 
   public PewPewStart(boolean slowShot, boolean oneBall) {
-    RobotMap.fullShooterPower = !slowShot;
+    fullShooterPower = !slowShot;
     RobotMap.isOneBall = oneBall;
   }
 
   public PewPewStart(boolean slowShot, boolean oneBall, double overrideVelocity) {
-    RobotMap.fullShooterPower = !slowShot;
+    fullShooterPower = !slowShot;
     RobotMap.isOneBall = oneBall;
     velocity = overrideVelocity;
   }
@@ -27,10 +28,24 @@ public class PewPewStart extends CommandBase {
   @Override
   public void initialize() {
     RobotMap.inFiringCoroutine = true;
-    RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
-    if (velocity == -1.0) {
-      velocity = RobotMap.fullShooterPower ? RobotMap.velocityFeeder : RobotMap.velocityTarget / 2.0;
+    if(fullShooterPower){
+      velocity = RobotMap.velocityTarget;
+      RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
+      RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
+      RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+      RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
+      
+    } else{
+      RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP2);
+      RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF2);
+      RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP2);
+      RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF2);
+      velocity = RobotMap.velocityTarget / 2.0;
     }
+    RobotMap.FeederMotor.config_kP(0, RobotMap.kPIndex);
+    RobotMap.FeederMotor.config_kF(0, RobotMap.kFIndex);
+    RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
+    
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -72,7 +87,6 @@ public class PewPewStart extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     RobotMap.inFiringCoroutine = false;
-    RobotMap.fullShooterPower = true;
     RobotMap.isOneBall = false;
     RobotMap.pneumaticSingleSolenoid.set(false);
     RobotMap.overrideVelocity = -1.0;

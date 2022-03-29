@@ -65,6 +65,8 @@ public class RobotMap {
   public static double kDAligner = 0.02;
   public static PIDController alignerController = new PIDController(kPAligner, 0.0, kDAligner);
   public static boolean isOneBall = false;
+  public static double kF2 = (0.6343 * 1023.0) / velocityTarget;
+  public static double kP2 = 0.0299999714;
   public static int numOfTogglesOnSolenoids = 0;
   public static boolean reachedGoal = false;
   public static boolean turnedaround = false;
@@ -102,6 +104,9 @@ public class RobotMap {
     MainLeftMotorFront = new WPI_TalonFX(1);
     MainRightMotorBack = new WPI_TalonFX(3);
     MainRightMotorFront = new WPI_TalonFX(2);
+
+    
+
     m_drive = new DifferentialDrive(RobotMap.MainLeftMotorBack,
         RobotMap.MainRightMotorBack);
 

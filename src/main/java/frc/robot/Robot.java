@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.BetterKearnyDriving;
 import frc.robot.commands.PewPewStart;
+import frc.robot.commands.SlowShotChecker;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.DriveSubsystem;
@@ -197,9 +198,9 @@ public class Robot extends TimedRobot {
     RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
     RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
 
-    RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Coast);
+    RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
-    RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Coast);
+    RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
 
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
@@ -254,7 +255,7 @@ public class Robot extends TimedRobot {
       RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
       RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
       RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
-    }
+    } //all of these if statements are useless because the robot gets disabled when the preferences change lol
     double feederKpInp = Preferences.getDouble("kP Feeder", RobotMap.kPIndex);
     double feederKfInp = Preferences.getDouble("kF Feeder", RobotMap.kFIndex);
     if (RobotMap.kPIndex != feederKpInp |
@@ -373,7 +374,7 @@ public class Robot extends TimedRobot {
     RobotMap.Climber2.setSelectedSensorPosition(0);
     // bind driver controls to the drivetrain
     // bind operator controls to climber
-    CommandScheduler.getInstance().schedule(new BetterKearnyDriving(), new Climber());
+    CommandScheduler.getInstance().schedule(new BetterKearnyDriving(), new Climber(), new SlowShotChecker());
   }
 
   @Override

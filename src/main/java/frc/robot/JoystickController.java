@@ -45,7 +45,7 @@ public class JoystickController {
 		// this is for xbox
 
 		// goes for low ball shot
-		setButtonHeldBehavior(joystick, 5, new SlowShot(), null);
+		setButtonHeldBehavior(joystick, 5, new PewPewStart(true), null);
 		// goes for high ball shot
 		setButtonHeldBehavior(joystick, 6, new PewPewStart(false), null);
 		//setButtonHeldBehavior(joystick, 2, new ClimberUp(), new GiveOperatorClimberControl());
@@ -154,7 +154,7 @@ public class JoystickController {
 	}
 
 	public boolean LeftTriggeredPressed() {
-		if (this.joystick.getRawAxis(2) > .25) {
+		if (this.joystick.getRawAxis(2) > 0.25) {
 			return true;
 		} else {
 			return false;
