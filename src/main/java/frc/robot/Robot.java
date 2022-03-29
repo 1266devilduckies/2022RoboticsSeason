@@ -238,6 +238,8 @@ public class Robot extends TimedRobot {
     // finished = true;
     // }
 
+    SmartDashboard.putNumber("climber one ticks", RobotMap.Climber1.getSelectedSensorPosition());
+
     DriveSubsystem.m_odometry.update(RobotMap.gyro.getRotation2d(),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainLeftMotorBack.getSelectedSensorPosition()),
         EncoderSetter.nativeUnitsToDistanceMeters(RobotMap.MainRightMotorBack.getSelectedSensorPosition()));
@@ -368,6 +370,7 @@ public class Robot extends TimedRobot {
 
     RobotMap.m_drive.arcadeDrive(0.0, 0.0);
     RobotMap.Climber1.setSelectedSensorPosition(0);
+    RobotMap.Climber2.setSelectedSensorPosition(0);
     // bind driver controls to the drivetrain
     // bind operator controls to climber
     CommandScheduler.getInstance().schedule(new BetterKearnyDriving(), new Climber());

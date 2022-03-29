@@ -36,11 +36,11 @@ public class Climber extends CommandBase {
 
     if (RobotMap.operatorIsControlling) {
       if (lVal > 0.1) {
-        RobotMap.Climber1.set(ControlMode.PercentOutput, -0.2);
-        RobotMap.Climber2.set(ControlMode.PercentOutput, -0.2);
+        RobotMap.Climber1.set(ControlMode.PercentOutput, -0.8);
+        RobotMap.Climber2.set(ControlMode.PercentOutput, -0.8);
       } else if (lVal < -0.1) {
-        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.2);
-        RobotMap.Climber2.set(ControlMode.PercentOutput, 0.2);
+        RobotMap.Climber1.set(ControlMode.PercentOutput, 0.8);
+        RobotMap.Climber2.set(ControlMode.PercentOutput, 0.8);
       } else {
         RobotMap.Climber1.set(ControlMode.PercentOutput, 0.0);
         RobotMap.Climber2.set(ControlMode.PercentOutput, 0.0);

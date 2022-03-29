@@ -42,8 +42,8 @@ public class RobotMap {
 
   // -1 = passes lower bound, 0 = in range, 1 = passes upper bound
   public static int climberFlag = 0;
-  public static double upperBoundClimber = -100000.0;
-  public static double lowerBoundClimber = -10000.0;
+  public static double upperBoundClimber = -150000.0; //hundred thousand
+  public static double lowerBoundClimber = 0.0; //ten thousand
   public static double climberSpeed = 0.5;
   // The robot's drive
   public static DifferentialDrive m_drive;
