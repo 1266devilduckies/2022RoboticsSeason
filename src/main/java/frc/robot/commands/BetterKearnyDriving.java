@@ -23,10 +23,10 @@ public class BetterKearnyDriving extends CommandBase {
     if (!RobotMap.pilotDisabled) {
       double lVal = mainJoystick.getLeftStickY();
       double rVal = mainJoystick.getRightStickX();
-      RobotMap.MainLeftMotorBack.configOpenloopRamp(0.2);
-      RobotMap.MainLeftMotorFront.configOpenloopRamp(0.2);
-      RobotMap.MainRightMotorBack.configOpenloopRamp(0.2);
-      RobotMap.MainRightMotorFront.configOpenloopRamp(0.2);
+      RobotMap.MainLeftMotorBack.configOpenloopRamp(0.);
+      RobotMap.MainLeftMotorFront.configOpenloopRamp(0.);
+      RobotMap.MainRightMotorBack.configOpenloopRamp(0.);
+      RobotMap.MainRightMotorFront.configOpenloopRamp(0.);//was 0.5 for all
 
       if (Math.abs(lVal) < 0.05) {
         RobotMap.m_drive.curvatureDrive(0.0, rVal*0.8, true);
@@ -39,7 +39,6 @@ public class BetterKearnyDriving extends CommandBase {
   @Override
   public void end(boolean interuppted) {
   }
-
   @Override
   public boolean isFinished() {
     return false;

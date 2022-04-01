@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.BetterKearnyDriving;
 import frc.robot.commands.PewPewStart;
 import frc.robot.commands.SlowShotChecker;
@@ -61,7 +62,8 @@ public class Robot extends TimedRobot {
   boolean finished = false;
 
   SequentialCommandGroup m_autonomousCommand;
-  SendableChooser<Integer> autoRoutines = new SendableChooser<>();
+  SendableChooser<Integer> autoRoutines;
+  SendableChooser<Integer> autonomousTimeDelays;
 
   Trajectory auto1Part1;
 
@@ -96,11 +98,23 @@ public class Robot extends TimedRobot {
   Trajectory auto8Part6;
   Trajectory auto8Part7;
 
+  Trajectory auto1part1;
+  Trajectory auto1part2;
+  Trajectory auto1part3;
+  Trajectory auto1part4;
+  Trajectory auto1part5;
+  Trajectory auto1part6;
+
+  Trajectory auto0Part1;
+  Trajectory auto0Part2;
+
   Trajectory initTrajectory;
 
   @Override
   public void robotInit() {
     RobotMap.init();
+    autoRoutines = new SendableChooser<>();
+    autonomousTimeDelays = new SendableChooser<>();
     m_robotDrive = new DriveSubsystem();
     drivetrain = new Drivetrain();
 
@@ -108,6 +122,23 @@ public class Robot extends TimedRobot {
       initTrajectory = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1Part1.wpilib.json"));
       auto1Part1 = initTrajectory;
+
+      auto0Part1 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto0Part1.wpilib.json"));
+        auto0Part2 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto0Part2.wpilib.json"));
+      auto1part1 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part1.wpilib.json"));
+        auto1part2 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part2.wpilib.json"));
+        auto1part3 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part3.wpilib.json"));
+        auto1part4 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part4.wpilib.json"));
+        auto1part5 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part5.wpilib.json"));
+        auto1part6 = TrajectoryUtil.fromPathweaverJson(
+        Filesystem.getDeployDirectory().toPath().resolve("paths/auto1part6.wpilib.json"));
 
       auto2Part1 = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto2Part1.wpilib.json"));
@@ -212,10 +243,17 @@ public class Robot extends TimedRobot {
     shooter = new Shooter();
     JoystickController.Init();
     // get auto path json
-    autoRoutines.setDefaultOption("Auto Defense", 1);
+    autoRoutines.setDefaultOption("1 Ball Auto", 0);
+    autoRoutines.addOption("Auto Defense", 1);
     autoRoutines.addOption("2 Ball Auto", 2);
     autoRoutines.addOption("4 Ball Auto", 3);
     SmartDashboard.putData(autoRoutines);
+
+    autonomousTimeDelays.setDefaultOption("No delay", 0);
+    autonomousTimeDelays.addOption("1 Second", 1000);
+    autonomousTimeDelays.addOption("3 Seconds", 3000);
+    autonomousTimeDelays.addOption("5 Seconds", 5000);
+    SmartDashboard.putData(autonomousTimeDelays);
 
     if (!Preferences.containsKey("kP Shooter")) {
       Preferences.setDouble("kP Shooter", RobotMap.kP);
@@ -306,6 +344,11 @@ public class Robot extends TimedRobot {
   public SequentialCommandGroup getAutonomousCommand(int num) {
 
     SequentialCommandGroup pathToGo = new SequentialCommandGroup();
+    if(num == 0){
+      Trajectory init = auto0Part1;
+      m_robotDrive.resetOdometry(init.getInitialPose());
+      pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto0Part1), new PewPewStart(false), generateTrajectoryCommand(auto0Part2));
+    }
     if (num == 1) {
       Trajectory init = auto1Part1;
       m_robotDrive.resetOdometry(init.getInitialPose());
@@ -356,11 +399,17 @@ public class Robot extends TimedRobot {
     // startAutoTime = System.currentTimeMillis();
     m_autonomousCommand = getAutonomousCommand(autoRoutines.getSelected());
     // schedule the autonomous command (example)
-    CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    if (autonomousTimeDelays.getSelected() == 0) {
+    CommandScheduler.getInstance().schedule(m_autonomousCommand);} else {
+      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+        new WaitUntilCommand(autonomousTimeDelays.getSelected()/1000.0),
+      m_autonomousCommand));
+    }
   }
 
   @Override
   public void teleopInit() {
+  
     RobotMap.MainLeftMotorBack.setSelectedSensorPosition(0);
     RobotMap.MainLeftMotorFront.setSelectedSensorPosition(0);
     RobotMap.MainRightMotorBack.setSelectedSensorPosition(0);
