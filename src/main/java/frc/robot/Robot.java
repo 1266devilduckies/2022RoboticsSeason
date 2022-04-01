@@ -24,6 +24,7 @@ import frc.robot.commands.PewPewStart;
 import frc.robot.commands.SlowShotChecker;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopIntake;
+import frc.robot.commands.Wait;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.commands.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -31,6 +32,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 //This is basically our main class, we just don't use Main.java for clarity (i guess) -JM
@@ -63,7 +66,7 @@ public class Robot extends TimedRobot {
 
   SequentialCommandGroup m_autonomousCommand;
   SendableChooser<Integer> autoRoutines;
-  SendableChooser<Integer> autonomousTimeDelays;
+  SendableChooser<Double> autonomousTimeDelays;
 
   Trajectory auto1Part1;
 
@@ -117,7 +120,7 @@ public class Robot extends TimedRobot {
     autonomousTimeDelays = new SendableChooser<>();
     m_robotDrive = new DriveSubsystem();
     drivetrain = new Drivetrain();
-
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
     try {
       initTrajectory = TrajectoryUtil.fromPathweaverJson(
           Filesystem.getDeployDirectory().toPath().resolve("paths/auto1Part1.wpilib.json"));
@@ -249,10 +252,10 @@ public class Robot extends TimedRobot {
     autoRoutines.addOption("4 Ball Auto", 3);
     SmartDashboard.putData(autoRoutines);
 
-    autonomousTimeDelays.setDefaultOption("No delay", 0);
-    autonomousTimeDelays.addOption("1 Second", 1000);
-    autonomousTimeDelays.addOption("3 Seconds", 3000);
-    autonomousTimeDelays.addOption("5 Seconds", 5000);
+    autonomousTimeDelays.setDefaultOption("No delay", 0.0);
+    autonomousTimeDelays.addOption("1 Second", 1000.0);
+    autonomousTimeDelays.addOption("3 Seconds", 3000.0);
+    autonomousTimeDelays.addOption("5 Seconds", 5000.0);
     SmartDashboard.putData(autonomousTimeDelays);
 
     if (!Preferences.containsKey("kP Shooter")) {
@@ -402,7 +405,7 @@ public class Robot extends TimedRobot {
     if (autonomousTimeDelays.getSelected() == 0) {
     CommandScheduler.getInstance().schedule(m_autonomousCommand);} else {
       CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-        new WaitUntilCommand(autonomousTimeDelays.getSelected()/1000.0),
+        new Wait(autonomousTimeDelays.getSelected()),
       m_autonomousCommand));
     }
   }
