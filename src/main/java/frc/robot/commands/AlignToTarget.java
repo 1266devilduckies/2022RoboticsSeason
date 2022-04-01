@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotMap;
 import frc.robot.limeLightDataFetcher;
@@ -13,6 +14,7 @@ public class AlignToTarget extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
+    //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
     RobotMap.pilotDisabled = true;
   }
 
@@ -36,6 +38,7 @@ public class AlignToTarget extends CommandBase {
   // Called once after isFinished returns true
   @Override
   public void end(boolean interrupted) {
+    //NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
     RobotMap.m_drive.tankDrive(0.0, 0.0);
   }
 
