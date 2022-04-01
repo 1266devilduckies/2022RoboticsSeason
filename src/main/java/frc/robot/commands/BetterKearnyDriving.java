@@ -29,9 +29,9 @@ public class BetterKearnyDriving extends CommandBase {
       RobotMap.MainRightMotorFront.configOpenloopRamp(0.);//was 0.5 for all
 
       if (Math.abs(lVal) < 0.05) {
-        RobotMap.m_drive.curvatureDrive(0.0, rVal*0.8, true);
+        RobotMap.m_drive.curvatureDrive(0.0, rVal*0.85, true);
       } else {
-        RobotMap.m_drive.curvatureDrive(-lVal*0.8, rVal * 0.5*0.8, false);
+        RobotMap.m_drive.curvatureDrive(-lVal*0.85, rVal * 0.5*0.85, false);
       }
     }
   }
