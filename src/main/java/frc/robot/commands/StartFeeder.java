@@ -26,7 +26,7 @@ public class StartFeeder extends CommandBase{
 
     @Override
     public boolean isFinished(){
-        return (System.currentTimeMillis() - startTime) >= 250;
+        return (System.currentTimeMillis() - startTime) >= 200;
     }
 
     @Override

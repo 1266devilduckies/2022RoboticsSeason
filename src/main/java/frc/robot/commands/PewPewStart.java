@@ -23,37 +23,15 @@ public class PewPewStart extends CommandBase {
     RobotMap.isOneBall = oneBall;
     velocity = overrideVelocity;
   }
-
   double startTime;
-
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    /*RobotMap.inFiringCoroutine = true;
-    if(fullShooterPower){
-      velocity = RobotMap.velocityTarget;
-      RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
-      RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
-      RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
-      RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
-      
-    } else{
-      RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP2);
-      RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF2);
-      RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP2);
-      RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF2);
-      velocity = RobotMap.velocityTarget / 2.0;
-    }
-    RobotMap.FeederMotor.config_kP(0, RobotMap.kPIndex);
-    RobotMap.FeederMotor.config_kF(0, RobotMap.kFIndex);
-    RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
-    */
-
     startTime = System.currentTimeMillis();
     RobotMap.inFiringCoroutine = true;
     if(fullShooterPower){
       velocity = RobotMap.velocityTarget;
-    } else {
+    } else{
       velocity = RobotMap.velocityTarget / 2.0;
     }
     RobotMap.PewPewMotor1.setSelectedSensorPosition(0);
@@ -62,13 +40,14 @@ public class PewPewStart extends CommandBase {
     RobotMap.FeederMotor.config_kF(0, RobotMap.kFIndex);
     RobotMap.PewPewMotor1.config_kP(0, RobotMap.kP);
     RobotMap.PewPewMotor1.config_kF(0, RobotMap.kF);
-    RobotMap.PewPewMotor2.config_kF(0, RobotMap.kP);
     RobotMap.PewPewMotor2.config_kP(0, RobotMap.kP);
+    RobotMap.PewPewMotor2.config_kF(0, RobotMap.kF);
     RobotMap.velocityCurrent = velocity;
     RobotMap.timeSinceStartedBeingReleasedForShooter = System.currentTimeMillis();
     RobotMap.PewPewMotor1.set(ControlMode.Velocity, velocity);
     RobotMap.PewPewMotor2.set(ControlMode.Velocity, velocity);
-    RobotMap.pneumaticSingleSolenoid.set(true); 
+    RobotMap.pneumaticSingleSolenoid.set(true);
+    
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -79,21 +58,24 @@ public class PewPewStart extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   public boolean isFinished() {
-    return (System.currentTimeMillis() - startTime) >= 500 &&
-      (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() + 450) - velocity) >= 0) &&
-      (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() + 450) - velocity) >= 0);
+    return (System.currentTimeMillis() - startTime) >= 500 && 
+    (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() ) - velocity) >= 0) && 
+    (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() ) - velocity) >= 0); //have it activate after it reaches it or passes it so that theres more speed than intended
   }
 
   // Called once after isFinished returns true
   @Override
   public void end(boolean interrupted) {
-    RobotMap.inFiringCoroutine = false;
-    RobotMap.isOneBall = false;
-    RobotMap.pneumaticSingleSolenoid.set(false);
-    RobotMap.overrideVelocity = -1.0;
-    RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
-    RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
-    RobotMap.PewPewMotor1.set(ControlMode.Velocity, 0);
+    
+    if (interrupted) {
+      RobotMap.inFiringCoroutine = false;
+      RobotMap.isOneBall = false;
+      RobotMap.pneumaticSingleSolenoid.set(false);
+      RobotMap.overrideVelocity = -1.0;
+      RobotMap.FeederMotor.set(ControlMode.Velocity, 0);
+      RobotMap.PewPewMotor2.set(ControlMode.Velocity, 0);
+      RobotMap.PewPewMotor1.set(ControlMode.Velocity, 0);
+    }
   }
 
 }// class PewPewStart

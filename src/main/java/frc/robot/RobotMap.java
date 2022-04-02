@@ -65,11 +65,11 @@ public class RobotMap {
   public static double kF = 0.045;
   public static double kP = 0.02;
   */
-  public static double velocityTarget = 12400;
-  public static double velocityFeeder = 16500;
+  public static double velocityTarget = 10100;
+  public static double velocityFeeder = 13000;
   public static double velocityCurrent;
-  public static double kF = 0.0528;
-  public static double kP = 0.0155;
+  public static double kF = 0.0527; //.0528
+  public static double kP = 0.0150; //.0155
   public static double kFIndex = 0.045;
   public static double kPIndex = 0.02;
   public static double kPAligner = 0.04;
