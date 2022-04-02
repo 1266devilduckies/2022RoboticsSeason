@@ -45,9 +45,17 @@ public class JoystickController {
 		// this is for xbox
 
 		// goes for low ball shot
-		setButtonHeldBehavior(joystick, 5, new PewPewStart(true), null);
+		setButtonHeldBehavior(joystick, 5, new SequentialCommandGroup(new PewPewStart(true),
+		new StartFeeder(), 
+		new StopFeeder(),
+		new StartFeeder(),
+		new PewPewEnd()), new StopIntake());
 		// goes for high ball shot
-		setButtonHeldBehavior(joystick, 6, new PewPewStart(false), null);
+		setButtonHeldBehavior(joystick, 6, new SequentialCommandGroup(new PewPewStart(false),
+		new StartFeeder(),
+		new StopFeeder(),
+		new StartFeeder(),
+		new PewPewEnd()), new StopIntake());
 		
 		//they want no buttons
 		//setButtonHeldBehavior(joystick, 2, new ClimberUp(), new GiveOperatorClimberControl());
