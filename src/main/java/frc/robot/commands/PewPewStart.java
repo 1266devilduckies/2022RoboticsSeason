@@ -80,8 +80,8 @@ public class PewPewStart extends CommandBase {
   @Override
   public boolean isFinished() {
     return (System.currentTimeMillis() - startTime) >= 500 &&
-      (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() + 400) - velocity) >= 0) &&
-      (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() + 400) - velocity) >= 0);
+      (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() + 450) - velocity) >= 0) &&
+      (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() + 450) - velocity) >= 0);
   }
 
   // Called once after isFinished returns true
