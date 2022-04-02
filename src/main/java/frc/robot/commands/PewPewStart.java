@@ -59,8 +59,8 @@ public class PewPewStart extends CommandBase {
   @Override
   public boolean isFinished() {
     return (System.currentTimeMillis() - startTime) >= 500 && 
-    (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() ) - velocity) >= 0) && 
-    (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() ) - velocity) >= 0); //have it activate after it reaches it or passes it so that theres more speed than intended
+    (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() +100 ) - velocity) >= 0) && 
+    (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() +100 ) - velocity) >= 0); //have it activate after it reaches it or passes it so that theres more speed than intended
   }
 
   // Called once after isFinished returns true

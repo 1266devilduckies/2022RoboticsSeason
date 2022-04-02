@@ -25,8 +25,8 @@ public class StopFeeder extends CommandBase{
 
     @Override
     public boolean isFinished(){
-        return (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() ) - RobotMap.velocityCurrent) >= 0) &&
-            (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() ) - RobotMap.velocityCurrent) >= 0);
+        return (((RobotMap.PewPewMotor2.getSelectedSensorVelocity() +100 ) - RobotMap.velocityCurrent) >= 0) &&
+            (((RobotMap.PewPewMotor1.getSelectedSensorVelocity() +100) - RobotMap.velocityCurrent) >= 0);
     }
 
     @Override

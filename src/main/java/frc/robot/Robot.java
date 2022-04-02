@@ -22,11 +22,14 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.BetterKearnyDriving;
 import frc.robot.commands.PewPewStart;
 import frc.robot.commands.SlowShotChecker;
+import frc.robot.commands.StartFeeder;
 import frc.robot.commands.StartIntake;
+import frc.robot.commands.StopFeeder;
 import frc.robot.commands.StopIntake;
 import frc.robot.commands.Wait;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.commands.Climber;
+import frc.robot.commands.PewPewEnd;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -221,10 +224,10 @@ public class Robot extends TimedRobot {
     RobotMap.Climber2.setInverted(true);
     RobotMap.Climber1.setNeutralMode(NeutralMode.Brake);
     RobotMap.Climber2.setNeutralMode(NeutralMode.Brake);
-    RobotMap.MainLeftMotorBack.enableVoltageCompensation(false);
-    RobotMap.MainLeftMotorFront.enableVoltageCompensation(false);
-    RobotMap.MainRightMotorBack.enableVoltageCompensation(false);
-    RobotMap.MainRightMotorFront.enableVoltageCompensation(false);
+    RobotMap.MainLeftMotorBack.enableVoltageCompensation(true); //false
+    RobotMap.MainLeftMotorFront.enableVoltageCompensation(true); //false
+    RobotMap.MainRightMotorBack.enableVoltageCompensation(true); //false
+    RobotMap.MainRightMotorFront.enableVoltageCompensation(true); //false
 
     RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
@@ -342,13 +345,16 @@ public class Robot extends TimedRobot {
 
     SequentialCommandGroup pathToGo = new SequentialCommandGroup();
     if(num == 0){
+      
       Trajectory init = auto0Part1;
-      if (m_robotDrive != null) {
       m_robotDrive.resetOdometry(init.getInitialPose());
+      pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto0Part1), new SequentialCommandGroup(new PewPewStart(false),
+      new StartFeeder(), 
+      new StopFeeder(),
+      new StartFeeder(),
+      new PewPewEnd()), generateTrajectoryCommand(auto0Part2));
     }
-      pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto0Part1), new PewPewStart(false), generateTrajectoryCommand(auto0Part2));
-    }
-    /*
+    
     if (num == 1) {
       Trajectory init = auto0Part1; //temp fix
       m_robotDrive.resetOdometry(init.getInitialPose());
@@ -384,7 +390,7 @@ public class Robot extends TimedRobot {
           generateTrajectoryCommand(auto8Part7),
           new PewPewStart(false));
     }
-*/
+
     return pathToGo;
   }
 
