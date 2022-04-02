@@ -111,8 +111,6 @@ public class Robot extends TimedRobot {
   Trajectory auto0Part1;
   Trajectory auto0Part2;
 
-  Trajectory initTrajectory;
-
   @Override
   public void robotInit() {
     RobotMap.init();
@@ -122,10 +120,6 @@ public class Robot extends TimedRobot {
     drivetrain = new Drivetrain();
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
     try {
-      initTrajectory = TrajectoryUtil.fromPathweaverJson(
-          Filesystem.getDeployDirectory().toPath().resolve("paths/auto1Part1.wpilib.json"));
-      auto1Part1 = initTrajectory;
-
       auto0Part1 = TrajectoryUtil.fromPathweaverJson(
         Filesystem.getDeployDirectory().toPath().resolve("paths/auto0Part1.wpilib.json"));
         auto0Part2 = TrajectoryUtil.fromPathweaverJson(
@@ -349,11 +343,14 @@ public class Robot extends TimedRobot {
     SequentialCommandGroup pathToGo = new SequentialCommandGroup();
     if(num == 0){
       Trajectory init = auto0Part1;
+      if (m_robotDrive != null) {
       m_robotDrive.resetOdometry(init.getInitialPose());
+    }
       pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto0Part1), new PewPewStart(false), generateTrajectoryCommand(auto0Part2));
     }
+    /*
     if (num == 1) {
-      Trajectory init = auto1Part1;
+      Trajectory init = auto0Part1; //temp fix
       m_robotDrive.resetOdometry(init.getInitialPose());
       // move back and play defense
       pathToGo = new SequentialCommandGroup(generateTrajectoryCommand(auto1Part1));
@@ -387,7 +384,7 @@ public class Robot extends TimedRobot {
           generateTrajectoryCommand(auto8Part7),
           new PewPewStart(false));
     }
-
+*/
     return pathToGo;
   }
 

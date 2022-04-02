@@ -1,3 +1,1 @@
-X,Y,Tangent X,Tangent Y,Fixed Theta,Reversed,Name
-10.138640195413755,-5.642554540378862,-1.0422929252243254,0.974501515453639,true,false,
-8.96923837686939,-4.6595790987038885,-1.2795628594217359,0.7033358763708879,true,false,
+{"waypoints":[{"anchorPoint":{"x":8.530558833269565,"y":1.8288036576073152},"prevControl":null,"nextControl":{"x":8.530558833269565,"y":1.388964803246063},"holonomicAngle":0.0,"isReversal":false,"velOverride":null,"isLocked":false},{"anchorPoint":{"x":9.132443581342859,"y":0.5903100413795758},"prevControl":{"x":8.762052967143909,"y":1.2500683229214564},"nextControl":null,"holonomicAngle":0.0,"isReversal":false,"velOverride":null,"isLocked":false}],"maxVelocity":1.75,"maxAcceleration":1.75,"isReversed":false}
