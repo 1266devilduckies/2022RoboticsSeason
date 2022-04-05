@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Drivetrain extends SubsystemBase {
   private final DifferentialDrive robotDrive;
@@ -56,10 +57,9 @@ public class Drivetrain extends SubsystemBase {
     
     MainLeftMotorBack.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
     MainRightMotorBack.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
-
-
-    leftMotorSim = MainLeftMotorBack.getSimCollection();
-    rightMotorSim = MainRightMotorBack.getSimCollection();
+    //reset master encoders
+    MainLeftMotorBack.setSelectedSensorPosition(0);
+    MainRightMotorBack.setSelectedSensorPosition(0);
 
     //Slave the front motors to their respective back motors
     MainLeftMotorFront.follow(MainLeftMotorBack);
@@ -100,17 +100,22 @@ public class Drivetrain extends SubsystemBase {
     );
 
     SmartDashboard.putData("Field", field); //send field to NT
+
+    robotDrive.setDeadband(Constants.driverJoystickDeadband); //Apply deadbanding to fix controller drift
+
+    leftMotorSim = MainLeftMotorBack.getSimCollection();
+    rightMotorSim = MainRightMotorBack.getSimCollection();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    robotDrive.arcadeDrive(RobotContainer.driverJoystick.getY()*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getX()*Constants.drivetrainSpeedLimiter);
+
     odometry.update(gyro.getRotation2d(),
     (MainLeftMotorBack.getSelectedSensorPosition() / 2048.0) * (2*Math.PI*Constants.drivetrainWheelRadius), //encoder position in meters
     (MainRightMotorBack.getSelectedSensorPosition() / 2048.0) * (2*Math.PI*Constants.drivetrainWheelRadius)); //encoder position in meters
     field.setRobotPose(odometry.getPoseMeters());
-
-    robotDrive.arcadeDrive(.05, 0.0);
   }
 
   @Override
@@ -118,7 +123,7 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
 
     //Multiply the percent output by the input voltage to get the actual voltage on the motor
-    robotDriveSim.setInputs(-MainLeftMotorBack.get() * RobotController.getInputVoltage(), MainRightMotorBack.get() * RobotController.getInputVoltage());
+    robotDriveSim.setInputs(MainLeftMotorBack.get() * RobotController.getInputVoltage(), MainRightMotorBack.get() * RobotController.getInputVoltage());
     //The roboRIO updates at 50hz so you want to match what it actually is in simulation to get accurate simulations
     robotDriveSim.update(0.02);
 

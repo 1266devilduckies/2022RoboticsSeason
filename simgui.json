@@ -1,6 +1,11 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "ADXRS450[0]": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon FX[0]/Integrated Sensor": {
         "header": {
           "open": true
