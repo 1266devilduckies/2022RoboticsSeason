@@ -66,7 +66,7 @@ public class RobotMap {
   public static double kP = 0.02;
   */
   public static double velocityTarget = 10750; //10100
-  public static double velocityFeeder = 13750; //13000
+  public static double velocityFeeder = 14250; //13000
   public static double velocityCurrent;
   public static double kF = 0.0527; //.0528
   public static double kP = 0.0150; //.0155

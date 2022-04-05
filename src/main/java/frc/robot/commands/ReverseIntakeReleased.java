@@ -14,6 +14,7 @@ public class ReverseIntakeReleased extends CommandBase {
   @Override
   public void initialize() {
     RobotMap.IntakeMotor1.setInverted(false);
+    RobotMap.pneumaticSingleSolenoid.set(false);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -24,7 +25,7 @@ public class ReverseIntakeReleased extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true

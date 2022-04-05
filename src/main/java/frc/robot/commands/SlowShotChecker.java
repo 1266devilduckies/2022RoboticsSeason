@@ -22,7 +22,7 @@ public class SlowShotChecker extends CommandBase {
         boolean isPressed = JoystickController.COPILOT_JOYSTICK.RightTriggeredPressed();
 
         if(isPressed && !RobotMap.inFiringCoroutine){
-            CommandScheduler.getInstance().schedule(new PewPewStart(true));
+           // CommandScheduler.getInstance().schedule(new PewPewStart(true));
         }
     }
 

@@ -38,6 +38,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 //This is basically our main class, we just don't use Main.java for clarity (i guess) -JM
 
@@ -224,15 +225,26 @@ public class Robot extends TimedRobot {
     RobotMap.Climber2.setInverted(true);
     RobotMap.Climber1.setNeutralMode(NeutralMode.Brake);
     RobotMap.Climber2.setNeutralMode(NeutralMode.Brake);
-    RobotMap.MainLeftMotorBack.enableVoltageCompensation(true); //false
-    RobotMap.MainLeftMotorFront.enableVoltageCompensation(true); //false
-    RobotMap.MainRightMotorBack.enableVoltageCompensation(true); //false
-    RobotMap.MainRightMotorFront.enableVoltageCompensation(true); //false
+    RobotMap.MainLeftMotorBack.enableVoltageCompensation(false); //false
+    RobotMap.MainLeftMotorFront.enableVoltageCompensation(false); //false
+    RobotMap.MainRightMotorBack.enableVoltageCompensation(false); //false
+    RobotMap.MainRightMotorFront.enableVoltageCompensation(false); //false
 
     RobotMap.MainLeftMotorBack.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
     RobotMap.MainRightMotorBack.setNeutralMode(NeutralMode.Brake);
     RobotMap.MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
+
+    SupplyCurrentLimitConfiguration currLim = new SupplyCurrentLimitConfiguration();
+    currLim.currentLimit = 35;
+    currLim.triggerThresholdCurrent = 38;
+    currLim.triggerThresholdTime = 0.002;
+    currLim.enable = true;
+
+    RobotMap.MainLeftMotorBack.configGetSupplyCurrentLimit(currLim);
+    RobotMap.MainLeftMotorFront.configGetSupplyCurrentLimit(currLim);
+    RobotMap.MainRightMotorBack.configGetSupplyCurrentLimit(currLim);
+    RobotMap.MainRightMotorFront.configGetSupplyCurrentLimit(currLim);
 
     RobotMap.FeederMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -352,7 +364,7 @@ public class Robot extends TimedRobot {
       new StartFeeder(), 
       new StopFeeder(),
       new StartFeeder(),
-      new PewPewEnd()), generateTrajectoryCommand(auto0Part2));
+      new PewPewEnd(), new StopIntake()), generateTrajectoryCommand(auto0Part2));
     }
     
     if (num == 1) {
@@ -435,8 +447,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // periodic events
-    SmartDashboard.putNumber("climber one ticks", RobotMap.Climber1.getSelectedSensorPosition());
-    limeLightDataFetcher.fetchData();
+   // SmartDashboard.putNumber("climber one ticks", RobotMap.Climber1.getSelectedSensorPosition());
+   // limeLightDataFetcher.fetchData();
 
     // logging data
     /*

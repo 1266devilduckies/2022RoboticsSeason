@@ -16,6 +16,10 @@ public class BetterKearnyDriving extends CommandBase {
 
   @Override
   public void initialize() {
+    RobotMap.MainLeftMotorBack.configOpenloopRamp(0);
+      RobotMap.MainLeftMotorFront.configOpenloopRamp(0);
+      RobotMap.MainRightMotorBack.configOpenloopRamp(0);
+      RobotMap.MainRightMotorFront.configOpenloopRamp(0);
   }
 
   @Override
@@ -23,15 +27,12 @@ public class BetterKearnyDriving extends CommandBase {
     if (!RobotMap.pilotDisabled) {
       double lVal = mainJoystick.getLeftStickY();
       double rVal = mainJoystick.getRightStickX();
-      RobotMap.MainLeftMotorBack.configOpenloopRamp(0.);
-      RobotMap.MainLeftMotorFront.configOpenloopRamp(0.);
-      RobotMap.MainRightMotorBack.configOpenloopRamp(0.);
-      RobotMap.MainRightMotorFront.configOpenloopRamp(0.);//was 0.5 for all
+      //was 0.5 for all
 
       if (Math.abs(lVal) < 0.05) {
         RobotMap.m_drive.curvatureDrive(0.0, rVal*0.8, true);
       } else {
-        RobotMap.m_drive.curvatureDrive(-lVal*0.8, rVal * 0.5*0.8, false);
+        RobotMap.m_drive.curvatureDrive(-lVal*0.8, rVal *0.8, false); //*.5
       }
     }
   }

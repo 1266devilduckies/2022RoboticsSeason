@@ -14,6 +14,7 @@ public class ReverseIntake extends CommandBase {
   @Override
   public void initialize() {
     RobotMap.IntakeMotor1.setInverted(true);
+    RobotMap.pneumaticSingleSolenoid.set(true);
   }
 
   // Called repeatedly when this Command is scheduled to run
