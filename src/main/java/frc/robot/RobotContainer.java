@@ -20,10 +20,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.StartIntake;
+import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,9 +37,21 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain drivetrainSubsystem;
 
+  //Declare subsystems
+  public final Drivetrain drivetrainSubsystem;
+  public final Intake intakeSubsystem;
+
+  //Declare commands
+  public static Command StartIntake;
+  public static Command StopIntake;
+
+  //Declare joysticks
   public final static Joystick driverJoystick = new Joystick(0);
+
+  //Declare joystick buttons
+  JoystickButton btn_ps4r1_driver = new JoystickButton(driverJoystick, 6);
+
 
   private SendableChooser<SequentialCommandGroup> autonomousMode = new SendableChooser<SequentialCommandGroup>();
   
@@ -46,7 +62,13 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    //Subsystem definitions
     drivetrainSubsystem = new Drivetrain();
+    intakeSubsystem = new Intake();
+
+    //Intake definitions
+    StartIntake = new StartIntake(intakeSubsystem);
+    StopIntake = new StopIntake(intakeSubsystem);
 
     //load in autonomous paths
     path1 = loadPath("path1");
@@ -68,7 +90,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    btn_ps4r1_driver.whenPressed(StartIntake);
+    btn_ps4r1_driver.whenReleased(StopIntake);
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -80,7 +105,7 @@ public class RobotContainer {
     drivetrainSubsystem.resetOdometry(firstTrajectoryInAutonomous.getInitialPose());
     return autonomousMode.getSelected();
   }
-  
+
   private void setAutonomousMode(String inputName, Trajectory firstPathInAutoMode, SequentialCommandGroup commandsToDo) {
     firstTrajectoryInAutonomous = firstPathInAutoMode;
     autonomousMode.addOption(inputName, commandsToDo);

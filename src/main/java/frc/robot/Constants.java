@@ -19,6 +19,11 @@ public final class Constants {
 
     //All constants are in SI units
 
+    //Pneumatics CAN IDs
+    public static final int CANID_pneumaticsControlModule = 10;
+    public static final int intakeSolenoidPort = 0;
+    public static final int CANID_intakeMotor = 4;
+
     //Drivetrain CAN IDs
     public static final int CANID_mainLeftMotorBack = 0;
     public static final int CANID_mainLeftMotorFront = 1;
