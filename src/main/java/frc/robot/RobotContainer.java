@@ -4,13 +4,22 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -25,15 +34,30 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrainSubsystem;
-  private final Command autonomousCommand;
 
   public final static Joystick driverJoystick = new Joystick(0);
 
+  private SendableChooser<SequentialCommandGroup> autonomousMode = new SendableChooser<SequentialCommandGroup>();
+  
+  private Trajectory firstTrajectoryInAutonomous; //needs to have its odometry updated for it to work not only in robot simulation, but for it to respect symmetry of the field irl
+
+  private SequentialCommandGroup path1CommandGroup;
+  private Trajectory path1;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    //It's best to define your subsystems and commands here as any constructor code will get ran on robotInit, which could prevent unexpected behavior
     drivetrainSubsystem = new Drivetrain();
-    autonomousCommand = new SequentialCommandGroup(); //default to an autonomous which does nothing
+
+    //load in autonomous paths
+    path1 = loadPath("path1");
+    path1CommandGroup = generateTrajectoryCommand(path1);
+
+    //Setup sendable chooser for autonomous mode selector
+    autonomousMode.setDefaultOption("Do nothing", new SequentialCommandGroup());
+
+    setAutonomousMode("1 Ball Auto", path1, new SequentialCommandGroup(path1CommandGroup));
+
+    SmartDashboard.putData(autonomousMode);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -53,12 +77,18 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return autonomousCommand;
+    drivetrainSubsystem.resetOdometry(firstTrajectoryInAutonomous.getInitialPose());
+    return autonomousMode.getSelected();
+  }
+  
+  private void setAutonomousMode(String inputName, Trajectory firstPathInAutoMode, SequentialCommandGroup commandsToDo) {
+    firstTrajectoryInAutonomous = firstPathInAutoMode;
+    autonomousMode.addOption(inputName, commandsToDo);
   }
 
   //Trajectory generator function
-  public SequentialCommandGroup generateTrajectoryCommand(Trajectory trajectory) {
+  private SequentialCommandGroup generateTrajectoryCommand(Trajectory trajectory) {
+    if (trajectory != null) {
     RamseteCommand ramseteCommand =
         new RamseteCommand(
             trajectory,
@@ -75,9 +105,21 @@ public class RobotContainer {
             // RamseteCommand passes volts to the callback
             drivetrainSubsystem::tankDriveVolts,
             drivetrainSubsystem);
-
+    
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> drivetrainSubsystem.tankDriveVolts(0, 0));
+    } else {
+      return new SequentialCommandGroup();
+    }
+}
+private Trajectory loadPath(String address) {
+  Trajectory trajectory = null;
+  try {
+    trajectory = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("pathplanner/generatedJSON/"+address+".wpilib.json"));
+  } catch(IOException exception) {
+    DriverStation.reportError("Unable to open trajectory: " + address, exception.getStackTrace());
+  }
+  return trajectory;
 }
   //Conversion functions
 
