@@ -66,9 +66,6 @@ public class Drivetrain extends SubsystemBase {
     //Setup the integrated sensor
     MainLeftMotorBack.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
     MainRightMotorBack.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
-    //reset master encoders
-    MainLeftMotorBack.setSelectedSensorPosition(0);
-    MainRightMotorBack.setSelectedSensorPosition(0);
 
     //Slave the front motors to their respective back motors
     MainLeftMotorFront.follow(MainLeftMotorBack);
@@ -191,6 +188,10 @@ public class Drivetrain extends SubsystemBase {
     MainLeftMotorBack.setSelectedSensorPosition(0);
     MainRightMotorBack.setSelectedSensorPosition(0);
     odometry.resetPosition(pose, gyro.getRotation2d());
+  }
+  public void resetEncoders() {
+    MainLeftMotorBack.setSelectedSensorPosition(0);
+    MainRightMotorBack.setSelectedSensorPosition(0);
   }
   
 }

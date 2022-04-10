@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
@@ -24,6 +22,7 @@ import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -39,18 +38,22 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   //Declare subsystems
-  public final Drivetrain drivetrainSubsystem;
-  public final Intake intakeSubsystem;
+  public static Drivetrain drivetrainSubsystem;
+  public static Intake intakeSubsystem;
+  public static Shooter shooterSubsystem;
 
   //Declare commands
   public static Command StartIntake;
   public static Command StopIntake;
 
-  //Declare joysticks
+  //Define joysticks
   public final static Joystick driverJoystick = new Joystick(0);
+  public final static Joystick operatorJoystick = new Joystick(1);
 
-  //Declare joystick buttons
+  //Define joystick buttons
   JoystickButton btn_ps4r1_driver = new JoystickButton(driverJoystick, 6);
+
+  JoystickButton btn_ps4r1_operator = new JoystickButton(operatorJoystick, 6);
 
 
   private SendableChooser<SequentialCommandGroup> autonomousMode = new SendableChooser<SequentialCommandGroup>();
@@ -65,6 +68,7 @@ public class RobotContainer {
     //Subsystem definitions
     drivetrainSubsystem = new Drivetrain();
     intakeSubsystem = new Intake();
+    shooterSubsystem = new Shooter();
 
     //Intake definitions
     StartIntake = new StartIntake(intakeSubsystem);
@@ -169,4 +173,11 @@ private Trajectory loadPath(String address) {
     //convert to encoder ticks per second
     return encoderTicksToMeters(ticksPer100ms*10.0, gearRatio, CPR, wheelRadius);
   }
+  public static double RPMToEncoderTicksPer100ms(double rpm, double gearRatio, double CPR) {
+    return (rpm/60.0) * CPR * gearRatio * 10.0;
+  }
+
+public static double EncoderTicksPer100msToRPM(double velocity, double gearingDrivetraingearbox, double CPR) {
+    return (((velocity*10.0)/CPR)/Constants.GEARING_drivetrainGearbox) * 60.0;
+}
 }

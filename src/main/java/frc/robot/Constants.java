@@ -31,6 +31,23 @@ public final class Constants {
     public static final int CANID_mainRightMotorBack = 3;
     public static final int CANID_mainRightMotorFront = 2;
 
+    //Shooter CAN IDs
+    public static final int CANID_leftFlywheelMotor = 8;
+    public static final int CANID_rightFlywheelMotor = 5;
+
+    public static final int CANID_indexerMotor = 9;
+
+    public static final int CANID_turretAlignmentMotor = 14;
+
+    //Turret PID
+    public static final double PID_kP_turretAlignment = 0.44;
+    public static final double PID_kI_turretAlignment = 0;
+    public static final double PID_kD_turretAlignment = 0;
+
+    //Flywheel PID
+    public static final double PID_kP_flywheel = 0.015;
+    public static final double PID_kF_flywheel = 0.0527;
+
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;
 
@@ -62,4 +79,8 @@ public final class Constants {
     public static final double kRamseteZeta = 0.7;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
       trackWidth);
+
+    public static final long actuatorFullyExtendedTimeMillis = 500;
+    public static final long actuatorFullyRetractedTimeMillis = 500;
+    public static final double flywheelTolerance = 0.02; //2 percent plus or minus
 }

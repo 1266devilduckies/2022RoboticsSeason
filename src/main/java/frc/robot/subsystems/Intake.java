@@ -38,8 +38,8 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    intakeMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     // This method will be called once per scheduler run during simulation
+    intakeMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
   }
   public void setSolenoid(boolean mode) {
     singleSolenoid.set(mode);
