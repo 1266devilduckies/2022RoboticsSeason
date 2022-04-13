@@ -80,7 +80,10 @@ public final class Constants {
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
       trackWidth);
 
-    public static final long actuatorFullyExtendedTimeMillis = 500;
-    public static final long actuatorFullyRetractedTimeMillis = 500;
+    //timing constants
+    public static final long actuatorFullyExtendedTimeMillis = 1000;
+    public static final long actuatorFullyRetractedTimeMillis = 1000;
+    public static final int indexingTimeMillis = 500;
+
     public static final double flywheelTolerance = 0.02; //2 percent plus or minus
 }

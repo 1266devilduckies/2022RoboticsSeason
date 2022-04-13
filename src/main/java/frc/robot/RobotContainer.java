@@ -18,7 +18,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.IndexBall;
+import frc.robot.commands.StartFlywheel;
 import frc.robot.commands.StartIntake;
+import frc.robot.commands.StopFlywheel;
 import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -45,6 +48,11 @@ public class RobotContainer {
   //Declare commands
   public static Command StartIntake;
   public static Command StopIntake;
+  public static Command StartFlywheel;
+  public static Command StopFlywheel;
+  public static Command IndexBall;
+  public static SequentialCommandGroup shootOneBall;
+  public static SequentialCommandGroup shootTwoBall;
 
   //Define joysticks
   public final static Joystick driverJoystick = new Joystick(0);
@@ -74,6 +82,16 @@ public class RobotContainer {
     StartIntake = new StartIntake(intakeSubsystem);
     StopIntake = new StopIntake(intakeSubsystem);
 
+    //Shooter definitions
+    StartFlywheel = new StartFlywheel(shooterSubsystem);
+    StopFlywheel = new StopFlywheel(shooterSubsystem);
+    IndexBall = new IndexBall(shooterSubsystem);
+
+    shootOneBall = new SequentialCommandGroup(StartFlywheel, IndexBall, StopFlywheel);
+
+    //Because of there being no timing in StartFlywheel dictating when it ends, StartFlywheel also acts as a WaitUntil command for when the flywheel is up to its target RPM
+    shootTwoBall = new SequentialCommandGroup(StartFlywheel, IndexBall, StartFlywheel, IndexBall, StopFlywheel);
+
     //load in autonomous paths
     path1 = loadPath("path1");
     path1CommandGroup = generateTrajectoryCommand(path1);
@@ -81,7 +99,7 @@ public class RobotContainer {
     //Setup sendable chooser for autonomous mode selector
     autonomousMode.setDefaultOption("Do nothing", new SequentialCommandGroup());
 
-    setAutonomousMode("1 Ball Auto", path1, new SequentialCommandGroup(path1CommandGroup));
+    setAutonomousMode("1 Ball Auto", path1, new SequentialCommandGroup(path1CommandGroup, shootOneBall));
 
     SmartDashboard.putData(autonomousMode);
     // Configure the button bindings
@@ -95,8 +113,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    //driver bindings
     btn_ps4r1_driver.whenPressed(StartIntake);
     btn_ps4r1_driver.whenReleased(StopIntake);
+
+    //operator bindings
+    btn_ps4r1_operator.whenPressed(StartFlywheel);
+    btn_ps4r1_operator.whenReleased(StopFlywheel);
   }
 
   /**

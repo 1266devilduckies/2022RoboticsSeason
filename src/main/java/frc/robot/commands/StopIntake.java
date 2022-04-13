@@ -8,7 +8,6 @@ public class StopIntake extends CommandBase {
   Intake intakeSubsystem;
   long startTime;
   public StopIntake(Intake subsystem) {
-    startTime = System.currentTimeMillis();
     intakeSubsystem = subsystem;
     addRequirements(intakeSubsystem);
   }
@@ -17,6 +16,7 @@ public class StopIntake extends CommandBase {
   public void initialize() {
     intakeSubsystem.setSolenoid(false);
     intakeSubsystem.setIntakeMotor(0.0);
+    startTime = System.currentTimeMillis();
   }
 
   @Override

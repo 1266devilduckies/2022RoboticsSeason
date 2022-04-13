@@ -1,12 +1,12 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "Compressor[10]": {
+      "Talon FX[8]": {
         "header": {
           "open": true
         }
       },
-      "Victor SPX[4]": {
+      "Talon FX[8]/Integrated Sensor": {
         "header": {
           "open": true
         }
@@ -24,14 +24,20 @@
       "/LiveWindow/Drivetrain": "Subsystem",
       "/LiveWindow/ExampleSubsystem": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
+      "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/Ungrouped/ADXRS450_Gyro[0]": "Gyro",
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/Talon FX [14]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [1]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [2]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [5]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [8]": "Motor Controller",
       "/LiveWindow/Ungrouped/Victor SPX [4]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Victor SPX [9]": "Motor Controller",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     }

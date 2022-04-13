@@ -14,9 +14,9 @@ public class StartIntake extends CommandBase {
 
   @Override
   public void initialize() {
-    startTime = System.currentTimeMillis();
     intakeSubsystem.setSolenoid(true);
     intakeSubsystem.setIntakeMotor(1.0);
+    startTime = System.currentTimeMillis();
   }
 
   @Override
@@ -31,6 +31,6 @@ public class StartIntake extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-
+    
   }
 }

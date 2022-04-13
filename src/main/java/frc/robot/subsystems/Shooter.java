@@ -126,4 +126,8 @@ public class Shooter extends SubsystemBase {
   public void resetEncoders() {
     leftFlywheelMotor.setSelectedSensorPosition(0);
   }
+
+  public void setIndexerMotor(double percentOutput) {
+    indexerMotor.set(ControlMode.PercentOutput, percentOutput);
+  }
 }
