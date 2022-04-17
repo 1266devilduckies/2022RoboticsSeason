@@ -10,9 +10,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -27,6 +29,8 @@ public class Shooter extends SubsystemBase {
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
   private final PIDController turretAlignmentPIDController;
+  private final FlywheelSim flywheelSim;
+
   private double flywheelTargetRPM = 0.0;
   private NetworkTable limelightTable;
   private double dx = 0.0;
@@ -72,6 +76,8 @@ public class Shooter extends SubsystemBase {
     rightFlywheelMotorSim = rightFlywheelMotor.getSimCollection();
     turretAlignmentMotorSim = turretAlignmentMotor.getSimCollection();
     indexerMotorSim = indexerMotor.getSimCollection();
+
+    flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), Constants.GEARING_flywheel, 0.1);
   }
 
   @Override
@@ -98,6 +104,17 @@ public class Shooter extends SubsystemBase {
     rightFlywheelMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     turretAlignmentMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     indexerMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
+
+    //simulation is useless as it uses PIDController but we dont use that
+
+    /*
+    //flywheelSim.setInput(u);
+    flywheelSim.update(0.02);
+
+    //keep gearing 1:1 because the class does the gearing for you
+    leftFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
+    rightFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
+    */
   }
 
   public void setMasterMotorOnFlywheel(double percentOutput) {

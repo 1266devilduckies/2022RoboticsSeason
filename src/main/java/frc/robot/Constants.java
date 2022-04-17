@@ -39,6 +39,14 @@ public final class Constants {
 
     public static final int CANID_turretAlignmentMotor = 14;
 
+    //Climber CAN IDs
+
+    //check in on these when you get the chance
+    public static final int CANID_leftClimberMotor = 13;
+    public static final int CANID_rightClimberMotor = 12;
+    public static double upperBoundClimber = -150000.0; //negative is up
+    public static double lowerBoundClimber = 0.0; //ten thousand
+
     //Turret PID
     public static final double PID_kP_turretAlignment = 0.44;
     public static final double PID_kI_turretAlignment = 0;
@@ -50,6 +58,7 @@ public final class Constants {
 
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;
+    public static final double GEARING_flywheel = 10.0;
 
     //Voltage constants calculated from SysId on the drivetrain on the linear test
     public static final double kSLinear = 0.67766;

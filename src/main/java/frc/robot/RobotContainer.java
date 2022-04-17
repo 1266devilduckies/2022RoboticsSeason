@@ -23,6 +23,7 @@ import frc.robot.commands.StartFlywheel;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopFlywheel;
 import frc.robot.commands.StopIntake;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -44,13 +45,14 @@ public class RobotContainer {
   public static Drivetrain drivetrainSubsystem;
   public static Intake intakeSubsystem;
   public static Shooter shooterSubsystem;
+  public static Climber climberSubsystem;
 
-  //Declare commands
+  //Declare commands for input controls
   public static Command StartIntake;
   public static Command StopIntake;
   public static Command StartFlywheel;
   public static Command StopFlywheel;
-  public static Command IndexBall;
+
   public static SequentialCommandGroup shootOneBall;
   public static SequentialCommandGroup shootTwoBall;
 
@@ -69,7 +71,9 @@ public class RobotContainer {
   private Trajectory firstTrajectoryInAutonomous; //needs to have its odometry updated for it to work not only in robot simulation, but for it to respect symmetry of the field irl
 
   private SequentialCommandGroup path1CommandGroup;
-  private Trajectory path1;
+  private SequentialCommandGroup path2CommandGroup;
+  private Trajectory auto1_path1;
+  private Trajectory auto2_path1;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -77,6 +81,7 @@ public class RobotContainer {
     drivetrainSubsystem = new Drivetrain();
     intakeSubsystem = new Intake();
     shooterSubsystem = new Shooter();
+    climberSubsystem = new Climber();
 
     //Intake definitions
     StartIntake = new StartIntake(intakeSubsystem);
@@ -85,21 +90,25 @@ public class RobotContainer {
     //Shooter definitions
     StartFlywheel = new StartFlywheel(shooterSubsystem);
     StopFlywheel = new StopFlywheel(shooterSubsystem);
-    IndexBall = new IndexBall(shooterSubsystem);
-
-    shootOneBall = new SequentialCommandGroup(StartFlywheel, IndexBall, StopFlywheel);
+    
+    shootOneBall = new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem));
 
     //Because of there being no timing in StartFlywheel dictating when it ends, StartFlywheel also acts as a WaitUntil command for when the flywheel is up to its target RPM
-    shootTwoBall = new SequentialCommandGroup(StartFlywheel, IndexBall, StartFlywheel, IndexBall, StopFlywheel);
+    shootTwoBall = new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem));
 
     //load in autonomous paths
-    path1 = loadPath("path1");
-    path1CommandGroup = generateTrajectoryCommand(path1);
+    auto1_path1 = loadPath("path1");
+    auto2_path1 = loadPath("path2");
+
+    //work on the logic
+    path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), shootOneBall);
+    path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1), shootTwoBall);
 
     //Setup sendable chooser for autonomous mode selector
     autonomousMode.setDefaultOption("Do nothing", new SequentialCommandGroup());
 
-    setAutonomousMode("1 Ball Auto", path1, new SequentialCommandGroup(path1CommandGroup, shootOneBall));
+    setAutonomousMode("1 Ball Auto", auto1_path1, path1CommandGroup);
+    setAutonomousMode("2 Ball Auto", auto2_path1, path2CommandGroup);
 
     SmartDashboard.putData(autonomousMode);
     // Configure the button bindings
@@ -129,7 +138,11 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() {
+    //this if statement is redundent but helps to make the code easier to read
+    if (firstTrajectoryInAutonomous != null) {
     drivetrainSubsystem.resetOdometry(firstTrajectoryInAutonomous.getInitialPose());
+    }
+
     return autonomousMode.getSelected();
   }
 
