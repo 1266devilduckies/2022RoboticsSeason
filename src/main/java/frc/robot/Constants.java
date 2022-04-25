@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
@@ -52,13 +53,18 @@ public final class Constants {
     public static final double PID_kI_turretAlignment = 0;
     public static final double PID_kD_turretAlignment = 0;
 
-    //Flywheel PID
-    public static final double PID_kP_flywheel = 0.015;
-    public static final double PID_kF_flywheel = 0.0527;
-
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;
-    public static final double GEARING_flywheel = 10.0;
+    public static final double GEARING_flywheel = 1.0;
+
+    //Flywheel
+    public static final double flywheelRPM = 4200;
+    public static final double kSFlywheel = 0.50745;
+    public static final double kVFlywheel = 0.10828;
+    public static final double kAFlywheel = 0.0080391;
+    public static final SimpleMotorFeedforward SIMPLE_MOTOR_FEEDFORWARD_flywheel = new SimpleMotorFeedforward(kSFlywheel, kVFlywheel, kAFlywheel); //in terms of rps
+    public static final double PID_kP_flywheel = 0.00040137;
+    public static final double PID_kF_flywheel = SIMPLE_MOTOR_FEEDFORWARD_flywheel.calculate(flywheelRPM / 60.) / 12.0;
 
     //Voltage constants calculated from SysId on the drivetrain on the linear test
     public static final double kSLinear = 0.67766;

@@ -47,15 +47,6 @@ public class RobotContainer {
   public static Shooter shooterSubsystem;
   public static Climber climberSubsystem;
 
-  //Declare commands for input controls
-  public static Command StartIntake;
-  public static Command StopIntake;
-  public static Command StartFlywheel;
-  public static Command StopFlywheel;
-
-  public static SequentialCommandGroup shootOneBall;
-  public static SequentialCommandGroup shootTwoBall;
-
   //Define joysticks
   public final static Joystick driverJoystick = new Joystick(0);
   public final static Joystick operatorJoystick = new Joystick(1);
@@ -83,26 +74,12 @@ public class RobotContainer {
     shooterSubsystem = new Shooter();
     climberSubsystem = new Climber();
 
-    //Intake definitions
-    StartIntake = new StartIntake(intakeSubsystem);
-    StopIntake = new StopIntake(intakeSubsystem);
-
-    //Shooter definitions
-    StartFlywheel = new StartFlywheel(shooterSubsystem);
-    StopFlywheel = new StopFlywheel(shooterSubsystem);
-    
-    shootOneBall = new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem));
-
-    //Because of there being no timing in StartFlywheel dictating when it ends, StartFlywheel also acts as a WaitUntil command for when the flywheel is up to its target RPM
-    shootTwoBall = new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem));
-
     //load in autonomous paths
     auto1_path1 = loadPath("path1");
     auto2_path1 = loadPath("path2");
 
-    //work on the logic
-    path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), shootOneBall);
-    path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1), shootTwoBall);
+    path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
+    path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1),  new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
 
     //Setup sendable chooser for autonomous mode selector
     autonomousMode.setDefaultOption("Do nothing", new SequentialCommandGroup());
@@ -123,12 +100,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //driver bindings
-    btn_ps4r1_driver.whenPressed(StartIntake);
-    btn_ps4r1_driver.whenReleased(StopIntake);
+    btn_ps4r1_driver.whenPressed(new StartIntake(intakeSubsystem));
+    btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));
 
     //operator bindings
-    btn_ps4r1_operator.whenPressed(StartFlywheel);
-    btn_ps4r1_operator.whenReleased(StopFlywheel);
+    btn_ps4r1_operator.whenPressed(new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
+    btn_ps4r1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
   }
 
   /**
@@ -210,10 +187,10 @@ private Trajectory loadPath(String address) {
     return encoderTicksToMeters(ticksPer100ms*10.0, gearRatio, CPR, wheelRadius);
   }
   public static double RPMToEncoderTicksPer100ms(double rpm, double gearRatio, double CPR) {
-    return (rpm/60.0) * CPR * gearRatio * 10.0;
+    return ((rpm/60.0) * CPR * gearRatio) / 10.0;
   }
 
-public static double EncoderTicksPer100msToRPM(double velocity, double gearingDrivetraingearbox, double CPR) {
-    return (((velocity*10.0)/CPR)/Constants.GEARING_drivetrainGearbox) * 60.0;
+public static double EncoderTicksPer100msToRPM(double velocity, double gearRatio, double CPR) {
+    return (((velocity*10.0)/CPR)/gearRatio) * 60.0;
 }
 }

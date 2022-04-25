@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
 
 public class StartFlywheel extends CommandBase {
@@ -13,7 +14,8 @@ public class StartFlywheel extends CommandBase {
 
   @Override
   public void initialize() {
-    shooterSubsystem.setTargetRPM(6000);
+    System.out.println(Constants.PID_kF_flywheel);
+    shooterSubsystem.setTargetRPM(Constants.flywheelRPM);
     shooterSubsystem.setRPM(shooterSubsystem.getTargetRPM());
   }
 
@@ -24,7 +26,7 @@ public class StartFlywheel extends CommandBase {
   
   @Override
   public boolean isFinished() {
-    return Math.abs(shooterSubsystem.getTargetRPM()-shooterSubsystem.getCurrentRPM()) <= (shooterSubsystem.getTargetRPM() * Constants.flywheelTolerance);
+    return false;//Math.abs(shooterSubsystem.getTargetRPM()-shooterSubsystem.getCurrentRPM()) <= (shooterSubsystem.getTargetRPM() * Constants.flywheelTolerance);
   }
 
   @Override

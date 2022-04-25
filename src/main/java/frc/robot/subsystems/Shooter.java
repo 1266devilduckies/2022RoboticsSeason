@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -10,7 +11,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -54,7 +57,6 @@ public class Shooter extends SubsystemBase {
     rightFlywheelMotor.setInverted(InvertType.OpposeMaster);
 
     leftFlywheelMotor.config_kP(0, Constants.PID_kP_flywheel);
-    leftFlywheelMotor.config_kF(0, Constants.PID_kF_flywheel);
 
     leftFlywheelMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
 
@@ -77,7 +79,7 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotorSim = turretAlignmentMotor.getSimCollection();
     indexerMotorSim = indexerMotor.getSimCollection();
 
-    flywheelSim = new FlywheelSim(DCMotor.getFalcon500(2), Constants.GEARING_flywheel, 0.1);
+    flywheelSim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(Constants.kVFlywheel, Constants.kAFlywheel), DCMotor.getFalcon500(2), Constants.GEARING_flywheel);
   }
 
   @Override
@@ -104,17 +106,13 @@ public class Shooter extends SubsystemBase {
     rightFlywheelMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     turretAlignmentMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     indexerMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
-
-    //simulation is useless as it uses PIDController but we dont use that
-
-    /*
-    //flywheelSim.setInput(u);
+    
+    flywheelSim.setInputVoltage(leftFlywheelMotor.getMotorOutputVoltage());
     flywheelSim.update(0.02);
 
-    //keep gearing 1:1 because the class does the gearing for you
-    leftFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
-    rightFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
-    */
+    leftFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), Constants.GEARING_flywheel, 2048.0));
+    rightFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), Constants.GEARING_flywheel, 2048.0));
+    
   }
 
   public void setMasterMotorOnFlywheel(double percentOutput) {
@@ -130,10 +128,10 @@ public class Shooter extends SubsystemBase {
     return canSeeAnyTarget == 1.0 && turretAlignmentPIDController.atSetpoint();
   }
   public double getCurrentRPM() {
-    return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0);
+    return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), Constants.GEARING_flywheel, 2048.0);
   }
   public void setRPM(double rpm) {
-    leftFlywheelMotor.set(ControlMode.Velocity, RobotContainer.RPMToEncoderTicksPer100ms(rpm, Constants.GEARING_drivetrainGearbox, 2048.0));
+    leftFlywheelMotor.set(ControlMode.Velocity, RobotContainer.RPMToEncoderTicksPer100ms(rpm, Constants.GEARING_flywheel, 2048.0), DemandType.ArbitraryFeedForward, Constants.PID_kF_flywheel);
   }
 
   public void setToCoast() {

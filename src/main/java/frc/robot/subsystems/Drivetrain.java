@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -42,9 +43,9 @@ public class Drivetrain extends SubsystemBase {
   private final ADXRS450_GyroSim gyroSim;
   private final ADXRS450_Gyro gyro;
 
-  DifferentialDriveOdometry odometry;
+  private final DifferentialDriveOdometry odometry;
   
-  private Field2d field = new Field2d(); //used to simulate the field for the simulated robot
+  private final Field2d field = new Field2d(); //used to simulate the field for the simulated robot
 
   public Drivetrain() {
     MainLeftMotorBack = new WPI_TalonFX(Constants.CANID_mainLeftMotorBack);
