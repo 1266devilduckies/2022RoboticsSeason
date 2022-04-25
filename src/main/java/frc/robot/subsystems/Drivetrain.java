@@ -96,7 +96,13 @@ public class Drivetrain extends SubsystemBase {
 
     //Initialize the drivetrain API which simulates the voltage outputs on the given CAN devices assigned to the DifferentialDrive class
 
-    //Example case, NOT ACCURATE. Collect tests on Friday.
+    // robotDriveSim = new DifferentialDrivetrainSim(LinearSystemId.identifyVelocitySystem(Constants.kVLinear, Constants.kALinear), 
+    // DCMotor.getFalcon500(2),
+    // Constants.GEARING_drivetrainGearbox, 
+    // Constants.trackWidth, 
+    // Constants.drivetrainWheelRadius, 
+    // VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
+    
     robotDriveSim = new DifferentialDrivetrainSim(
       DCMotor.getFalcon500(2),  //2 Falcon 500s on each side of the drivetrain.
       Constants.GEARING_drivetrainGearbox,               //Standard AndyMark Gearing reduction.
@@ -114,20 +120,6 @@ public class Drivetrain extends SubsystemBase {
        */
       null //VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005) //Uncomment this line to add measurement noise.
     );
-    
-    /*new DifferentialDrivetrainSim(
-      LinearSystemId.identifyDrivetrainSystem(Constants.kVLinear, Constants.kALinear, Constants.kVAngular, Constants.kAAngular),
-      DCMotor.getFalcon500(2),
-      Constants.GEARING_drivetrainGearbox,
-      Constants.trackWidth,
-      Constants.drivetrainWheelRadius,
-      // The standard deviations for measurement noise:
-      // x and y:          0.001 m
-      // heading:          0.001 rad
-      // l and r velocity: 0.1   m/s
-      // l and r position: 0.005 m
-      VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
-    );*/
 
     SmartDashboard.putData("Field", field); //send field to NT
 

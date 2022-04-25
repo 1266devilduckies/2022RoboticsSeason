@@ -79,7 +79,7 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotorSim = turretAlignmentMotor.getSimCollection();
     indexerMotorSim = indexerMotor.getSimCollection();
 
-    flywheelSim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(Constants.kVFlywheel, Constants.kAFlywheel), DCMotor.getFalcon500(2), Constants.GEARING_flywheel);
+    flywheelSim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(Constants.kVFlywheel / 6.28, Constants.kAFlywheel / 6.28), DCMotor.getFalcon500(2), Constants.GEARING_flywheel);
   }
 
   @Override

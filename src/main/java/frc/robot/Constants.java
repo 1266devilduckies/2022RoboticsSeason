@@ -63,8 +63,8 @@ public final class Constants {
     public static final double kVFlywheel = 0.10828;
     public static final double kAFlywheel = 0.0080391;
     public static final SimpleMotorFeedforward SIMPLE_MOTOR_FEEDFORWARD_flywheel = new SimpleMotorFeedforward(kSFlywheel, kVFlywheel, kAFlywheel); //in terms of rps
-    public static final double PID_kP_flywheel = 0.00040137;
-    public static final double PID_kF_flywheel = SIMPLE_MOTOR_FEEDFORWARD_flywheel.calculate(flywheelRPM / 60.) / 12.0;
+    public static final double PID_kP_flywheel = 0.2;
+    public static double PID_kF_flywheel = SIMPLE_MOTOR_FEEDFORWARD_flywheel.calculate(flywheelRPM / 60.) / 12.0;
 
     //Voltage constants calculated from SysId on the drivetrain on the linear test
     public static final double kSLinear = 0.67766;
