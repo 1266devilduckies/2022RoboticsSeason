@@ -14,7 +14,6 @@ public class StartFlywheel extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println(Constants.PID_kF_flywheel);
     shooterSubsystem.setTargetRPM(Constants.flywheelRPM);
     shooterSubsystem.setRPM(shooterSubsystem.getTargetRPM());
   }
@@ -26,7 +25,7 @@ public class StartFlywheel extends CommandBase {
   
   @Override
   public boolean isFinished() {
-    return false;//Math.abs(shooterSubsystem.getTargetRPM()-shooterSubsystem.getCurrentRPM()) <= (shooterSubsystem.getTargetRPM() * Constants.flywheelTolerance);
+    return Math.abs(shooterSubsystem.getTargetRPM()-shooterSubsystem.getCurrentRPM()) <= (shooterSubsystem.getTargetRPM() * Constants.flywheelTolerance);
   }
 
   @Override

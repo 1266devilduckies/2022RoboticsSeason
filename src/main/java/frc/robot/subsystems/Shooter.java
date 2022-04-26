@@ -39,6 +39,7 @@ public class Shooter extends SubsystemBase {
   private double dx = 0.0;
   private double dy = 0.0;
   private double canSeeAnyTarget = 0.0;
+  private long startLostSight;
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -46,6 +47,10 @@ public class Shooter extends SubsystemBase {
     indexerMotor = new WPI_VictorSPX(Constants.CANID_indexerMotor);
     turretAlignmentMotor = new WPI_TalonFX(Constants.CANID_turretAlignmentMotor);
     
+    indexerMotor.configFactoryDefault();
+    indexerMotor.setNeutralMode(NeutralMode.Brake);
+    indexerMotor.setInverted(false);
+
     //config flywheel motors
     leftFlywheelMotor.configFactoryDefault();
     rightFlywheelMotor.configFactoryDefault();
@@ -91,9 +96,15 @@ public class Shooter extends SubsystemBase {
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
 
     if (canSeeAnyTarget == 1.0 && !turretAlignmentPIDController.atSetpoint()) {
+      startLostSight = -1;
       turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
-    } else {
-      turretAlignmentMotor.set(0.0);
+    } else if (canSeeAnyTarget != 1.0) {
+      if (startLostSight == -1) {
+        startLostSight = System.currentTimeMillis();
+      }
+      if ((System.currentTimeMillis() - startLostSight) >= Constants.LOSScanMillis) {
+         turretAlignmentMotor.set(0.3);
+      }
     }
   }
 
@@ -131,7 +142,10 @@ public class Shooter extends SubsystemBase {
     return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), Constants.GEARING_flywheel, 2048.0);
   }
   public void setRPM(double rpm) {
-    leftFlywheelMotor.set(ControlMode.Velocity, RobotContainer.RPMToEncoderTicksPer100ms(rpm, Constants.GEARING_flywheel, 2048.0), DemandType.ArbitraryFeedForward, Constants.PID_kF_flywheel);
+    leftFlywheelMotor.set(ControlMode.Velocity, 
+    RobotContainer.RPMToEncoderTicksPer100ms(rpm, Constants.GEARING_flywheel, 2048.0), 
+    DemandType.ArbitraryFeedForward, 
+    Constants.SIMPLE_MOTOR_FEEDFORWARD_flywheel.calculate(rpm / 60.) / RobotController.getBatteryVoltage());
   }
 
   public void setToCoast() {

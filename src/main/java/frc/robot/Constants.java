@@ -64,7 +64,7 @@ public final class Constants {
     public static final double kAFlywheel = 0.0080391;
     public static final SimpleMotorFeedforward SIMPLE_MOTOR_FEEDFORWARD_flywheel = new SimpleMotorFeedforward(kSFlywheel, kVFlywheel, kAFlywheel); //in terms of rps
     public static final double PID_kP_flywheel = 0.2;
-    public static double PID_kF_flywheel = SIMPLE_MOTOR_FEEDFORWARD_flywheel.calculate(flywheelRPM / 60.) / 12.0;
+    public static final double flywheelTolerance = 0.02; //2 percent plus or minus
 
     //Voltage constants calculated from SysId on the drivetrain on the linear test
     public static final double kSLinear = 0.67766;
@@ -99,6 +99,5 @@ public final class Constants {
     public static final long actuatorFullyExtendedTimeMillis = 1000;
     public static final long actuatorFullyRetractedTimeMillis = 1000;
     public static final int indexingTimeMillis = 500;
-
-    public static final double flywheelTolerance = 0.02; //2 percent plus or minus
+    public static final long LOSScanMillis = 1000;
 }

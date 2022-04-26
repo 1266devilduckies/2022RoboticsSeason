@@ -21,10 +21,6 @@ public class Climber extends SubsystemBase {
         leftClimberMotor = new WPI_TalonFX(Constants.CANID_leftClimberMotor);
         rightClimberMotor = new WPI_TalonFX(Constants.CANID_rightClimberMotor);
 
-        //proportional gains this high act as mini bang-bangs, but it's more performant to run it on the onboard CS
-        leftClimberMotor.config_kP(0, 0.1);
-        rightClimberMotor.config_kP(0, 0.1);
-
         leftClimberMotor.configForwardSoftLimitThreshold(Constants.lowerBoundClimber, 0);
         leftClimberMotor.configReverseSoftLimitThreshold(Constants.upperBoundClimber, 0);
         leftClimberMotor.configForwardSoftLimitEnable(true, 0);
@@ -45,10 +41,6 @@ public class Climber extends SubsystemBase {
         rightClimberMotorSim = rightClimberMotor.getSimCollection();
     }
 
-    public void setClimberDisplacement(double ticks) {
-        leftClimberMotor.set(ControlMode.Position, ticks);
-    }
-
     //speed should be between -1 to 1 but it wont matter as it has a clamp function built-in
     public void setClimberPercentOutput(double speed) {
         leftClimberMotor.set(ControlMode.PercentOutput, speed);
@@ -56,16 +48,16 @@ public class Climber extends SubsystemBase {
 
     @Override
     public void periodic() {
-    double lVal = -RobotContainer.operatorJoystick.getY();
-    //deadband needs to be around half because the operators joystick is trash now
-    if (lVal > 0.5) {
-        leftClimberMotor.set(ControlMode.PercentOutput, -0.8);
+        double lVal = -RobotContainer.operatorJoystick.getY();
+        //deadband needs to be around half because the operators joystick is trash now
+        if (lVal > 0.5) {
+            setClimberPercentOutput(-.8);
         } else if (lVal < -0.5) {
-           leftClimberMotor.set(ControlMode.PercentOutput, 0.8);
-         } else {
-            leftClimberMotor.set(ControlMode.PercentOutput, 0.0);
-         }
-     }
+            setClimberPercentOutput(.8);
+        } else {
+            setClimberPercentOutput(0.);
+        }
+    }
      public void simulationPeriodic() {
         leftClimberMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
         rightClimberMotorSim.setBusVoltage(RobotController.getBatteryVoltage());

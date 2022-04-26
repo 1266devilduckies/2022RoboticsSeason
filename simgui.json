@@ -1,11 +1,6 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "Talon FX[14]": {
-        "header": {
-          "open": true
-        }
-      },
       "Talon FX[8]": {
         "header": {
           "open": true
@@ -17,6 +12,11 @@
           "open": true
         },
         "name": "LeftFlywheelMotor/Integrated Sensor"
+      },
+      "Victor SPX[9]": {
+        "header": {
+          "open": true
+        }
       }
     },
     "Solenoids": {
