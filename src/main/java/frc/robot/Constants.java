@@ -52,10 +52,11 @@ public final class Constants {
     public static final double PID_kP_turretAlignment = 0.44;
     public static final double PID_kI_turretAlignment = 0;
     public static final double PID_kD_turretAlignment = 0;
+    public static final int ticksPerDegreeTurret = (int)((2048.0 * 74.0) / 360.0);
 
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;
-    public static final double GEARING_flywheel = 1.0;
+    public static final double GEARING_flywheel = 74.0;
 
     //Flywheel
     public static final double flywheelRPM = 4200;
@@ -65,6 +66,10 @@ public final class Constants {
     public static final SimpleMotorFeedforward SIMPLE_MOTOR_FEEDFORWARD_flywheel = new SimpleMotorFeedforward(kSFlywheel, kVFlywheel, kAFlywheel); //in terms of rps
     public static final double PID_kP_flywheel = 0.2;
     public static final double flywheelTolerance = 0.02; //2 percent plus or minus
+
+    //assumed with 0 degrees being heading
+    public static final double lowerBoundShooterDegrees = -90;
+    public static final double upperBoundShooterDegrees = 90;
 
     //Voltage constants calculated from SysId on the drivetrain on the linear test
     public static final double kSLinear = 0.67766;

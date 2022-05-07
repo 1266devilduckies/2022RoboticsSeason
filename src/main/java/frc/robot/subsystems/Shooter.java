@@ -39,7 +39,7 @@ public class Shooter extends SubsystemBase {
   private double dx = 0.0;
   private double dy = 0.0;
   private double canSeeAnyTarget = 0.0;
-  private long startLostSight;
+  private boolean startAlignToHeading = false;
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -74,6 +74,12 @@ public class Shooter extends SubsystemBase {
 
     turretAlignmentMotor.setInverted(false);
 
+    turretAlignmentMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
+    
+    turretAlignmentMotor.config_kP(0, Constants.PID_kP_turretAlignment);
+    turretAlignmentMotor.config_kI(0, Constants.PID_kI_turretAlignment);
+    turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
+
     turretAlignmentPIDController = new PIDController(Constants.PID_kP_turretAlignment, Constants.PID_kI_turretAlignment, Constants.PID_kD_turretAlignment);
     turretAlignmentPIDController.setTolerance(2,15); //returns true if we are within 2 degrees of 0 degrees AND the rate of change currently (derivative) is less than 15 degrees
     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
@@ -94,7 +100,32 @@ public class Shooter extends SubsystemBase {
     dx = limelightTable.getEntry("tx").getDouble(0.0);
     dy = limelightTable.getEntry("ty").getDouble(0.0);
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
+    
+    double ticksOnSpinner = turretAlignmentMotor.getSelectedSensorPosition();
+    double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
+    double upperBoundTicks = Constants.upperBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
+    double tickTolerance = 500.;
 
+    boolean isAtLowerBound = Math.abs(ticksOnSpinner-lowerBoundTicks) < tickTolerance;
+    boolean isAtUpperBound = Math.abs(ticksOnSpinner-upperBoundTicks) < tickTolerance;
+
+    boolean isAtAnyBound = isAtLowerBound || isAtUpperBound;
+
+    if (Math.abs(ticksOnSpinner) < 0) {
+      startAlignToHeading = false;
+    }
+
+    if ((canSeeAnyTarget == 0.0 && isAtAnyBound) && !startAlignToHeading) {
+      startAlignToHeading = true;
+      turretAlignmentMotor.set(ControlMode.Position, 0);
+    }
+
+    if (!startAlignToHeading) {
+      turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
+    }
+
+
+    /*
     if (canSeeAnyTarget == 1.0 && !turretAlignmentPIDController.atSetpoint()) {
       startLostSight = -1;
       turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
@@ -106,6 +137,7 @@ public class Shooter extends SubsystemBase {
          turretAlignmentMotor.set(0.3);
       }
     }
+    */
   }
 
 
