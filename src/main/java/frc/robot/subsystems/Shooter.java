@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ResourceBundle.Control;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -76,12 +78,17 @@ public class Shooter extends SubsystemBase {
 
     turretAlignmentMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
     
+    turretAlignmentMotor.configForwardSoftLimitThreshold(Constants.upperBoundTicks, 0);
+    turretAlignmentMotor.configReverseSoftLimitThreshold(Constants.lowerBoundTicks, 0);
+    turretAlignmentMotor.configForwardSoftLimitEnable(true, 0);
+    turretAlignmentMotor.configReverseSoftLimitEnable(true, 0);
+
     turretAlignmentMotor.config_kP(0, Constants.PID_kP_turretAlignment);
     turretAlignmentMotor.config_kI(0, Constants.PID_kI_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
 
     turretAlignmentPIDController = new PIDController(Constants.PID_kP_turretAlignment, Constants.PID_kI_turretAlignment, Constants.PID_kD_turretAlignment);
-    turretAlignmentPIDController.setTolerance(2,15); //returns true if we are within 2 degrees of 0 degrees AND the rate of change currently (derivative) is less than 15 degrees
+    turretAlignmentPIDController.setTolerance(1,15); //returns true if we are within 2 degrees of 0 degrees AND the rate of change currently (derivative) is less than 15 degrees
     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
     //bind all of the simulated motors
@@ -102,26 +109,33 @@ public class Shooter extends SubsystemBase {
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
     
     double ticksOnSpinner = turretAlignmentMotor.getSelectedSensorPosition();
-    double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
-    double upperBoundTicks = Constants.upperBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
-    double tickTolerance = 500.;
 
-    boolean isAtLowerBound = Math.abs(ticksOnSpinner-lowerBoundTicks) < tickTolerance;
-    boolean isAtUpperBound = Math.abs(ticksOnSpinner-upperBoundTicks) < tickTolerance;
+    boolean isAtLowerBound = Math.abs(ticksOnSpinner-Constants.lowerBoundTicks) < Constants.tickTolerance;
+    boolean isAtUpperBound = Math.abs(ticksOnSpinner-Constants.upperBoundTicks) < Constants.tickTolerance;
 
     boolean isAtAnyBound = isAtLowerBound || isAtUpperBound;
 
-    if (Math.abs(ticksOnSpinner) < 0) {
+    if (turretAlignmentPIDController.atSetpoint()) {
       startAlignToHeading = false;
     }
 
-    if ((canSeeAnyTarget == 0.0 && isAtAnyBound) && !startAlignToHeading) {
+    if (
+      (
+      (isAtAnyBound && !startAlignToHeading) || 
+      (canSeeAnyTarget == 1.0 && !startAlignToHeading)
+      ) && 
+      !turretAlignmentPIDController.atSetpoint()
+      )  {
       startAlignToHeading = true;
       turretAlignmentMotor.set(ControlMode.Position, 0);
     }
 
-    if (!startAlignToHeading) {
-      turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
+    if (canSeeAnyTarget == 0.0) {
+      if (!isAtAnyBound) {
+        turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
+      } else {
+        turretAlignmentMotor.set(0.0);
+      }
     }
 
 

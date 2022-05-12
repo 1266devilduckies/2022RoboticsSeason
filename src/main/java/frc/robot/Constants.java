@@ -48,11 +48,14 @@ public final class Constants {
     public static double upperBoundClimber = -150000.0; //negative is up
     public static double lowerBoundClimber = 0.0; //ten thousand
 
-    //Turret PID
+    //Turret
     public static final double PID_kP_turretAlignment = 0.44;
     public static final double PID_kI_turretAlignment = 0;
     public static final double PID_kD_turretAlignment = 0;
     public static final int ticksPerDegreeTurret = (int)((2048.0 * 74.0) / 360.0);
+    public static final double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
+    public static final double upperBoundTicks = Constants.upperBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
+    public static final double tickTolerance = 500.;
 
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;
