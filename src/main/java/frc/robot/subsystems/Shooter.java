@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.ResourceBundle.Control;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -13,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.NetworkTable;
@@ -24,6 +21,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
+enum ShooterState {
+  IDLE,
+  ALIGN,
+  SEARCH,
+  SWEEPLEFT,
+  SWEEPRIGHT
+}
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
   private final TalonFXSimCollection leftFlywheelMotorSim;
@@ -41,7 +45,9 @@ public class Shooter extends SubsystemBase {
   private double dx = 0.0;
   private double dy = 0.0;
   private double canSeeAnyTarget = 0.0;
-  private boolean startAlignToHeading = false;
+  private ShooterState currentState = ShooterState.IDLE;
+  private boolean canShoot = false;
+  
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -88,7 +94,7 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
 
     turretAlignmentPIDController = new PIDController(Constants.PID_kP_turretAlignment, Constants.PID_kI_turretAlignment, Constants.PID_kD_turretAlignment);
-    turretAlignmentPIDController.setTolerance(1,15); //returns true if we are within 2 degrees of 0 degrees AND the rate of change currently (derivative) is less than 15 degrees
+    turretAlignmentPIDController.setTolerance(1,15); //returns true if we are within 1 degree of 0 degrees AND the rate of change currently (derivative) is less than 15 degrees
     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
     //bind all of the simulated motors
@@ -113,45 +119,58 @@ public class Shooter extends SubsystemBase {
     boolean isAtLowerBound = Math.abs(ticksOnSpinner-Constants.lowerBoundTicks) < Constants.tickTolerance;
     boolean isAtUpperBound = Math.abs(ticksOnSpinner-Constants.upperBoundTicks) < Constants.tickTolerance;
 
-    boolean isAtAnyBound = isAtLowerBound || isAtUpperBound;
-
-    if (turretAlignmentPIDController.atSetpoint()) {
-      startAlignToHeading = false;
+    switch(currentState) {
+      case IDLE:
+        turretAlignmentMotor.set(ControlMode.PercentOutput, 0.0);
+        if (canSeeAnyTarget == 1.0) {
+          currentState = ShooterState.ALIGN;
+          break;
+        }
+        break;
+      case ALIGN:
+        if (canSeeAnyTarget == 0.0) {
+          currentState = ShooterState.SEARCH;
+          canShoot = false;
+          break;
+        }
+        double motorOutput = turretAlignmentPIDController.calculate(dx, 0.0);
+        turretAlignmentMotor.set(ControlMode.PercentOutput, motorOutput);
+        this.canShoot = turretAlignmentPIDController.atSetpoint();
+        break;
+      case SEARCH:
+        /*if (canSeeAnyTarget == 1.0) {
+          currentState = ShooterState.ALIGN;
+          break;
+        }
+        turretAlignmentMotor.set(ControlMode.Position, 0.0);
+        if (Math.abs(turretAlignmentMotor.getSelectedSensorPosition()) < Constants.tickTolerance) {
+          currentState = ShooterState.IDLE;
+        }*/
+        currentState = ShooterState.SWEEPLEFT;
+        break;
+      case SWEEPLEFT:
+        if (canSeeAnyTarget == 1.0) {
+          currentState = ShooterState.ALIGN;
+          break;
+        }
+        turretAlignmentMotor.set(ControlMode.Position, Constants.lowerBoundTicks);
+        if (isAtLowerBound) {
+          currentState = ShooterState.SWEEPRIGHT;
+          break;
+        }
+        break;
+      case SWEEPRIGHT:
+        if (canSeeAnyTarget == 1.0) {
+          currentState = ShooterState.ALIGN;
+          break;
+        }
+        turretAlignmentMotor.set(ControlMode.Position, Constants.upperBoundTicks);
+        if (isAtUpperBound) {
+          currentState = ShooterState.SWEEPRIGHT;
+          break;
+        }
+        break;
     }
-
-    if (
-      (
-      (isAtAnyBound && !startAlignToHeading) || 
-      (canSeeAnyTarget == 1.0 && !startAlignToHeading)
-      ) && 
-      !turretAlignmentPIDController.atSetpoint()
-      )  {
-      startAlignToHeading = true;
-      turretAlignmentMotor.set(ControlMode.Position, 0);
-    }
-
-    if (canSeeAnyTarget == 0.0) {
-      if (!isAtAnyBound) {
-        turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
-      } else {
-        turretAlignmentMotor.set(0.0);
-      }
-    }
-
-
-    /*
-    if (canSeeAnyTarget == 1.0 && !turretAlignmentPIDController.atSetpoint()) {
-      startLostSight = -1;
-      turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
-    } else if (canSeeAnyTarget != 1.0) {
-      if (startLostSight == -1) {
-        startLostSight = System.currentTimeMillis();
-      }
-      if ((System.currentTimeMillis() - startLostSight) >= Constants.LOSScanMillis) {
-         turretAlignmentMotor.set(0.3);
-      }
-    }
-    */
   }
 
 
@@ -183,6 +202,9 @@ public class Shooter extends SubsystemBase {
   }
   public boolean alignedToGoalpost() {
     return canSeeAnyTarget == 1.0 && turretAlignmentPIDController.atSetpoint();
+  }
+  public boolean canShoot() {
+    return this.canShoot;
   }
   public double getCurrentRPM() {
     return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), Constants.GEARING_flywheel, 2048.0);
