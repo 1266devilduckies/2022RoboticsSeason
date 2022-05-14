@@ -22,6 +22,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
+enum ShooterState {
+  IDLE,
+  ALIGN,
+  SEARCH
+}
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
   private final TalonFXSimCollection leftFlywheelMotorSim;
@@ -40,6 +45,8 @@ public class Shooter extends SubsystemBase {
   private double dy = 0.0;
   private double canSeeAnyTarget = 0.0;
   private boolean startAlignToHeading = false;
+  private ShooterState currentState = ShooterState.IDLE;
+  
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -111,33 +118,21 @@ public class Shooter extends SubsystemBase {
 
     boolean isAtAnyBound = isAtLowerBound || isAtUpperBound;
 
-    if (Math.abs(ticksOnSpinner) < 0) {
-      startAlignToHeading = false;
+    switch(currentState) {
+      case IDLE:
+        turretAlignmentMotor.set(ControlMode.PercentOutput, 0.0);
+        if (canSeeAnyTarget == 1.0) {
+          currentState = ShooterState.ALIGN;
+        }
+        break;
+      case ALIGN:
+        if (canSeeAnyTarget == 0.0) {
+          currentState = ShooterState.SEARCH;
+        }
+        double motorOutput = turretAlignmentPIDController.calculate(dx, 0.0);
+        turretAlignmentMotor.set(ControlMode.PercentOutput, motorOutput);
+        break;
     }
-
-    if ((canSeeAnyTarget == 0.0 && isAtAnyBound) && !startAlignToHeading) {
-      startAlignToHeading = true;
-      turretAlignmentMotor.set(ControlMode.Position, 0);
-    }
-
-    if (!startAlignToHeading) {
-      turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
-    }
-
-
-    /*
-    if (canSeeAnyTarget == 1.0 && !turretAlignmentPIDController.atSetpoint()) {
-      startLostSight = -1;
-      turretAlignmentMotor.set(turretAlignmentPIDController.calculate(dx, 0.0));
-    } else if (canSeeAnyTarget != 1.0) {
-      if (startLostSight == -1) {
-        startLostSight = System.currentTimeMillis();
-      }
-      if ((System.currentTimeMillis() - startLostSight) >= Constants.LOSScanMillis) {
-         turretAlignmentMotor.set(0.3);
-      }
-    }
-    */
   }
 
 
