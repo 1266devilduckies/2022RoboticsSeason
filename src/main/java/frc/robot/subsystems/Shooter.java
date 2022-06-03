@@ -17,9 +17,11 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.AlignToTarget;
 
 enum ShooterState {
   IDLE,
@@ -33,7 +35,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFXSimCollection leftFlywheelMotorSim;
   private final WPI_TalonFX rightFlywheelMotor;
   private final TalonFXSimCollection rightFlywheelMotorSim;
-  private final WPI_TalonFX turretAlignmentMotor;
+  public final WPI_TalonFX turretAlignmentMotor;
   private final TalonFXSimCollection turretAlignmentMotorSim;
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
@@ -42,11 +44,9 @@ public class Shooter extends SubsystemBase {
 
   private double flywheelTargetRPM = 0.0;
   private NetworkTable limelightTable;
-  private double dx = 0.0;
-  private double dy = 0.0;
   private double canSeeAnyTarget = 0.0;
-  private ShooterState currentState = ShooterState.IDLE;
   private boolean canShoot = false;
+  public boolean startedToBeAligned = false;
   
 
   public Shooter() {
@@ -103,74 +103,19 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotorSim = turretAlignmentMotor.getSimCollection();
     indexerMotorSim = indexerMotor.getSimCollection();
 
-    flywheelSim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(Constants.kVFlywheel / 6.28, Constants.kAFlywheel / 6.28), DCMotor.getFalcon500(2), Constants.GEARING_flywheel);
+    flywheelSim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(Constants.kVFlywheel / 6.28, Constants.kAFlywheel / 6.28), DCMotor.getFalcon500(2), 1.0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     
-    dx = limelightTable.getEntry("tx").getDouble(0.0);
-    dy = limelightTable.getEntry("ty").getDouble(0.0);
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
-    
-    double ticksOnSpinner = turretAlignmentMotor.getSelectedSensorPosition();
 
-    boolean isAtLowerBound = Math.abs(ticksOnSpinner-Constants.lowerBoundTicks) < Constants.tickTolerance;
-    boolean isAtUpperBound = Math.abs(ticksOnSpinner-Constants.upperBoundTicks) < Constants.tickTolerance;
-
-    switch(currentState) {
-      case IDLE:
-        turretAlignmentMotor.set(ControlMode.PercentOutput, 0.0);
-        if (canSeeAnyTarget == 1.0) {
-          currentState = ShooterState.ALIGN;
-          break;
-        }
-        break;
-      case ALIGN:
-        if (canSeeAnyTarget == 0.0) {
-          currentState = ShooterState.SEARCH;
-          canShoot = false;
-          break;
-        }
-        double motorOutput = turretAlignmentPIDController.calculate(dx, 0.0);
-        turretAlignmentMotor.set(ControlMode.PercentOutput, motorOutput);
-        this.canShoot = turretAlignmentPIDController.atSetpoint();
-        break;
-      case SEARCH:
-        /*if (canSeeAnyTarget == 1.0) {
-          currentState = ShooterState.ALIGN;
-          break;
-        }
-        turretAlignmentMotor.set(ControlMode.Position, 0.0);
-        if (Math.abs(turretAlignmentMotor.getSelectedSensorPosition()) < Constants.tickTolerance) {
-          currentState = ShooterState.IDLE;
-        }*/
-        currentState = ShooterState.SWEEPLEFT;
-        break;
-      case SWEEPLEFT:
-        if (canSeeAnyTarget == 1.0) {
-          currentState = ShooterState.ALIGN;
-          break;
-        }
-        turretAlignmentMotor.set(ControlMode.Position, Constants.lowerBoundTicks);
-        if (isAtLowerBound) {
-          currentState = ShooterState.SWEEPRIGHT;
-          break;
-        }
-        break;
-      case SWEEPRIGHT:
-        if (canSeeAnyTarget == 1.0) {
-          currentState = ShooterState.ALIGN;
-          break;
-        }
-        turretAlignmentMotor.set(ControlMode.Position, Constants.upperBoundTicks);
-        if (isAtUpperBound) {
-          currentState = ShooterState.SWEEPRIGHT;
-          break;
-        }
-        break;
-    }
+    if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
+      startedToBeAligned = true;
+      CommandScheduler.getInstance().schedule(new AlignToTarget(RobotContainer.shooterSubsystem));
+    } 
   }
 
 
@@ -186,8 +131,8 @@ public class Shooter extends SubsystemBase {
     flywheelSim.setInputVoltage(leftFlywheelMotor.getMotorOutputVoltage());
     flywheelSim.update(0.02);
 
-    leftFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), Constants.GEARING_flywheel, 2048.0));
-    rightFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), Constants.GEARING_flywheel, 2048.0));
+    leftFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
+    rightFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
     
   }
 
@@ -200,18 +145,15 @@ public class Shooter extends SubsystemBase {
   public double getTargetRPM() {
     return flywheelTargetRPM;
   }
-  public boolean alignedToGoalpost() {
-    return canSeeAnyTarget == 1.0 && turretAlignmentPIDController.atSetpoint();
-  }
   public boolean canShoot() {
     return this.canShoot;
   }
   public double getCurrentRPM() {
-    return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), Constants.GEARING_flywheel, 2048.0);
+    return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), 1.0, 2048.0);
   }
   public void setRPM(double rpm) {
     leftFlywheelMotor.set(ControlMode.Velocity, 
-    RobotContainer.RPMToEncoderTicksPer100ms(rpm, Constants.GEARING_flywheel, 2048.0), 
+    RobotContainer.RPMToEncoderTicksPer100ms(rpm, 1.0, 2048.0), 
     DemandType.ArbitraryFeedForward, 
     Constants.SIMPLE_MOTOR_FEEDFORWARD_flywheel.calculate(rpm / 60.) / RobotController.getBatteryVoltage());
   }
@@ -226,5 +168,17 @@ public class Shooter extends SubsystemBase {
 
   public void setIndexerMotor(double percentOutput) {
     indexerMotor.set(ControlMode.PercentOutput, percentOutput);
+  }
+  public double degreesOnTurret() {
+    return indexerMotor.getSelectedSensorPosition()/((double)Constants.ticksPerDegreeTurret);
+  }
+  public double getTurretPosition() {
+    return turretAlignmentMotor.getSelectedSensorPosition() / Constants.GEARING_turret; 
+  }
+  public boolean isAtLowerBound(double ticks) {
+    return Math.abs(ticks-Constants.lowerBoundTicks) < Constants.tickTolerance;
+  }
+  public boolean isAtUpperBound(double ticks) {
+    return Math.abs(ticks-Constants.upperBoundTicks) < Constants.tickTolerance;
   }
 }

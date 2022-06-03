@@ -52,14 +52,14 @@ public final class Constants {
     public static final double PID_kP_turretAlignment = 0.44;
     public static final double PID_kI_turretAlignment = 0;
     public static final double PID_kD_turretAlignment = 0;
-    public static final int ticksPerDegreeTurret = (int)((2048.0 * 74.0) / 360.0);
-    public static final double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
-    public static final double upperBoundTicks = Constants.upperBoundShooterDegrees * ((2048*Constants.GEARING_flywheel)/360.);
+    public static final double ticksPerDegreeTurret = (2048*Constants.GEARING_turret)/360.;
+    public static final double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ticksPerDegreeTurret;
+    public static final double upperBoundTicks = Constants.upperBoundShooterDegrees * ticksPerDegreeTurret;
     public static final double tickTolerance = 500.;
 
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;
-    public static final double GEARING_flywheel = 74.0;
+    public static final double GEARING_turret = 74.0;
 
     //Flywheel
     public static final double flywheelRPM = 4200;
