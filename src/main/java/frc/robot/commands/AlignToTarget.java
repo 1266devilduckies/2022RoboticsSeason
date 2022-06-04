@@ -31,7 +31,8 @@ public class AlignToTarget extends CommandBase {
     if (shooterSubsystem.isAtLowerBound(tickConversion) || shooterSubsystem.isAtUpperBound(tickConversion)) {
       shooterSubsystem.turretAlignmentMotor.set(ControlMode.PercentOutput, 0.0);
     } else if (!shooterSubsystem.isAtLowerBound(tickConversion) && !shooterSubsystem.isAtUpperBound(tickConversion)){
-      shooterSubsystem.turretAlignmentMotor.set(ControlMode.Position, tickConversion);
+      double pidVal = shooterSubsystem.turretAlignmentPIDController.calculate(shooterSubsystem.getTurretPosition(),tickConversion);
+      shooterSubsystem.turretAlignmentMotor.set(ControlMode.PercentOutput, pidVal*0.1);
     }
   }
   

@@ -39,7 +39,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFXSimCollection turretAlignmentMotorSim;
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
-  private final PIDController turretAlignmentPIDController;
+  public final PIDController turretAlignmentPIDController;
   private final FlywheelSim flywheelSim;
 
   private double flywheelTargetRPM = 0.0;
