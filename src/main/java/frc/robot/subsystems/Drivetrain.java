@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -20,7 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimeLight;
 import frc.robot.RobotContainer;
+import frc.robot.VectorUtil;
 
 public class Drivetrain extends SubsystemBase {
   private final DifferentialDrive robotDrive;
@@ -43,6 +46,7 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDriveOdometry odometry;
   
   private final Field2d field = new Field2d(); //used to simulate the field for the simulated robot
+  private final LimeLight limelightSim;
 
   public Drivetrain() {
     MainLeftMotorBack = new WPI_TalonFX(Constants.CANID_mainLeftMotorBack);
@@ -106,7 +110,7 @@ public class Drivetrain extends SubsystemBase {
       2.1,                      //MOI of 2.1 kg m^2 (from CAD model).
       26.5,                     //Mass of the robot is 26.5 kg.
       Constants.drivetrainWheelRadius,  //Robot uses 3" radius (6" diameter) wheels.
-      0.546,                    //Distance between wheels is _ meters.
+      Constants.trackWidth,                    //Distance between wheels is _ meters.
       
       /*
        * The standard deviations for measurement noise:
@@ -124,6 +128,8 @@ public class Drivetrain extends SubsystemBase {
 
     leftMotorSim = MainLeftMotorBack.getSimCollection();
     rightMotorSim = MainRightMotorBack.getSimCollection();
+
+    limelightSim = new LimeLight(field);
   }
 
   @Override
@@ -135,17 +141,20 @@ public class Drivetrain extends SubsystemBase {
     odometry.update(gyro.getRotation2d(), 
     RobotContainer.encoderTicksToMeters(MainLeftMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius),
     RobotContainer.encoderTicksToMeters(MainRightMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
-
-    field.setRobotPose(odometry.getPoseMeters()); //update current pose from odometry to glass
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
 
+    Pose2d robotPose = odometry.getPoseMeters();
+    field.setRobotPose(robotPose);
+    limelightSim.render(VectorUtil.moveForward(robotPose, -Units.inchesToMeters(12)));
+
+
     //For the motor master which is inverted, you'll need to invert it manually (ie with a negative sign) here when fetching any data 
     //CTRE doesn't support setInverted() for simulation
-
+    
     leftMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     rightMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     robotDriveSim.setInputs(leftMotorSim.getMotorOutputLeadVoltage(),

@@ -77,7 +77,7 @@ public class RobotContainer {
 
     //load in autonomous paths
     auto1_path1 = loadPath("path1");
-    auto2_path1 = loadPath("path2");
+    auto2_path1 = loadPath("auto1path2");
 
     path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
     path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1),  new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
