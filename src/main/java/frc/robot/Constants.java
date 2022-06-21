@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
@@ -56,6 +57,8 @@ public final class Constants {
     public static final double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ticksPerDegreeTurret;
     public static final double upperBoundTicks = Constants.upperBoundShooterDegrees * ticksPerDegreeTurret;
     public static final double tickTolerance = 500.;
+    public static final Translation2d hubPosition = new Translation2d(Units.feetToMeters(54/2.), Units.feetToMeters(27/2.));
+    public static final double limelightHorizontalRange = 27; //in terms of degrees
 
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;

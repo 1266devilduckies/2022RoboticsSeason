@@ -76,7 +76,7 @@ public class RobotContainer {
     climberSubsystem = new Climber();
 
     //load in autonomous paths
-    auto1_path1 = loadPath("path1");
+    auto1_path1 = loadPath("auto1path1");
     auto2_path1 = loadPath("auto1path2");
 
     path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));

@@ -150,6 +150,9 @@ public class Drivetrain extends SubsystemBase {
     Pose2d robotPose = odometry.getPoseMeters();
     field.setRobotPose(robotPose);
     limelightSim.render(VectorUtil.moveForward(robotPose, -Units.inchesToMeters(12)));
+    SmartDashboard.putNumber("simTx", limelightSim.getSimTx(0.0));
+    SmartDashboard.putNumber("simTv", limelightSim.getSimTv());
+    SmartDashboard.putNumber("distanceSim", limelightSim.getSimDistanceToHub());
 
 
     //For the motor master which is inverted, you'll need to invert it manually (ie with a negative sign) here when fetching any data 
