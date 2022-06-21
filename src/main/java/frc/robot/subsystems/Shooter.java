@@ -10,16 +10,19 @@ import com.ctre.phoenix.motorcontrol.VictorSPXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.commands.AlignToTarget;
 
@@ -39,8 +42,8 @@ public class Shooter extends SubsystemBase {
   private final TalonFXSimCollection turretAlignmentMotorSim;
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
-  public final PIDController turretAlignmentPIDController;
   private final FlywheelSim flywheelSim;
+  private final SingleJointedArmSim turretSim;
 
   private double flywheelTargetRPM = 0.0;
   private NetworkTable limelightTable;
@@ -93,8 +96,9 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotor.config_kI(0, Constants.PID_kI_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
 
-    turretAlignmentPIDController = new PIDController(Constants.PID_kP_turretAlignment, Constants.PID_kI_turretAlignment, Constants.PID_kD_turretAlignment);
-    turretAlignmentPIDController.setTolerance(1,15); //returns true if we are within 1 degree of 0 degrees AND the rate of change currently (derivative) is less than 15 degrees
+    turretAlignmentMotor.configMotionCruiseVelocity(10000);
+    turretAlignmentMotor.configMotionAcceleration(10000);
+    turretAlignmentMotor.configMotionSCurveStrength(2);
     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
     //bind all of the simulated motors
@@ -104,18 +108,41 @@ public class Shooter extends SubsystemBase {
     indexerMotorSim = indexerMotor.getSimCollection();
 
     flywheelSim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(Constants.kVFlywheel / 6.28, Constants.kAFlywheel / 6.28), DCMotor.getFalcon500(2), 1.0);
+    turretSim = new SingleJointedArmSim(DCMotor.getFalcon500(1), Constants.GEARING_turret, SingleJointedArmSim.estimateMOI(.3, 5), .3, 
+    Units.degreesToRadians(Constants.lowerBoundShooterDegrees), 
+    Units.degreesToRadians(Constants.upperBoundShooterDegrees),
+    5, false);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
+  if (Robot.isReal()) {
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
+    if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
+      startedToBeAligned = true;
+      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new AlignToTarget(RobotContainer.shooterSubsystem)));
+    } 
+    if (canSeeAnyTarget == 0.0) {
+      if (this.getCurrentCommand() != null) {
+        this.getCurrentCommand().cancel();
+      }
+      turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
+    }
+  } else {
+    canSeeAnyTarget = Drivetrain.limelightSim.getSimTv();
 
     if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
       startedToBeAligned = true;
-      CommandScheduler.getInstance().schedule(new AlignToTarget(RobotContainer.shooterSubsystem));
+      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new AlignToTarget(RobotContainer.shooterSubsystem)));
+    }
+    if (canSeeAnyTarget == 0.0) {
+      if (this.getCurrentCommand() != null) {
+        this.getCurrentCommand().cancel();
+      }
+      turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
     } 
+  }
   }
 
 
@@ -130,10 +157,13 @@ public class Shooter extends SubsystemBase {
     
     flywheelSim.setInputVoltage(leftFlywheelMotor.getMotorOutputVoltage());
     flywheelSim.update(0.02);
+    turretSim.setInputVoltage(turretAlignmentMotor.getMotorOutputVoltage());
+    turretSim.update(0.02);
 
     leftFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
     rightFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
-    
+
+    turretAlignmentMotorSim.setIntegratedSensorRawPosition((int)(Units.radiansToDegrees(turretSim.getAngleRads())*Constants.ticksPerDegreeTurret));
   }
 
   public void setMasterMotorOnFlywheel(double percentOutput) {

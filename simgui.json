@@ -1,6 +1,17 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "Talon FX[14]": {
+        "header": {
+          "open": true
+        },
+        "name": "Turret Alignment Motor [14]"
+      },
+      "Talon FX[14]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon FX[8]": {
         "name": "LeftFlywheelMotor"
       },

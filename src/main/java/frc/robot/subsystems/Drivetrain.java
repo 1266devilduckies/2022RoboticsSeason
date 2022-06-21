@@ -46,7 +46,7 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDriveOdometry odometry;
   
   private final Field2d field = new Field2d(); //used to simulate the field for the simulated robot
-  private final LimeLight limelightSim;
+  public static LimeLight limelightSim;
 
   public Drivetrain() {
     MainLeftMotorBack = new WPI_TalonFX(Constants.CANID_mainLeftMotorBack);
