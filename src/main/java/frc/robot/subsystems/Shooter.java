@@ -25,6 +25,9 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.commands.AlignToTarget;
+import frc.robot.commands.IndexBall;
+import frc.robot.commands.StartFlywheel;
+import frc.robot.commands.StopFlywheel;
 
 enum ShooterState {
   IDLE,
@@ -119,9 +122,16 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
   if (Robot.isReal()) {
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
+    
     if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
       startedToBeAligned = true;
-      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new AlignToTarget(RobotContainer.shooterSubsystem)));
+      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+      new AlignToTarget(RobotContainer.shooterSubsystem), 
+      new StartFlywheel(RobotContainer.shooterSubsystem), 
+      new IndexBall(RobotContainer.shooterSubsystem),
+      new StartFlywheel(RobotContainer.shooterSubsystem),
+      new IndexBall(RobotContainer.shooterSubsystem),
+      new StopFlywheel(RobotContainer.shooterSubsystem)));
     } 
     if (canSeeAnyTarget == 0.0) {
       if (this.getCurrentCommand() != null) {
@@ -134,7 +144,13 @@ public class Shooter extends SubsystemBase {
 
     if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
       startedToBeAligned = true;
-      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new AlignToTarget(RobotContainer.shooterSubsystem)));
+      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+      new AlignToTarget(RobotContainer.shooterSubsystem), 
+      new StartFlywheel(RobotContainer.shooterSubsystem), 
+      new IndexBall(RobotContainer.shooterSubsystem),
+      new StartFlywheel(RobotContainer.shooterSubsystem),
+      new IndexBall(RobotContainer.shooterSubsystem),
+      new StopFlywheel(RobotContainer.shooterSubsystem)));
     }
     if (canSeeAnyTarget == 0.0) {
       if (this.getCurrentCommand() != null) {

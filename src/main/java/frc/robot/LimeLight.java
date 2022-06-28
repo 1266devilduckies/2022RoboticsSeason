@@ -1,11 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
+import frc.robot.subsystems.Drivetrain;
 
 public class LimeLight {
     FieldObject2d limelightFieldObject;
@@ -32,6 +34,17 @@ public class LimeLight {
 
     public static void setCurrentPipeline(int pipelineId) {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(pipelineId);
+    }
+
+    //prereq is that tv has to be 1
+    public static Pose2d getRobotPoseFromVision() {
+        Rotation2d lookVector = Drivetrain.gyro.getRotation2d();
+        double rotationOffset = LimeLight.getTx();
+        double theta = Units.degreesToRadians(rotationOffset + lookVector.getDegrees());
+        double approachAngle = Units.degreesToRadians(Constants.limelightHorizontalRange + LimeLight.getTy());
+        double camToHubDistHorizontal = (Constants.hubHeight - Constants.limelightHeight) / Math.tan(approachAngle);
+        Translation2d robotDisplacementFromHub = new Translation2d(Math.cos(theta)*camToHubDistHorizontal, Math.sin(theta)*camToHubDistHorizontal);
+        return new Pose2d(Constants.hubPosition.minus(robotDisplacementFromHub), lookVector);
     }
 
     //simulation
@@ -65,5 +78,4 @@ public class LimeLight {
     public double getSimDistanceToHub() {
         return VectorUtil.getMagnitude(Constants.hubPosition.minus(this.pose.getTranslation()));
     }
-
 }

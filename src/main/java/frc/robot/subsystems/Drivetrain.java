@@ -41,7 +41,7 @@ public class Drivetrain extends SubsystemBase {
   private final TalonFXSimCollection rightMotorSim;
 
   private final ADXRS450_GyroSim gyroSim;
-  private final ADXRS450_Gyro gyro;
+  public static ADXRS450_Gyro gyro;
 
   private final DifferentialDriveOdometry odometry;
   
