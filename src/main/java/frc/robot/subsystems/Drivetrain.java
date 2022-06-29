@@ -6,9 +6,11 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -43,7 +45,7 @@ public class Drivetrain extends SubsystemBase {
   private final ADXRS450_GyroSim gyroSim;
   public static ADXRS450_Gyro gyro;
 
-  private final DifferentialDriveOdometry odometry;
+  public static DifferentialDrivePoseEstimator odometry;
   
   private final Field2d field = new Field2d(); //used to simulate the field for the simulated robot
   public static LimeLight limelightSim;
@@ -57,7 +59,11 @@ public class Drivetrain extends SubsystemBase {
     gyro = new ADXRS450_Gyro();
     gyro.calibrate();
     gyroSim = new ADXRS450_GyroSim(gyro);
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-gyro.getAngle()), new Pose2d(5.0, 8.0, new Rotation2d()));
+    odometry = new DifferentialDrivePoseEstimator(Rotation2d.fromDegrees(-gyro.getAngle()),
+     new Pose2d(5.0, 8.0, new Rotation2d()),  
+     new MatBuilder<>(Nat.N5(), Nat.N1()).fill(0.02, 0.02, 0.01, 0.02, 0.02), // State measurement standard deviations. X, Y, theta.
+     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations. Left encoder, right encoder, gyro.
+     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Global measurement standard deviations. X, Y, and theta.);
     
     //Reset settings
     MainLeftMotorBack.configFactoryDefault();
@@ -138,7 +144,12 @@ public class Drivetrain extends SubsystemBase {
 
     //Invert the left input due to PS4 API thinking up is -1
     robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getRawAxis(4)*Constants.drivetrainSpeedLimiter);
+
+    double leftSpeedMs = RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
+    double rightSpeedMs = RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
+
     odometry.update(gyro.getRotation2d(), 
+    new DifferentialDriveWheelSpeeds(leftSpeedMs, rightSpeedMs),
     RobotContainer.encoderTicksToMeters(MainLeftMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius),
     RobotContainer.encoderTicksToMeters(MainRightMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
   }
@@ -147,7 +158,7 @@ public class Drivetrain extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
 
-    Pose2d robotPose = odometry.getPoseMeters();
+    Pose2d robotPose = odometry.getEstimatedPosition();
     field.setRobotPose(robotPose);
     limelightSim.render(VectorUtil.moveForward(robotPose, -Units.inchesToMeters(12)));
     SmartDashboard.putNumber("simTx", limelightSim.getSimTx(0.0));
@@ -179,7 +190,7 @@ public class Drivetrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius), RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainRightMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
   }
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return odometry.getEstimatedPosition();
   }
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     MainLeftMotorBack.setVoltage(leftVolts);

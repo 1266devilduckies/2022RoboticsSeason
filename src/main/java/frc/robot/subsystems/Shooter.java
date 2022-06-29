@@ -16,12 +16,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimeLight;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.commands.AlignToTarget;
@@ -29,13 +31,6 @@ import frc.robot.commands.IndexBall;
 import frc.robot.commands.StartFlywheel;
 import frc.robot.commands.StopFlywheel;
 
-enum ShooterState {
-  IDLE,
-  ALIGN,
-  SEARCH,
-  SWEEPLEFT,
-  SWEEPRIGHT
-}
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
   private final TalonFXSimCollection leftFlywheelMotorSim;
@@ -122,7 +117,10 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
   if (Robot.isReal()) {
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
-    
+    if (canSeeAnyTarget == 1.0) {
+      Drivetrain.odometry.addVisionMeasurement(LimeLight.getRobotPoseFromVision(), Timer.getFPGATimestamp());
+    }
+
     if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
       startedToBeAligned = true;
       CommandScheduler.getInstance().schedule(new SequentialCommandGroup(

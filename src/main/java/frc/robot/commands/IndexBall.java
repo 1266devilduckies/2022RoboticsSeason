@@ -1,12 +1,13 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class IndexBall extends CommandBase {
   Shooter shooterSubsystem;
-  long startTime;
+  double startTime;
   public IndexBall(Shooter subsystem) {
     shooterSubsystem = subsystem;
     addRequirements(shooterSubsystem);
@@ -14,7 +15,7 @@ public class IndexBall extends CommandBase {
 
   @Override
   public void initialize() {
-    startTime = System.currentTimeMillis();
+    startTime = Timer.getFPGATimestamp();
     shooterSubsystem.setIndexerMotor(1.0);
   }
 
@@ -25,7 +26,7 @@ public class IndexBall extends CommandBase {
   
   @Override
   public boolean isFinished() {
-    return (System.currentTimeMillis() - startTime) >= Constants.indexingTimeMillis;
+    return (Timer.getFPGATimestamp() - startTime) >= Constants.indexingTimeMillis /1000.;
   }
 
   @Override

@@ -1,12 +1,13 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 
 public class StopIntake extends CommandBase {
   Intake intakeSubsystem;
-  long startTime;
+  double startTime;
   public StopIntake(Intake subsystem) {
     intakeSubsystem = subsystem;
     addRequirements(intakeSubsystem);
@@ -16,7 +17,7 @@ public class StopIntake extends CommandBase {
   public void initialize() {
     intakeSubsystem.setSolenoid(false);
     intakeSubsystem.setIntakeMotor(0.0);
-    startTime = System.currentTimeMillis();
+    startTime = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -26,7 +27,7 @@ public class StopIntake extends CommandBase {
   
   @Override
   public boolean isFinished() {
-    return (System.currentTimeMillis() - startTime) >= Constants.actuatorFullyRetractedTimeMillis;
+    return (Timer.getFPGATimestamp() - startTime) >= Constants.actuatorFullyRetractedTimeMillis/1000.;
   }
 
   @Override
