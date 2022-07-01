@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,7 +27,6 @@ import frc.robot.Constants;
 import frc.robot.LimeLight;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.commands.AlignToTarget;
 import frc.robot.commands.IndexBall;
 import frc.robot.commands.StartFlywheel;
 import frc.robot.commands.StopFlywheel;
@@ -46,8 +46,7 @@ public class Shooter extends SubsystemBase {
   private double flywheelTargetRPM = 0.0;
   private NetworkTable limelightTable;
   private double canSeeAnyTarget = 0.0;
-  private boolean canShoot = false;
-  public boolean startedToBeAligned = false;
+  public boolean aligned = false;
   
 
   public Shooter() {
@@ -116,47 +115,36 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   if (Robot.isReal()) {
+    //periodically real life
     canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
+
     if (canSeeAnyTarget == 1.0) {
       Drivetrain.odometry.addVisionMeasurement(LimeLight.getRobotPoseFromVision(), Timer.getFPGATimestamp());
+      turretAlignmentMotor.set(ControlMode.MotionMagic, Constants.ticksPerDegreeTurret*LimeLight.getTx());
+      aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*LimeLight.getTx()) < Constants.tickTolerance;
     }
-
-    if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
-      startedToBeAligned = true;
-      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-      new AlignToTarget(RobotContainer.shooterSubsystem), 
-      new StartFlywheel(RobotContainer.shooterSubsystem), 
-      new IndexBall(RobotContainer.shooterSubsystem),
-      new StartFlywheel(RobotContainer.shooterSubsystem),
-      new IndexBall(RobotContainer.shooterSubsystem),
-      new StopFlywheel(RobotContainer.shooterSubsystem)));
-    } 
     if (canSeeAnyTarget == 0.0) {
-      if (this.getCurrentCommand() != null) {
-        this.getCurrentCommand().cancel();
-      }
+      aligned = false;
       turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
-    }
-  } else {
+    } 
+    //
+  } 
+  else {
+    //periodically simulation
     canSeeAnyTarget = Drivetrain.limelightSim.getSimTv();
 
-    if (canSeeAnyTarget == 1.0 && !startedToBeAligned) {
-      startedToBeAligned = true;
-      CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-      new AlignToTarget(RobotContainer.shooterSubsystem), 
-      new StartFlywheel(RobotContainer.shooterSubsystem), 
-      new IndexBall(RobotContainer.shooterSubsystem),
-      new StartFlywheel(RobotContainer.shooterSubsystem),
-      new IndexBall(RobotContainer.shooterSubsystem),
-      new StopFlywheel(RobotContainer.shooterSubsystem)));
+    if (canSeeAnyTarget == 1.0) {
+      turretAlignmentMotor.set(ControlMode.MotionMagic, Constants.ticksPerDegreeTurret*LimeLight.getTx());
+      aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*Drivetrain.limelightSim.getSimTx(0.0)) < Constants.tickTolerance;
     }
     if (canSeeAnyTarget == 0.0) {
-      if (this.getCurrentCommand() != null) {
-        this.getCurrentCommand().cancel();
-      }
+      aligned = false;
       turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
-    } 
+    }
+    // 
   }
+  
+  SmartDashboard.putBoolean("Ready To Shoot", aligned);
   }
 
 
@@ -188,9 +176,6 @@ public class Shooter extends SubsystemBase {
   }
   public double getTargetRPM() {
     return flywheelTargetRPM;
-  }
-  public boolean canShoot() {
-    return this.canShoot;
   }
   public double getCurrentRPM() {
     return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), 1.0, 2048.0);

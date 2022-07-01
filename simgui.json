@@ -12,6 +12,16 @@
           "open": true
         }
       },
+      "Talon FX[1]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[1]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon FX[8]": {
         "name": "LeftFlywheelMotor"
       },

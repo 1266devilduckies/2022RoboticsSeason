@@ -198,8 +198,7 @@ public class Drivetrain extends SubsystemBase {
     robotDrive.feed(); //feed watchdog to prevent error from clogging can bus
   }
   public void resetOdometry(Pose2d pose) {
-    MainLeftMotorBack.setSelectedSensorPosition(0);
-    MainRightMotorBack.setSelectedSensorPosition(0);
+    resetEncoders();
     odometry.resetPosition(pose, gyro.getRotation2d());
   }
   public void resetEncoders() {

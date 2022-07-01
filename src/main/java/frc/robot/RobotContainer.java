@@ -27,10 +27,8 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -58,9 +56,7 @@ public class RobotContainer {
   JoystickButton btn_ps4r1_operator = new JoystickButton(operatorJoystick, 6);
 
 
-  private SendableChooser<SequentialCommandGroup> autonomousMode = new SendableChooser<SequentialCommandGroup>();
-  
-  private Trajectory firstTrajectoryInAutonomous; //needs to have its odometry updated for it to work not only in robot simulation, but for it to respect symmetry of the field irl
+  private SendableChooser<Object[]> autonomousMode = new SendableChooser<Object[]>();
 
   private SequentialCommandGroup path1CommandGroup;
   private SequentialCommandGroup path2CommandGroup;
@@ -83,7 +79,8 @@ public class RobotContainer {
     path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1),  new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
 
     //Setup sendable chooser for autonomous mode selector
-    autonomousMode.setDefaultOption("Do nothing", new SequentialCommandGroup());
+    Object[] data = {new SequentialCommandGroup(), null};
+    autonomousMode.setDefaultOption("Do nothing", data);
 
     setAutonomousMode("1 Ball Auto", auto1_path1, path1CommandGroup);
     setAutonomousMode("2 Ball Auto", auto2_path1, path2CommandGroup);
@@ -107,7 +104,6 @@ public class RobotContainer {
     //operator bindings
     btn_ps4r1_operator.whenPressed(
       new SequentialCommandGroup(
-        new WaitUntilCommand(shooterSubsystem::canShoot),
         new StartFlywheel(shooterSubsystem), 
         new IndexBall(shooterSubsystem), 
         new StartFlywheel(shooterSubsystem), 
@@ -123,18 +119,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
 
-  public Command getAutonomousCommand() {
-    //this if statement is redundent but helps to make the code easier to read
-    if (firstTrajectoryInAutonomous != null) {
-    drivetrainSubsystem.resetOdometry(firstTrajectoryInAutonomous.getInitialPose());
-    }
-
+  public Object[] getAutonomousCommand() {
     return autonomousMode.getSelected();
   }
 
   private void setAutonomousMode(String inputName, Trajectory firstPathInAutoMode, SequentialCommandGroup commandsToDo) {
-    firstTrajectoryInAutonomous = firstPathInAutoMode;
-    autonomousMode.addOption(inputName, commandsToDo);
+    Object[] data = {commandsToDo, firstPathInAutoMode.getInitialPose()};
+    autonomousMode.addOption(inputName, data);
   }
 
   //Trajectory generator function
