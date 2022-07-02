@@ -20,16 +20,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimeLight;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.commands.IndexBall;
-import frc.robot.commands.StartFlywheel;
-import frc.robot.commands.StopFlywheel;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
@@ -46,7 +41,7 @@ public class Shooter extends SubsystemBase {
   private double flywheelTargetRPM = 0.0;
   private NetworkTable limelightTable;
   private double canSeeAnyTarget = 0.0;
-  public boolean aligned = false;
+  private boolean aligned = false;
   
 
   public Shooter() {
@@ -176,6 +171,9 @@ public class Shooter extends SubsystemBase {
   }
   public double getTargetRPM() {
     return flywheelTargetRPM;
+  }
+  public boolean shooterIsAligned() {
+    return aligned;
   }
   public double getCurrentRPM() {
     return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), 1.0, 2048.0);

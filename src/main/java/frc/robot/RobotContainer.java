@@ -9,6 +9,7 @@ import java.io.IOException;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,8 +19,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.IndexBall;
-import frc.robot.commands.StartFlywheel;
+import frc.robot.commands.Fire2Balls;
 import frc.robot.commands.StartIntake;
 import frc.robot.commands.StopFlywheel;
 import frc.robot.commands.StopIntake;
@@ -75,15 +75,15 @@ public class RobotContainer {
     auto1_path1 = loadPath("auto1path1");
     auto2_path1 = loadPath("auto1path2");
 
-    path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
-    path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1),  new SequentialCommandGroup(new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StartFlywheel(shooterSubsystem), new IndexBall(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
+    path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), new SequentialCommandGroup(new Fire2Balls(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
+    path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1), new SequentialCommandGroup(new Fire2Balls(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
 
     //Setup sendable chooser for autonomous mode selector
     Object[] data = {new SequentialCommandGroup(), null};
     autonomousMode.setDefaultOption("Do nothing", data);
 
-    setAutonomousMode("1 Ball Auto", auto1_path1, path1CommandGroup);
-    setAutonomousMode("2 Ball Auto", auto2_path1, path2CommandGroup);
+    setAutonomousMode("1 Ball Auto", auto1_path1.getInitialPose(), path1CommandGroup);
+    setAutonomousMode("2 Ball Auto", auto2_path1.getInitialPose(), path2CommandGroup);
 
     SmartDashboard.putData(autonomousMode);
     // Configure the button bindings
@@ -102,14 +102,7 @@ public class RobotContainer {
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));
 
     //operator bindings
-    btn_ps4r1_operator.whenPressed(
-      new SequentialCommandGroup(
-        new StartFlywheel(shooterSubsystem), 
-        new IndexBall(shooterSubsystem), 
-        new StartFlywheel(shooterSubsystem), 
-        new IndexBall(shooterSubsystem), 
-        new StopFlywheel(shooterSubsystem)
-      ));
+    btn_ps4r1_operator.whenPressed(new Fire2Balls(shooterSubsystem));
     btn_ps4r1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
   }
 
@@ -123,8 +116,8 @@ public class RobotContainer {
     return autonomousMode.getSelected();
   }
 
-  private void setAutonomousMode(String inputName, Trajectory firstPathInAutoMode, SequentialCommandGroup commandsToDo) {
-    Object[] data = {commandsToDo, firstPathInAutoMode.getInitialPose()};
+  private void setAutonomousMode(String inputName, Pose2d startingPose, SequentialCommandGroup commandsToDo) {
+    Object[] data = {commandsToDo, startingPose};
     autonomousMode.addOption(inputName, data);
   }
 

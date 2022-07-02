@@ -15,6 +15,7 @@ public class StartFlywheel extends CommandBase {
   public void initialize() {
     shooterSubsystem.setTargetRPM(Constants.flywheelRPM);
     shooterSubsystem.setRPM(shooterSubsystem.getTargetRPM());
+    shooterSubsystem.setIndexerMotor(0.0);
   }
 
   @Override
