@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.VictorSPXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -37,6 +38,7 @@ public class Shooter extends SubsystemBase {
   private final VictorSPXSimCollection indexerMotorSim;
   private final FlywheelSim flywheelSim;
   private final SingleJointedArmSim turretSim;
+  private PIDController turretController;
 
   private double flywheelTargetRPM = 0.0;
   private NetworkTable limelightTable;
@@ -88,8 +90,8 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotor.config_kI(0, Constants.PID_kI_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
 
-    turretAlignmentMotor.configMotionCruiseVelocity(10000);
-    turretAlignmentMotor.configMotionAcceleration(10000);
+    turretAlignmentMotor.configMotionCruiseVelocity(20000);
+    turretAlignmentMotor.configMotionAcceleration(20000);
     turretAlignmentMotor.configMotionSCurveStrength(2);
     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -104,6 +106,8 @@ public class Shooter extends SubsystemBase {
     Units.degreesToRadians(Constants.lowerBoundShooterDegrees), 
     Units.degreesToRadians(Constants.upperBoundShooterDegrees),
     5, false);
+
+    turretController = new PIDController(Constants.PID_kP_turretAlignment, Constants.PID_kI_turretAlignment, Constants.PID_kD_turretAlignment);
   }
 
   @Override
@@ -115,12 +119,15 @@ public class Shooter extends SubsystemBase {
 
     if (canSeeAnyTarget == 1.0) {
       Drivetrain.odometry.addVisionMeasurement(LimeLight.getRobotPoseFromVision(), Timer.getFPGATimestamp());
-      turretAlignmentMotor.set(ControlMode.MotionMagic, Constants.ticksPerDegreeTurret*LimeLight.getTx());
+      turretAlignmentMotor.set(ControlMode.MotionMagic, LimeLight.getTx() * Constants.ticksPerDegreeTurret);
       aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*LimeLight.getTx()) < Constants.tickTolerance;
     }
     if (canSeeAnyTarget == 0.0) {
       aligned = false;
       turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
+      if (Math.abs(turretAlignmentMotor.getSelectedSensorPosition()) < Constants.tickTolerance) {
+        turretAlignmentMotor.set(ControlMode.PercentOutput, 0);
+      }
     } 
     //
   } 
