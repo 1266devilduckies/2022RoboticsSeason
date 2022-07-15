@@ -126,17 +126,24 @@ public class Shooter extends SubsystemBase {
   } 
   else {
     //periodically simulation
-    canSeeAnyTarget = Drivetrain.limelightSim.getSimTv();
-
-    if (canSeeAnyTarget == 1.0) {
-      turretAlignmentMotor.set(ControlMode.MotionMagic, Constants.ticksPerDegreeTurret*LimeLight.getTx());
-      aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*Drivetrain.limelightSim.getSimTx(0.0)) < Constants.tickTolerance;
-    }
     if (canSeeAnyTarget == 0.0) {
       aligned = false;
       turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
     }
     // 
+    canSeeAnyTarget = Drivetrain.limelightSim.getSimTv();
+
+    if (canSeeAnyTarget == 1.0) {
+      turretAlignmentMotor.set(ControlMode.MotionMagic, turretAlignmentMotor.getSelectedSensorPosition() + (LimeLight.getTx() * Constants.ticksPerDegreeTurret));
+      aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*Drivetrain.limelightSim.getSimTx(0.0)) < Constants.tickTolerance;
+    }
+    if (canSeeAnyTarget == 0.0) {
+      aligned = false;
+      turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
+      if (Math.abs(turretAlignmentMotor.getSelectedSensorPosition()) < Constants.tickTolerance) {
+        turretAlignmentMotor.set(ControlMode.PercentOutput, 0);
+      }
+    } 
   }
   
   SmartDashboard.putBoolean("Ready To Shoot", aligned);
