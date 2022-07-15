@@ -38,7 +38,6 @@ public class Shooter extends SubsystemBase {
   private final VictorSPXSimCollection indexerMotorSim;
   private final FlywheelSim flywheelSim;
   private final SingleJointedArmSim turretSim;
-  private PIDController turretController;
 
   private double flywheelTargetRPM = 0.0;
   private NetworkTable limelightTable;
@@ -106,8 +105,6 @@ public class Shooter extends SubsystemBase {
     Units.degreesToRadians(Constants.lowerBoundShooterDegrees), 
     Units.degreesToRadians(Constants.upperBoundShooterDegrees),
     5, false);
-
-    turretController = new PIDController(Constants.PID_kP_turretAlignment, Constants.PID_kI_turretAlignment, Constants.PID_kD_turretAlignment);
   }
 
   @Override
@@ -115,11 +112,11 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
   if (Robot.isReal()) {
     //periodically real life
-    canSeeAnyTarget = limelightTable.getEntry("tv").getDouble(0.0);
+    canSeeAnyTarget = LimeLight.getTv();
 
     if (canSeeAnyTarget == 1.0) {
       Drivetrain.odometry.addVisionMeasurement(LimeLight.getRobotPoseFromVision(), Timer.getFPGATimestamp());
-      turretAlignmentMotor.set(ControlMode.MotionMagic, LimeLight.getTx() * Constants.ticksPerDegreeTurret);
+      turretAlignmentMotor.set(ControlMode.MotionMagic, turretAlignmentMotor.getSelectedSensorPosition() + (LimeLight.getTx() * Constants.ticksPerDegreeTurret));
       aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*LimeLight.getTx()) < Constants.tickTolerance;
     }
     if (canSeeAnyTarget == 0.0) {
