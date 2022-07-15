@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.VictorSPXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -110,7 +111,7 @@ public class Shooter extends SubsystemBase {
     canSeeAnyTarget = LimeLight.getTv();
 
     if (canSeeAnyTarget == 1.0) {
-      Drivetrain.odometry.addVisionMeasurement(LimeLight.getRobotPoseFromVision(), Timer.getFPGATimestamp());
+      Drivetrain.odometry.addVisionMeasurement((Pose2d)LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
       turretAlignmentMotor.set(ControlMode.MotionMagic, turretAlignmentMotor.getSelectedSensorPosition() + (LimeLight.getTx() * Constants.ticksPerDegreeTurret));
       aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*LimeLight.getTx()) < Constants.tickTolerance;
     }
