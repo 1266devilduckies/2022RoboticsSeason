@@ -10,12 +10,9 @@ import com.ctre.phoenix.motorcontrol.VictorSPXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -32,7 +29,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFXSimCollection leftFlywheelMotorSim;
   private final WPI_TalonFX rightFlywheelMotor;
   private final TalonFXSimCollection rightFlywheelMotorSim;
-  public final WPI_TalonFX turretAlignmentMotor;
+  public static WPI_TalonFX turretAlignmentMotor;
   private final TalonFXSimCollection turretAlignmentMotorSim;
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
@@ -40,7 +37,6 @@ public class Shooter extends SubsystemBase {
   private final SingleJointedArmSim turretSim;
 
   private double flywheelTargetRPM = 0.0;
-  private NetworkTable limelightTable;
   private double canSeeAnyTarget = 0.0;
   private boolean aligned = false;
   
@@ -92,7 +88,6 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotor.configMotionCruiseVelocity(20000);
     turretAlignmentMotor.configMotionAcceleration(20000);
     turretAlignmentMotor.configMotionSCurveStrength(2);
-    limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
     //bind all of the simulated motors
     leftFlywheelMotorSim = leftFlywheelMotor.getSimCollection();

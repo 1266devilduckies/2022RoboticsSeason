@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
 
 public class LimeLight {
     FieldObject2d limelightFieldObject;
@@ -39,7 +40,8 @@ public class LimeLight {
     //prereq is that tv has to be 1
     public static Pose2d getRobotPoseFromVision() {
         Rotation2d lookVector = Drivetrain.gyro.getRotation2d();
-        double rotationOffset = LimeLight.getTx();
+        double turretRotationsRelative = (Shooter.turretAlignmentMotor.getSelectedSensorPosition()/2048.) * Constants.GEARING_turret;
+        double rotationOffset = LimeLight.getTx() - turretRotationsRelative * 360.;
         double theta = Units.degreesToRadians(rotationOffset + lookVector.getDegrees());
         double approachAngle = Units.degreesToRadians(Constants.limelightHorizontalRange + LimeLight.getTy());
         double camToHubDistHorizontal = (Constants.hubHeight - Constants.limelightHeight) / Math.tan(approachAngle);
