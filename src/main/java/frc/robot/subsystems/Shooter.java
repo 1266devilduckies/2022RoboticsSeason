@@ -83,12 +83,11 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotor.configReverseSoftLimitEnable(true, 0);
 
     turretAlignmentMotor.config_kP(0, Constants.PID_kP_turretAlignment);
-    turretAlignmentMotor.config_kI(0, Constants.PID_kI_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
 
-    turretAlignmentMotor.configMotionCruiseVelocity(20000);
-    turretAlignmentMotor.configMotionAcceleration(20000);
-    turretAlignmentMotor.configMotionSCurveStrength(2);
+    turretAlignmentMotor.configMotionCruiseVelocity(RobotContainer.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
+    turretAlignmentMotor.configMotionAcceleration(RobotContainer.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
+    turretAlignmentMotor.configMotionSCurveStrength(0);
 
     //bind all of the simulated motors
     leftFlywheelMotorSim = leftFlywheelMotor.getSimCollection();
