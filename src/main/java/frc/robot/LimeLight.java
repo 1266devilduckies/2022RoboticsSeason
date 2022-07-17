@@ -41,15 +41,15 @@ public class LimeLight {
     public static Object[] getRobotPoseFromVision() {
         Rotation2d lookVector = Drivetrain.gyro.getRotation2d();
         double turretRotationsRelative = (Shooter.turretAlignmentMotor.getSelectedSensorPosition()/2048.) * Constants.GEARING_turret;
-        double rotationOffset = LimeLight.getTx() - turretRotationsRelative * 360.;
+        double rotationOffset = (turretRotationsRelative * 360.) - LimeLight.getTx();
         double theta = Units.degreesToRadians(rotationOffset + lookVector.getDegrees());
-        double approachAngle = Units.degreesToRadians(Constants.limelightHorizontalRange + LimeLight.getTy());
+        double approachAngle = Units.degreesToRadians(Constants.limelightMountAngle + LimeLight.getTy());
         double camToHubDistHorizontal = (Constants.hubHeight - Constants.limelightHeight) / Math.tan(approachAngle);
         Translation2d robotDisplacementFromHub = new Translation2d(Math.cos(theta)*camToHubDistHorizontal, Math.sin(theta)*camToHubDistHorizontal);
 
         Object[] data = {};
         data[0] = new Pose2d(Constants.hubPosition.minus(robotDisplacementFromHub), lookVector);
-        data[1] = camToHubDistHorizontal; //distance to hub
+        data[1] = camToHubDistHorizontal;
         return data;
     }
 

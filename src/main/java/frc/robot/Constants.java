@@ -60,6 +60,7 @@ public final class Constants {
     public static final double limelightHorizontalRange = 27; //in terms of degrees
     public static final double hubHeight = 2.6416;
     public static final double limelightHeight = 0.8;
+    public static final double limelightMountAngle = 30.;
 
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;
