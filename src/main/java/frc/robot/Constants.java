@@ -72,7 +72,7 @@ public final class Constants {
     public static final double kVFlywheel = 0.10828;
     public static final double kAFlywheel = 0.0080391;
     public static final SimpleMotorFeedforward SIMPLE_MOTOR_FEEDFORWARD_flywheel = new SimpleMotorFeedforward(kSFlywheel, kVFlywheel, kAFlywheel); //in terms of rps
-    public static final double PID_kP_flywheel = 0.2;
+    public static final double PID_kP_flywheel = 0.1;
     public static final double flywheelTolerance = 0.02; //2 percent plus or minus
 
     //assumed with 0 degrees being heading

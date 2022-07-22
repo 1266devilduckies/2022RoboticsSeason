@@ -47,7 +47,7 @@ public class LimeLight {
         double camToHubDistHorizontal = (Constants.hubHeight - Constants.limelightHeight) / Math.tan(approachAngle);
         Translation2d robotDisplacementFromHub = new Translation2d(Math.cos(theta)*camToHubDistHorizontal, Math.sin(theta)*camToHubDistHorizontal);
 
-        Object[] data = {};
+        Object[] data = new Object[2];
         data[0] = new Pose2d(Constants.hubPosition.minus(robotDisplacementFromHub), lookVector);
         data[1] = camToHubDistHorizontal;
         return data;
