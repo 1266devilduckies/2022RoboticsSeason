@@ -91,7 +91,7 @@ public final class Constants {
     public static final double kVAngular = 0.22804;
     public static final double kAAngular = 0.06814;
     public static final double drivetrainWheelRadius = Units.inchesToMeters(2);
-    public static final double trackWidth = Units.inchesToMeters(30);
+    public static final double trackWidth = Units.inchesToMeters(28);
     public static final double robotWeight = Units.lbsToKilograms(140);
 
     public static final double drivetrainSpeedLimiter = 0.8; //Limit the drivetrain to 80%
