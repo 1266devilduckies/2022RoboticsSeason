@@ -19,20 +19,17 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimeLight;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.commands.SeekTarget;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
   private final TalonFXSimCollection leftFlywheelMotorSim;
   private final WPI_TalonFX rightFlywheelMotor;
   private final TalonFXSimCollection rightFlywheelMotorSim;
-  public static WPI_TalonFX turretAlignmentMotor;
+  public WPI_TalonFX turretAlignmentMotor;
   private final TalonFXSimCollection turretAlignmentMotorSim;
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
@@ -107,23 +104,24 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  if (Robot.isReal()) {
-    //periodically real life
     canSeeAnyTarget = LimeLight.getTv();
-
     if (canSeeAnyTarget == 1.0) {
       double rotationSetpoint = (turretAlignmentMotor.getSelectedSensorPosition()/Constants.ticksPerDegreeTurret) + LimeLight.getTx();
+      Object[] visionData = LimeLight.getRobotPoseFromVision();
+
       if (!aligned) {
       Drivetrain.odometry.addVisionMeasurement((Pose2d)LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
       turretAlignmentMotor.set(ControlMode.MotionMagic, rotationSetpoint*Constants.ticksPerDegreeTurret);
-      SmartDashboard.putNumber("tx", LimeLight.getTx());
       }
+      
       aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - rotationSetpoint*Constants.ticksPerDegreeTurret) < Constants.tickTolerance;
+      SmartDashboard.putNumber("distance ft", (double)visionData[1]);
     }
     if (canSeeAnyTarget == 0.0 /*&& startedSeeking == false*/) {
       // startedSeeking = true;
       aligned = false;
-      turretAlignmentMotor.set(ControlMode.PercentOutput, 0);
+      turretAlignmentMotor.set(ControlMode.PercentOutput, 0.0);
+      SmartDashboard.putNumber("distance ft", -1.0); //cant see anything
       // Command seekCommand = new SeekTarget(RobotContainer.shooterSubsystem);
       // seekCommand.schedule();
       /*
@@ -132,32 +130,9 @@ public class Shooter extends SubsystemBase {
         turretAlignmentMotor.set(ControlMode.PercentOutput, 0);
       }
       */
-    } 
-    //
-  } 
-  else {
-    //periodically simulation
-    if (canSeeAnyTarget == 0.0) {
-      aligned = false;
-      turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
     }
-    // 
-    canSeeAnyTarget = Drivetrain.limelightSim.getSimTv();
-
-    if (canSeeAnyTarget == 1.0) {
-      turretAlignmentMotor.set(ControlMode.MotionMagic, turretAlignmentMotor.getSelectedSensorPosition() + (LimeLight.getTx() * Constants.ticksPerDegreeTurret));
-      aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - Constants.ticksPerDegreeTurret*Drivetrain.limelightSim.getSimTx(0.0)) < Constants.tickTolerance;
-    }
-    if (canSeeAnyTarget == 0.0) {
-      aligned = false;
-      turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
-      if (Math.abs(turretAlignmentMotor.getSelectedSensorPosition()) < Constants.tickTolerance) {
-        turretAlignmentMotor.set(ControlMode.PercentOutput, 0);
-      }
-    } 
-  }
-  
-  SmartDashboard.putBoolean("Ready To Shoot", aligned);
+    SmartDashboard.putNumber("tx", LimeLight.getTx());
+    SmartDashboard.putBoolean("Ready To Shoot", aligned);
   }
 
 
@@ -215,7 +190,7 @@ public class Shooter extends SubsystemBase {
     indexerMotor.set(ControlMode.PercentOutput, percentOutput);
   }
   public double degreesOnTurret() {
-    return indexerMotor.getSelectedSensorPosition()/((double)Constants.ticksPerDegreeTurret);
+    return turretAlignmentMotor.getSelectedSensorPosition()/((double)Constants.ticksPerDegreeTurret);
   }
   public double getTurretPosition() {
     return turretAlignmentMotor.getSelectedSensorPosition() / Constants.GEARING_turret; 
