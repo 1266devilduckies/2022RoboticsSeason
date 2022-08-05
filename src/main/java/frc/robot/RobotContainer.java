@@ -19,14 +19,17 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.Fire2Balls;
-import frc.robot.commands.StartIntake;
-import frc.robot.commands.StopFlywheel;
-import frc.robot.commands.StopIntake;
+import frc.robot.commands.complex.Fire2Balls;
+import frc.robot.commands.complex.PathCommandGroup;
+import frc.robot.commands.simple.OverrideAuto;
+import frc.robot.commands.simple.StartIntake;
+import frc.robot.commands.simple.StopFlywheel;
+import frc.robot.commands.simple.StopIntake;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -75,7 +78,9 @@ public class RobotContainer {
     auto1_path1 = loadPath("auto1path1");
     auto2_path1 = loadPath("auto1path2");
 
-    path1CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto1_path1), new SequentialCommandGroup(new Fire2Balls(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
+    path1CommandGroup = new SequentialCommandGroup(new ParallelRaceGroup(generateTrajectoryCommand(auto1_path1), new OverrideAuto()), 
+      new ParallelRaceGroup(new SequentialCommandGroup(new Fire2Balls(shooterSubsystem), new StopFlywheel(shooterSubsystem)), new OverrideAuto()));
+    
     path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1), new SequentialCommandGroup(new Fire2Balls(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
 
     //Setup sendable chooser for autonomous mode selector

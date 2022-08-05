@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.simple;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
