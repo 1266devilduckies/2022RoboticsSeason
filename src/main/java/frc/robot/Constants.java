@@ -76,8 +76,8 @@ public final class Constants {
     public static final double flywheelTolerance = 0.02; //2 percent plus or minus
 
     //assumed with 0 degrees being heading
-    public static final double lowerBoundShooterDegrees = -90;
-    public static final double upperBoundShooterDegrees = 90;
+    public static final double lowerBoundShooterDegrees = -190;
+    public static final double upperBoundShooterDegrees = 190;
 
     //Voltage constants calculated from SysId on the drivetrain on the linear test
     public static final double kSLinear = 0.67766;
