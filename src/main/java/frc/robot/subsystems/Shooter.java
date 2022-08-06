@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.GearUtil;
 import frc.robot.LimeLight;
-import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
@@ -36,7 +36,6 @@ public class Shooter extends SubsystemBase {
   private final FlywheelSim flywheelSim;
   private final SingleJointedArmSim turretSim;
 
-  private double flywheelTargetRPM = 0.0;
   private double canSeeAnyTarget = 0.0;
   private boolean aligned = false;
   public static boolean startedSeeking = false;
@@ -84,8 +83,8 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotor.config_kP(0, Constants.PID_kP_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
 
-    turretAlignmentMotor.configMotionCruiseVelocity(RobotContainer.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
-    turretAlignmentMotor.configMotionAcceleration(RobotContainer.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
+    turretAlignmentMotor.configMotionCruiseVelocity(GearUtil.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
+    turretAlignmentMotor.configMotionAcceleration(GearUtil.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
     turretAlignmentMotor.configMotionSCurveStrength(0);
 
     //bind all of the simulated motors
@@ -117,19 +116,10 @@ public class Shooter extends SubsystemBase {
       aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - rotationSetpoint*Constants.ticksPerDegreeTurret) < Constants.tickTolerance;
       SmartDashboard.putNumber("distance ft", (double)visionData[1]);
     }
-    if (canSeeAnyTarget == 0.0 /*&& startedSeeking == false*/) {
-      // startedSeeking = true;
+    if (canSeeAnyTarget == 0.0) {
       aligned = false;
       turretAlignmentMotor.set(ControlMode.PercentOutput, 0.0);
       SmartDashboard.putNumber("distance ft", -1.0); //cant see anything
-      // Command seekCommand = new SeekTarget(RobotContainer.shooterSubsystem);
-      // seekCommand.schedule();
-      /*
-      turretAlignmentMotor.set(ControlMode.MotionMagic, 0);
-      if (Math.abs(turretAlignmentMotor.getSelectedSensorPosition()) < Constants.tickTolerance) {
-        turretAlignmentMotor.set(ControlMode.PercentOutput, 0);
-      }
-      */
     }
     SmartDashboard.putNumber("tx", LimeLight.getTx());
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
@@ -150,8 +140,8 @@ public class Shooter extends SubsystemBase {
     turretSim.setInputVoltage(turretAlignmentMotor.getMotorOutputVoltage());
     turretSim.update(0.02);
 
-    leftFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
-    rightFlywheelMotorSim.setIntegratedSensorVelocity((int)RobotContainer.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
+    leftFlywheelMotorSim.setIntegratedSensorVelocity((int)GearUtil.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
+    rightFlywheelMotorSim.setIntegratedSensorVelocity((int)GearUtil.RPMToEncoderTicksPer100ms(flywheelSim.getAngularVelocityRPM(), 1.0, 2048.0));
 
     turretAlignmentMotorSim.setIntegratedSensorRawPosition((int)(Units.radiansToDegrees(turretSim.getAngleRads())*Constants.ticksPerDegreeTurret));
   }
@@ -159,21 +149,15 @@ public class Shooter extends SubsystemBase {
   public void setMasterMotorOnFlywheel(double percentOutput) {
     leftFlywheelMotor.set(ControlMode.PercentOutput, percentOutput);
   }
-  public void setTargetRPM(double newRPM) {
-    flywheelTargetRPM = newRPM;
-  }
-  public double getTargetRPM() {
-    return flywheelTargetRPM;
-  }
   public boolean shooterIsAligned() {
     return aligned;
   }
   public double getCurrentRPM() {
-    return RobotContainer.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), 1.0, 2048.0);
+    return GearUtil.EncoderTicksPer100msToRPM(leftFlywheelMotor.getSelectedSensorVelocity(), 1.0, 2048.0);
   }
   public void setRPM(double rpm) {
     leftFlywheelMotor.set(ControlMode.Velocity, 
-    RobotContainer.RPMToEncoderTicksPer100ms(rpm, 1.0, 2048.0), 
+    GearUtil.RPMToEncoderTicksPer100ms(rpm, 1.0, 2048.0), 
     DemandType.ArbitraryFeedForward, 
     Constants.SIMPLE_MOTOR_FEEDFORWARD_flywheel.calculate(rpm / 60.) / RobotController.getBatteryVoltage());
   }

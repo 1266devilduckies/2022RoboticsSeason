@@ -12,7 +12,6 @@ public class StopFlywheel extends CommandBase {
 
   @Override
   public void initialize() {
-    shooterSubsystem.setTargetRPM(0);
     shooterSubsystem.setToCoast();
   }
 

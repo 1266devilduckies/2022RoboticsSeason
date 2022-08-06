@@ -4,23 +4,15 @@
 
 package frc.robot;
 
-import java.io.IOException;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.complex.Auto1;
+import frc.robot.commands.complex.Auto2;
 import frc.robot.commands.complex.Fire2Balls;
-import frc.robot.commands.complex.PathCommandGroup;
 import frc.robot.commands.simple.OverrideAuto;
 import frc.robot.commands.simple.StartIntake;
 import frc.robot.commands.simple.StopFlywheel;
@@ -29,8 +21,8 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -63,8 +55,6 @@ public class RobotContainer {
 
   private SequentialCommandGroup path1CommandGroup;
   private SequentialCommandGroup path2CommandGroup;
-  private Trajectory auto1_path1;
-  private Trajectory auto2_path1;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -74,21 +64,14 @@ public class RobotContainer {
     shooterSubsystem = new Shooter();
     climberSubsystem = new Climber();
 
-    //load in autonomous paths
-    auto1_path1 = loadPath("auto1path1");
-    auto2_path1 = loadPath("auto1path2");
+    path1CommandGroup = new Auto1();
+    path2CommandGroup = new Auto2();
 
-    path1CommandGroup = new SequentialCommandGroup(new ParallelRaceGroup(generateTrajectoryCommand(auto1_path1), new OverrideAuto()), 
-      new ParallelRaceGroup(new SequentialCommandGroup(new Fire2Balls(shooterSubsystem), new StopFlywheel(shooterSubsystem)), new OverrideAuto()));
-    
-    path2CommandGroup = new SequentialCommandGroup(generateTrajectoryCommand(auto2_path1), new SequentialCommandGroup(new Fire2Balls(shooterSubsystem), new StopFlywheel(shooterSubsystem)));
-
-    //Setup sendable chooser for autonomous mode selector
-    Object[] data = {new SequentialCommandGroup(), null};
+    Object[] data = {null, null}; //spec [command to run at auto, starting position for odometry]
     autonomousMode.setDefaultOption("Do nothing", data);
 
-    setAutonomousMode("1 Ball Auto", auto1_path1.getInitialPose(), path1CommandGroup);
-    setAutonomousMode("2 Ball Auto", auto2_path1.getInitialPose(), path2CommandGroup);
+    setAutonomousMode("1 Ball Auto", Auto1.getStartingPose(), path1CommandGroup);
+    setAutonomousMode("2 Ball Auto", Auto2.getStartingPose(), path2CommandGroup);
 
     SmartDashboard.putData(autonomousMode);
     // Configure the button bindings
@@ -107,7 +90,7 @@ public class RobotContainer {
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));
 
     //operator bindings
-    btn_ps4r1_operator.whenPressed(new Fire2Balls(shooterSubsystem));
+    btn_ps4r1_operator.whenPressed(new Fire2Balls(shooterSubsystem)); //doesnt actually fire, polls until aligned from shooter subsystem is true
     btn_ps4r1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
   }
 
@@ -126,69 +109,8 @@ public class RobotContainer {
     autonomousMode.addOption(inputName, data);
   }
 
-  //Trajectory generator function
-  private SequentialCommandGroup generateTrajectoryCommand(Trajectory trajectory) {
-    if (trajectory != null) {
-    RamseteCommand ramseteCommand =
-        new RamseteCommand(
-            trajectory,
-            drivetrainSubsystem::getPose,
-            new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-            new SimpleMotorFeedforward(
-                Constants.kSLinear,
-                Constants.kVLinear,
-                Constants.kALinear),
-            Constants.kDriveKinematics,
-            drivetrainSubsystem::getWheelSpeeds,
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            // RamseteCommand passes volts to the callback
-            drivetrainSubsystem::tankDriveVolts,
-            drivetrainSubsystem);
-    
-    // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> drivetrainSubsystem.tankDriveVolts(0, 0));
-    } else {
-      return new SequentialCommandGroup();
-    }
-}
-private Trajectory loadPath(String address) {
-  Trajectory trajectory = null;
-  try {
-    trajectory = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("pathplanner/generatedJSON/"+address+".wpilib.json"));
-  } catch(IOException exception) {
-    DriverStation.reportError("Unable to open trajectory: " + address, exception.getStackTrace());
-  }
-  return trajectory;
-}
-  //Conversion functions
-
-  //Gear ratio must be a reduction, CPR means ticks per revolution
-  public static double encoderTicksToMeters(double ticks, double gearRatio, double CPR, double wheelRadius) {
-    double numAxleRotations = ticks/CPR; //is a form of angular velocity, so Win/Wout works
-    double numRotationsOnDriverGear = numAxleRotations/gearRatio; //Din/Dout = gear ratio
-    //2pi is the circumfrence on unit circle
-    //multiply it to scale it and multiply that UNIT of rotation to distance by the total amount of rotations
-    return numRotationsOnDriverGear*2*Math.PI*wheelRadius;
-  }
-  public static double metersToEncoderTicks(double meters, double gearRatio, double CPR, double wheelRadius) {
-   //rearrange the equation in encoderTicksToMeters and solve for ticks
-   return (meters/(2*Math.PI*wheelRadius))*gearRatio*CPR;
-  }
-  public static double metersPerSecondToEncoderTicksPer100ms(double metersPerSecond, double gearRatio, double CPR, double wheelRadius) {
-    //convert to meters per 100 ms
-    metersPerSecond /= 10.0;
-    return metersToEncoderTicks(metersPerSecond, gearRatio, CPR, wheelRadius);
-  }
-  public static double EncoderTicksPer100msToMetersPerSecond(double ticksPer100ms, double gearRatio, double CPR, double wheelRadius) {
-    //convert to encoder ticks per second
-    return encoderTicksToMeters(ticksPer100ms*10.0, gearRatio, CPR, wheelRadius);
-  }
-  public static double RPMToEncoderTicksPer100ms(double rpm, double gearRatio, double CPR) {
-    return ((rpm/60.0) * CPR * gearRatio) / 10.0;
+  public static ParallelRaceGroup bindOverride(Command command) {
+    return new ParallelRaceGroup(command, new OverrideAuto());
   }
 
-public static double EncoderTicksPer100msToRPM(double velocity, double gearRatio, double CPR) {
-    return (((velocity*10.0)/CPR)/gearRatio) * 60.0;
-}
 }

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.GearUtil;
 import frc.robot.LimeLight;
 import frc.robot.RobotContainer;
 import frc.robot.VectorUtil;
@@ -145,13 +146,13 @@ public class Drivetrain extends SubsystemBase {
     //Invert the left input due to PS4 API thinking up is -1
     robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getRawAxis(4)*Constants.drivetrainSpeedLimiter);
 
-    double leftSpeedMs = RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
-    double rightSpeedMs = RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
+    double leftSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
+    double rightSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
 
     odometry.update(gyro.getRotation2d(), 
     new DifferentialDriveWheelSpeeds(leftSpeedMs, rightSpeedMs),
-    RobotContainer.encoderTicksToMeters(MainLeftMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius),
-    RobotContainer.encoderTicksToMeters(MainRightMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    GearUtil.encoderTicksToMeters(MainLeftMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius),
+    GearUtil.encoderTicksToMeters(MainRightMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
   }
 
   @Override
@@ -177,17 +178,20 @@ public class Drivetrain extends SubsystemBase {
     robotDriveSim.update(0.02);
 
     //Update sensors
-    leftMotorSim.setIntegratedSensorRawPosition((int)RobotContainer.metersToEncoderTicks(robotDriveSim.getLeftPositionMeters(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
-    leftMotorSim.setIntegratedSensorVelocity((int)RobotContainer.metersPerSecondToEncoderTicksPer100ms(robotDriveSim.getLeftVelocityMetersPerSecond(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
-    rightMotorSim.setIntegratedSensorRawPosition((int)RobotContainer.metersToEncoderTicks(-robotDriveSim.getRightPositionMeters(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
-    rightMotorSim.setIntegratedSensorVelocity((int)RobotContainer.metersPerSecondToEncoderTicksPer100ms(-robotDriveSim.getRightVelocityMetersPerSecond(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    leftMotorSim.setIntegratedSensorRawPosition((int)GearUtil.metersToEncoderTicks(robotDriveSim.getLeftPositionMeters(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    leftMotorSim.setIntegratedSensorVelocity((int)GearUtil.metersPerSecondToEncoderTicksPer100ms(robotDriveSim.getLeftVelocityMetersPerSecond(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    rightMotorSim.setIntegratedSensorRawPosition((int)GearUtil.metersToEncoderTicks(-robotDriveSim.getRightPositionMeters(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    rightMotorSim.setIntegratedSensorVelocity((int)GearUtil.metersPerSecondToEncoderTicksPer100ms(-robotDriveSim.getRightVelocityMetersPerSecond(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
 
     //Update simulation gyro, it's detached from the actual gyro
     gyroSim.setAngle(robotDriveSim.getHeading().getDegrees());
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius), RobotContainer.EncoderTicksPer100msToMetersPerSecond(MainRightMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    return new DifferentialDriveWheelSpeeds(GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), 
+    Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius), 
+    GearUtil.EncoderTicksPer100msToMetersPerSecond(MainRightMotorBack.getSelectedSensorVelocity(), 
+    Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
   }
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();

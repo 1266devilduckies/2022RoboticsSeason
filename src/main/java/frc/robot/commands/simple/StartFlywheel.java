@@ -13,8 +13,7 @@ public class StartFlywheel extends CommandBase {
 
   @Override
   public void initialize() {
-    shooterSubsystem.setTargetRPM(Constants.flywheelRPM);
-    shooterSubsystem.setRPM(shooterSubsystem.getTargetRPM());
+    shooterSubsystem.setRPM(Constants.flywheelRPM);
     shooterSubsystem.setIndexerMotor(0.0);
   }
 
@@ -25,7 +24,7 @@ public class StartFlywheel extends CommandBase {
   
   @Override
   public boolean isFinished() {
-    return Math.abs(shooterSubsystem.getTargetRPM()-shooterSubsystem.getCurrentRPM()) <= (shooterSubsystem.getTargetRPM() * Constants.flywheelTolerance);
+    return Math.abs(Constants.flywheelRPM - shooterSubsystem.getCurrentRPM()) <= (Constants.flywheelRPM * Constants.flywheelTolerance);
   }
 
   @Override
