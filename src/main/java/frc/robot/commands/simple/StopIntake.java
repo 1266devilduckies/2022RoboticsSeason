@@ -15,6 +15,7 @@ public class StopIntake extends CommandBase {
 
   @Override
   public void initialize() {
+    System.out.println("stopped intake");
     intakeSubsystem.setSolenoid(false);
     intakeSubsystem.setIntakeMotor(0.0);
     startTime = Timer.getFPGATimestamp();

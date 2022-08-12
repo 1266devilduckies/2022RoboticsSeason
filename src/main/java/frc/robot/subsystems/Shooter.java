@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.GearUtil;
 import frc.robot.LimeLight;
+import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
@@ -39,6 +40,7 @@ public class Shooter extends SubsystemBase {
   private double canSeeAnyTarget = 0.0;
   private boolean aligned = false;
   public static boolean startedSeeking = false;
+  public static double timeSinceOverridedAutonomous = -1; //negative means disabled, time in FPGA seconds
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -123,6 +125,7 @@ public class Shooter extends SubsystemBase {
     }
     SmartDashboard.putNumber("tx", LimeLight.getTx());
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
+    SmartDashboard.putNumber("delayTime", timeSinceOverridedAutonomous);
   }
 
 
