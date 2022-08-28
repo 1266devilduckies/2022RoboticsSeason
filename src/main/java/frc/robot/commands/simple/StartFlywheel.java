@@ -13,6 +13,7 @@ public class StartFlywheel extends CommandBase {
 
   @Override
   public void initialize() {
+    System.out.println("started flywheel");
     shooterSubsystem.setRPM(Constants.flywheelRPM);
     shooterSubsystem.setIndexerMotor(0.0);
   }

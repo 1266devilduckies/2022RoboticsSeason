@@ -15,6 +15,7 @@ public class StartIntake extends CommandBase {
 
   @Override
   public void initialize() {
+    System.out.println("started intake");
     intakeSubsystem.setSolenoid(true);
     intakeSubsystem.setIntakeMotor(1.0);
     startTime = Timer.getFPGATimestamp();

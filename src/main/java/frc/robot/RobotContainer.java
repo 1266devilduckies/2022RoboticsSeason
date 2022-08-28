@@ -14,6 +14,7 @@ import frc.robot.commands.complex.Auto1;
 import frc.robot.commands.complex.Auto2;
 import frc.robot.commands.complex.Fire2Balls;
 import frc.robot.commands.simple.OverrideAuto;
+import frc.robot.commands.simple.OverrideBtnPressed;
 import frc.robot.commands.simple.StartIntake;
 import frc.robot.commands.simple.StopFlywheel;
 import frc.robot.commands.simple.StopIntake;
@@ -47,6 +48,7 @@ public class RobotContainer {
 
   //Define joystick buttons
   JoystickButton btn_ps4r1_driver = new JoystickButton(driverJoystick, 6);
+  JoystickButton btn_ps4x_driver = new JoystickButton(driverJoystick, 2);
 
   JoystickButton btn_ps4r1_operator = new JoystickButton(operatorJoystick, 6);
 
@@ -55,6 +57,8 @@ public class RobotContainer {
 
   private SequentialCommandGroup path1CommandGroup;
   private SequentialCommandGroup path2CommandGroup;
+
+  public static boolean overriding = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -85,6 +89,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    btn_ps4x_driver.whenPressed(new OverrideBtnPressed());
     //driver bindings
     btn_ps4r1_driver.whenPressed(new StartIntake(intakeSubsystem));
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));

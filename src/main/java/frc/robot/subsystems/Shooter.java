@@ -41,6 +41,7 @@ public class Shooter extends SubsystemBase {
   private double canSeeAnyTarget = 0.0;
   private boolean aligned = false;
   public static boolean startedSeeking = false;
+  public static double timeSinceOverridedAutonomous = -1; //negative means disabled, time in FPGA seconds
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -135,6 +136,7 @@ public class Shooter extends SubsystemBase {
     aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - rotationSetpoint*Constants.ticksPerDegreeTurret) < Constants.tickTolerance; //trusts odometry and camera
     SmartDashboard.putNumber("tx", LimeLight.getTx());
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
+    SmartDashboard.putNumber("delayTime", timeSinceOverridedAutonomous);
   }
 
 

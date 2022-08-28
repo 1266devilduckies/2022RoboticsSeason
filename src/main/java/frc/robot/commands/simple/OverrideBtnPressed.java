@@ -1,19 +1,17 @@
 package frc.robot.commands.simple;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-public class StopFlywheel extends CommandBase {
-  Shooter shooterSubsystem;
-  public StopFlywheel(Shooter subsystem) {
-    shooterSubsystem = subsystem;
-    addRequirements(shooterSubsystem);
+public class OverrideBtnPressed extends CommandBase {
+  public OverrideBtnPressed() {
   }
 
   @Override
   public void initialize() {
-    System.out.println("stopped flywheel");
-    shooterSubsystem.setToCoast();
+      System.out.println("updated");
+    Shooter.timeSinceOverridedAutonomous = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -28,6 +26,6 @@ public class StopFlywheel extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    
+
   }
 }
