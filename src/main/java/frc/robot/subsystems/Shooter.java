@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.GearUtil;
 import frc.robot.LimeLight;
+import frc.robot.VectorUtil;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
@@ -104,23 +106,33 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     canSeeAnyTarget = LimeLight.getTv();
+    double rotationSetpoint = 0; //in terms of degrees
+    double rotation = turretAlignmentMotor.getSelectedSensorPosition()/Constants.ticksPerDegreeTurret; //in terms of degrees relative to turret
     if (canSeeAnyTarget == 1.0) {
-      double rotationSetpoint = (turretAlignmentMotor.getSelectedSensorPosition()/Constants.ticksPerDegreeTurret) + LimeLight.getTx();
+      rotationSetpoint = rotation + LimeLight.getTx(); //get offset based on camera
       Object[] visionData = LimeLight.getRobotPoseFromVision();
 
       if (!aligned) {
       Drivetrain.odometry.addVisionMeasurement((Pose2d)LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
-      turretAlignmentMotor.set(ControlMode.MotionMagic, rotationSetpoint*Constants.ticksPerDegreeTurret);
+      feedCLRotateToAngle(rotationSetpoint);
       }
-      
-      aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - rotationSetpoint*Constants.ticksPerDegreeTurret) < Constants.tickTolerance;
       SmartDashboard.putNumber("distance ft", (double)visionData[1]);
+      SmartDashboard.putBoolean("using odometry for turret tracking", false);
     }
     if (canSeeAnyTarget == 0.0) {
-      aligned = false;
-      turretAlignmentMotor.set(ControlMode.PercentOutput, 0.0);
-      SmartDashboard.putNumber("distance ft", -1.0); //cant see anything
+      Pose2d odometryPose = Drivetrain.odometry.getEstimatedPosition();
+      Translation2d robotToHub = Constants.hubPosition.minus(odometryPose.getTranslation()); //displacement vector robot to hub
+      Translation2d lookVectorDirection = new Translation2d(odometryPose.getRotation().getCos(), odometryPose.getRotation().getSin());
+      Translation2d lookVectorOnRobot = odometryPose.getTranslation().plus(lookVectorDirection);
+      double angleDifferenceHeadingToHub = VectorUtil.dot(VectorUtil.unit(robotToHub), VectorUtil.unit(lookVectorOnRobot));
+
+      rotationSetpoint = (rotation - angleDifferenceHeadingToHub) + rotation;
+      feedCLRotateToAngle(rotationSetpoint);
+      turretAlignmentMotor.set(ControlMode.PercentOutput, rotationSetpoint*Constants.ticksPerDegreeTurret);
+      SmartDashboard.putNumber("distance ft", robotToHub.getNorm()); //use odometry data
+      SmartDashboard.putBoolean("using odometry for turret tracking", true);
     }
+    aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition() - rotationSetpoint*Constants.ticksPerDegreeTurret) < Constants.tickTolerance; //trusts odometry and camera
     SmartDashboard.putNumber("tx", LimeLight.getTx());
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
   }
@@ -184,5 +196,12 @@ public class Shooter extends SubsystemBase {
   }
   public boolean isAtUpperBound(double ticks) {
     return Math.abs(ticks-Constants.upperBoundTicks) < Constants.tickTolerance;
+  }
+  private void feedCLRotateToAngle(double degrees) {
+    double newAngle = (degrees + 170) % 360 - 170;
+    if (newAngle - 360 > degreesOnTurret()) {
+      newAngle -= 360;
+    }
+    turretAlignmentMotor.set(ControlMode.MotionMagic, newAngle*Constants.ticksPerDegreeTurret);
   }
 }
