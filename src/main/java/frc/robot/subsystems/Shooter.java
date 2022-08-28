@@ -204,6 +204,9 @@ public class Shooter extends SubsystemBase {
     if (newAngle - 360 > degreesOnTurret()) {
       newAngle -= 360;
     }
+    if (degrees + 360 < degreesOnTurret()) {
+      degrees += 360;
+    }
     turretAlignmentMotor.set(ControlMode.MotionMagic, newAngle*Constants.ticksPerDegreeTurret);
   }
 }
