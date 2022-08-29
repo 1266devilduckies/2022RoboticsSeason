@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.VictorSPXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -200,13 +201,6 @@ public class Shooter extends SubsystemBase {
     return Math.abs(ticks-Constants.upperBoundTicks) < Constants.tickTolerance;
   }
   private void feedCLRotateToAngle(double degrees) {
-    double newAngle = (degrees + 170) % 360 - 170;
-    if (newAngle - 360 > degreesOnTurret()) {
-      newAngle -= 360;
-    }
-    if (degrees + 360 < degreesOnTurret()) {
-      degrees += 360;
-    }
-    turretAlignmentMotor.set(ControlMode.MotionMagic, newAngle*Constants.ticksPerDegreeTurret);
+    turretAlignmentMotor.set(ControlMode.MotionMagic, MathUtil.inputModulus(degrees, -180, 180)*Constants.ticksPerDegreeTurret);
   }
 }
