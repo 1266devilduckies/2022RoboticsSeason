@@ -17,6 +17,11 @@
           "open": true
         }
       },
+      "Talon FX[1]/Fwd Limit": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon FX[1]/Integrated Sensor": {
         "header": {
           "open": true

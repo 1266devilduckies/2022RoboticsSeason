@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.GearUtil;
 import frc.robot.LimeLight;
+import frc.robot.LineRenderer;
 import frc.robot.RobotContainer;
 import frc.robot.VectorUtil;
 
@@ -50,6 +53,7 @@ public class Drivetrain extends SubsystemBase {
   
   private final Field2d field = new Field2d(); //used to simulate the field for the simulated robot
   public static LimeLight limelightSim;
+  private LineRenderer turretDirection;
 
   public Drivetrain() {
     MainLeftMotorBack = new WPI_TalonFX(Constants.CANID_mainLeftMotorBack);
@@ -137,6 +141,7 @@ public class Drivetrain extends SubsystemBase {
     rightMotorSim = MainRightMotorBack.getSimCollection();
 
     limelightSim = new LimeLight(field);
+    turretDirection = new LineRenderer(odometry.getEstimatedPosition().getX(), odometry.getEstimatedPosition().getY(), 3, 3, field);
   }
 
   @Override
@@ -162,6 +167,15 @@ public class Drivetrain extends SubsystemBase {
     Pose2d robotPose = odometry.getEstimatedPosition();
     field.setRobotPose(robotPose);
     limelightSim.render(VectorUtil.moveForward(robotPose, -Units.inchesToMeters(12)));
+
+    Rotation2d rotationTurret = 
+    new Rotation2d(Units.degreesToRadians(Shooter.degreesOnTurret() + gyro.getRotation2d().getDegrees())); //since it is field centric to visualize add the gyro
+    System.out.println(Shooter.degreesOnTurret());
+    turretDirection.update(odometry.getEstimatedPosition().getX(), 
+    odometry.getEstimatedPosition().getY(),
+    odometry.getEstimatedPosition().getX() + rotationTurret.getCos(), 
+    odometry.getEstimatedPosition().getY() + rotationTurret.getSin(), field);
+
     SmartDashboard.putNumber("simTx", limelightSim.getSimTx(0.0));
     SmartDashboard.putNumber("simTv", limelightSim.getSimTv());
     SmartDashboard.putNumber("distanceSim", limelightSim.getSimDistanceToHub());

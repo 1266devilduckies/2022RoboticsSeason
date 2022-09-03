@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFXSimCollection leftFlywheelMotorSim;
   private final WPI_TalonFX rightFlywheelMotor;
   private final TalonFXSimCollection rightFlywheelMotorSim;
-  public WPI_TalonFX turretAlignmentMotor;
+  public static WPI_TalonFX turretAlignmentMotor;
   private final TalonFXSimCollection turretAlignmentMotorSim;
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
@@ -188,7 +188,7 @@ public class Shooter extends SubsystemBase {
   public void setIndexerMotor(double percentOutput) {
     indexerMotor.set(ControlMode.PercentOutput, percentOutput);
   }
-  public double degreesOnTurret() {
+  public static double degreesOnTurret() {
     return turretAlignmentMotor.getSelectedSensorPosition()/((double)Constants.ticksPerDegreeTurret);
   }
   public double getTurretPosition() {
