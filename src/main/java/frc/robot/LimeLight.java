@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.opencv.core.Mat;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
 
 public class LimeLight {
     FieldObject2d limelightFieldObject;
@@ -57,13 +60,16 @@ public class LimeLight {
         this.pose = position;
         limelightFieldObject.setPose(position);
     }
-
-    private double getDegreeDifference() {
-        Translation2d position = this.pose.getTranslation();
-        Translation2d limelightToHub = Constants.hubPosition.minus(position);
-        Translation2d headingVector = VectorUtil.moveForward(this.pose, 1.).getTranslation().minus(position);
-        double dot = VectorUtil.dot(VectorUtil.unit(headingVector), VectorUtil.unit(limelightToHub));
-        return Units.radiansToDegrees(Math.acos(dot));
+    LineRenderer line = new LineRenderer(0,0,0,0,Drivetrain.field);
+    public double getDegreeDifference() {
+        Translation2d robotPose = Drivetrain.odometry.getEstimatedPosition().getTranslation();
+        Translation2d limelightToHub = Constants.hubPosition.minus(robotPose);
+        double radian = Units.degreesToRadians(Shooter.degreesOnTurret() - Drivetrain.gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
+        Translation2d originOrientation = new Translation2d(Math.cos(radian), Math.sin(radian));
+        Translation2d localPosition = robotPose.plus(originOrientation);
+        Translation2d headingVector = robotPose.minus(localPosition);
+        line.update(robotPose.getX(), robotPose.getY(), localPosition.getX(), localPosition.getY(), Drivetrain.field);
+        return (180-Units.radiansToDegrees(Math.atan2(headingVector.getY(), headingVector.getX()) - Math.atan2(limelightToHub.getY(), limelightToHub.getX()))); //not sure why, just observed that it was opposite
     }
 
     public double getSimTv() {
@@ -77,6 +83,7 @@ public class LimeLight {
 
     public double getSimTx(double defaultValue) {
         double degreeDifference = getDegreeDifference();
+        System.out.println(degreeDifference);
         return Math.abs(degreeDifference) <= Constants.limelightHorizontalRange ? degreeDifference : defaultValue;
     }
 

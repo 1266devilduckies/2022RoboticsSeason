@@ -6,12 +6,14 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import org.opencv.core.Mat;
+
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -51,7 +53,7 @@ public class Drivetrain extends SubsystemBase {
 
   public static DifferentialDrivePoseEstimator odometry;
   
-  private final Field2d field = new Field2d(); //used to simulate the field for the simulated robot
+  public final static Field2d field = new Field2d(); //used to simulate the field for the simulated robot
   public static LimeLight limelightSim;
   private LineRenderer turretDirection;
 
@@ -166,15 +168,13 @@ public class Drivetrain extends SubsystemBase {
 
     Pose2d robotPose = odometry.getEstimatedPosition();
     field.setRobotPose(robotPose);
-    limelightSim.render(VectorUtil.moveForward(robotPose, -Units.inchesToMeters(12)));
-
-    Rotation2d rotationTurret = 
-    new Rotation2d(Units.degreesToRadians(Shooter.degreesOnTurret() + gyro.getRotation2d().getDegrees())); //since it is field centric to visualize add the gyro
-    System.out.println(Shooter.degreesOnTurret());
-    turretDirection.update(odometry.getEstimatedPosition().getX(), 
-    odometry.getEstimatedPosition().getY(),
-    odometry.getEstimatedPosition().getX() + rotationTurret.getCos(), 
-    odometry.getEstimatedPosition().getY() + rotationTurret.getSin(), field);
+    double radian = Units.degreesToRadians(Shooter.degreesOnTurret() - gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
+    Translation2d originOrientation = new Translation2d(Math.cos(radian), Math.sin(radian));
+    Translation2d localPosition = robotPose.getTranslation().plus(originOrientation);
+    Translation2d lookDirection = robotPose.getTranslation().minus(localPosition);
+    Rotation2d look = new Rotation2d(lookDirection.getX(), lookDirection.getY());
+    limelightSim.render(new Pose2d(localPosition, look));
+    turretDirection.update(robotPose.getX(), robotPose.getY(), Constants.hubPosition.getX(), Constants.hubPosition.getY(), field);
 
     SmartDashboard.putNumber("simTx", limelightSim.getSimTx(0.0));
     SmartDashboard.putNumber("simTv", limelightSim.getSimTv());
