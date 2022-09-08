@@ -26,14 +26,13 @@ import frc.robot.Constants;
 import frc.robot.GearUtil;
 import frc.robot.LimeLight;
 import frc.robot.Robot;
-import frc.robot.VectorUtil;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
   private final TalonFXSimCollection leftFlywheelMotorSim;
   private final WPI_TalonFX rightFlywheelMotor;
   private final TalonFXSimCollection rightFlywheelMotorSim;
-  public static WPI_TalonFX turretAlignmentMotor;
+  public WPI_TalonFX turretAlignmentMotor;
   private final TalonFXSimCollection turretAlignmentMotorSim;
   private final WPI_VictorSPX indexerMotor;
   private final VictorSPXSimCollection indexerMotorSim;
@@ -203,7 +202,7 @@ public class Shooter extends SubsystemBase {
     indexerMotor.set(ControlMode.PercentOutput, percentOutput);
   }
 
-  public static double degreesOnTurret() {
+  public double degreesOnTurret() {
     return turretAlignmentMotor.getSelectedSensorPosition() / Constants.ticksPerDegreeTurret;
   }
 

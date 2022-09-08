@@ -6,8 +6,6 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
@@ -19,7 +17,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -31,7 +28,6 @@ import frc.robot.GearUtil;
 import frc.robot.LimeLight;
 import frc.robot.LineRenderer;
 import frc.robot.RobotContainer;
-import frc.robot.VectorUtil;
 
 public class Drivetrain extends SubsystemBase {
   private final DifferentialDrive robotDrive;
@@ -168,7 +164,7 @@ public class Drivetrain extends SubsystemBase {
 
     Pose2d robotPose = odometry.getEstimatedPosition();
     field.setRobotPose(robotPose);
-    double radian = Units.degreesToRadians(Shooter.degreesOnTurret() - gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
+    double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() - gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
     Translation2d originOrientation = new Translation2d(Math.cos(radian), Math.sin(radian));
     Translation2d localPosition = robotPose.getTranslation().plus(originOrientation);
     Translation2d lookDirection = robotPose.getTranslation().minus(localPosition);

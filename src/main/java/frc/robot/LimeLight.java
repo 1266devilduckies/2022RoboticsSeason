@@ -1,7 +1,5 @@
 package frc.robot;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,7 +8,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Shooter;
 
 public class LimeLight {
     FieldObject2d limelightFieldObject;
@@ -64,7 +61,7 @@ public class LimeLight {
     public double getDegreeDifference() {
         Translation2d robotPose = Drivetrain.odometry.getEstimatedPosition().getTranslation();
         Translation2d limelightToHub = Constants.hubPosition.minus(robotPose);
-        double radian = Units.degreesToRadians(Shooter.degreesOnTurret() - Drivetrain.gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
+        double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() - Drivetrain.gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
         Translation2d originOrientation = new Translation2d(Math.cos(radian), Math.sin(radian));
         Translation2d localPosition = robotPose.plus(originOrientation);
         Translation2d headingVector = robotPose.minus(localPosition);
@@ -83,7 +80,6 @@ public class LimeLight {
 
     public double getSimTx(double defaultValue) {
         double degreeDifference = getDegreeDifference();
-        System.out.println(degreeDifference);
         return Math.abs(degreeDifference) <= Constants.limelightHorizontalRange ? degreeDifference : defaultValue;
     }
 
