@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 
@@ -18,7 +19,8 @@ public class LineRenderer {
         line = field.getObject("Line"+lineNum);
     }
     public void update(double x1, double y1, double x2, double y2, Field2d field) {
-        
+        if (VectorUtil.getMagnitude(new Translation2d(x2-x1, y2-y1)) < Units.inchesToMeters(6)) { return; }
+
         Translation2d direction = new Translation2d(x2-x1, y2-y1);
 
         Rotation2d orientation = new Rotation2d(direction.getX(), direction.getY());

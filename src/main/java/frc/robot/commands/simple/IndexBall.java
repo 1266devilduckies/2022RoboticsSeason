@@ -31,6 +31,9 @@ public class IndexBall extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    if (!interrupted) {
+      System.out.println("indexed ball");
+    }
     shooterSubsystem.setIndexerMotor(0.0); //dont check if it finished the logic as this acts as a watchdog
   }
 }

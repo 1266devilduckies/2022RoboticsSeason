@@ -120,8 +120,6 @@ public class Shooter extends SubsystemBase {
 
     if (canSeeAnyTarget == 1.0) {
       rotationSetpoint = rotation + degreesOff; // get offset based on camera
-      //System.out.println(rotation);
-      Object[] visionData = LimeLight.getRobotPoseFromVision();
 
       if (!aligned) {
         if (Robot.isReal()) {
@@ -129,23 +127,14 @@ public class Shooter extends SubsystemBase {
         }
         feedCLRotateToAngle(rotationSetpoint);
       }
-      SmartDashboard.putNumber("distance ft", (double) visionData[1]);
-      SmartDashboard.putBoolean("using odometry for turret tracking", false);
     }
     if (canSeeAnyTarget == 0.0) {
-      Pose2d odometryPose = Drivetrain.odometry.getEstimatedPosition();
-      Translation2d robotToHub = Constants.hubPosition.minus(odometryPose.getTranslation()); // displacement vector robot to hub
-
       rotationSetpoint = rotation + Drivetrain.limelightSim.getDegreeDifference();
       feedCLRotateToAngle(rotationSetpoint);
-      SmartDashboard.putNumber("distance ft", robotToHub.getNorm()); // use odometry data
-      SmartDashboard.putBoolean("using odometry for turret tracking", true);
     }
     aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()
         - MathUtil.inputModulus(rotationSetpoint, -180, 180) * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
-    SmartDashboard.putNumber("tx", degreesOff);
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
-    SmartDashboard.putNumber("delayTime", timeSinceOverridedAutonomous);
   }
 
   @Override
