@@ -50,12 +50,12 @@ public final class Constants {
     public static double lowerBoundClimber = 0.0; //ten thousand
 
     //Turret
-    public static final double PID_kP_turretAlignment = 0.1;
-    public static final double PID_kD_turretAlignment = 0.03;
+    public static final double PID_kP_turretAlignment = 0.5;
+    public static final double PID_kD_turretAlignment = 0.05;
     public static final double ticksPerDegreeTurret = (2048*Constants.GEARING_turret)/360.;
     public static final double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ticksPerDegreeTurret;
     public static final double upperBoundTicks = Constants.upperBoundShooterDegrees * ticksPerDegreeTurret;
-    public static final double tickTolerance = ticksPerDegreeTurret * 0.1;
+    public static final double tickTolerance = ticksPerDegreeTurret * 0.5;
     public static final Translation2d hubPosition = new Translation2d(Units.feetToMeters(54/2.), Units.feetToMeters(27/2.));
     public static final double limelightHorizontalRange = 27; //in terms of degrees
     public static final double hubHeight = 2.6416;

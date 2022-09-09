@@ -142,7 +142,7 @@ public class Shooter extends SubsystemBase {
       SmartDashboard.putBoolean("using odometry for turret tracking", true);
     }
     aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()
-        - rotationSetpoint * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
+        - MathUtil.inputModulus(rotationSetpoint, -180, 180) * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
     SmartDashboard.putNumber("tx", degreesOff);
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
     SmartDashboard.putNumber("delayTime", timeSinceOverridedAutonomous);
