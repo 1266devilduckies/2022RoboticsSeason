@@ -1,12 +1,8 @@
 package frc.robot;
 
-import java.util.ArrayList;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
@@ -20,17 +16,8 @@ public class LineRenderer {
     }
     public void update(double x1, double y1, double x2, double y2, Field2d field) {
         if (VectorUtil.getMagnitude(new Translation2d(x2-x1, y2-y1)) < Units.inchesToMeters(6)) { return; }
-
         Translation2d direction = new Translation2d(x2-x1, y2-y1);
-
         Rotation2d orientation = new Rotation2d(direction.getX(), direction.getY());
-        TrajectoryConfig config = new TrajectoryConfig(1,1);
-        config.setReversed(false);
-        var trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(x1,y1, orientation),
-        new ArrayList<Translation2d>(),
-        new Pose2d(x2,y2, orientation),
-        config);
-        
-        line.setTrajectory(trajectory);
+        line.setPoses(new Pose2d(x1,y1, orientation), new Pose2d(x2,y2,Rotation2d.fromDegrees(180).minus(orientation)));
     }
 }
