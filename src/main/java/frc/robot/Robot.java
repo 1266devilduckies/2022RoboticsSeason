@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -67,16 +66,11 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     Object[] data = m_robotContainer.getAutonomousCommand();
     m_autonomousCommand = (Command)data[0];
-    Pose2d startingPose = new Pose2d(-1,0, Rotation2d.fromDegrees(0.0));//(Pose2d)data[1];
+    Pose2d startingPose = (Pose2d)data[1];
     RobotContainer.drivetrainSubsystem.resetEncoders();
     RobotContainer.shooterSubsystem.resetEncoders();
-    if (startingPose != null) {
-      RobotContainer.drivetrainSubsystem.resetOdometry(startingPose);
-    }
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    RobotContainer.drivetrainSubsystem.resetOdometry(startingPose);
+    m_autonomousCommand.schedule();
   }
 
   /** This function is called periodically during autonomous. */
