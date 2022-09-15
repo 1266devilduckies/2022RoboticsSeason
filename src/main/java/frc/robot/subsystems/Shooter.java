@@ -111,8 +111,10 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    canSeeAnyTarget = Robot.isReal() ? LimeLight.getTv() : Drivetrain.limelightSim.getSimTv();
-    double degreesOff = Robot.isReal() ? LimeLight.getTx() : Drivetrain.limelightSim.getSimTx(0.0);
+    double canSeeAnyTarget = Drivetrain.limelightSim.getSimTv();
+    double degreesOff = Drivetrain.limelightSim.getSimTx(0.0);
+    //canSeeAnyTarget = Robot.isReal() ? LimeLight.getTv() : Drivetrain.limelightSim.getSimTv();
+    //double degreesOff = Robot.isReal() ? LimeLight.getTx() : Drivetrain.limelightSim.getSimTx(0.0);
 
     double rotationSetpoint = 0; // in terms of degrees
     double rotation = turretAlignmentMotor.getSelectedSensorPosition() / Constants.ticksPerDegreeTurret; //in terms of degrees relative to turret
@@ -184,6 +186,7 @@ public class Shooter extends SubsystemBase {
 
   public void resetEncoders() {
     leftFlywheelMotor.setSelectedSensorPosition(0);
+    turretAlignmentMotor.setSelectedSensorPosition(0);
   }
 
   public void setIndexerMotor(double percentOutput) {

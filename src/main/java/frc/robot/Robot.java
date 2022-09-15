@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
     RobotContainer.drivetrainSubsystem.resetEncoders();
     RobotContainer.shooterSubsystem.resetEncoders();
     RobotContainer.drivetrainSubsystem.resetOdometry(startingPose);
+    RobotContainer.drivetrainSubsystem.gyro.calibrate();
     m_autonomousCommand.schedule();
   }
 
@@ -87,8 +88,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    RobotContainer.drivetrainSubsystem.resetEncoders();
-    RobotContainer.shooterSubsystem.resetEncoders();
+    // RobotContainer.drivetrainSubsystem.resetEncoders();
+    // RobotContainer.shooterSubsystem.resetEncoders();
   }
 
   /** This function is called periodically during operator control. */
