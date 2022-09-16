@@ -45,12 +45,12 @@ public class Drivetrain extends SubsystemBase {
   private final TalonFXSimCollection rightMotorSim;
 
   private final ADXRS450_GyroSim gyroSim;
-  public static ADXRS450_Gyro gyro;
+  public ADXRS450_Gyro gyro;
 
-  public static DifferentialDrivePoseEstimator odometry;
+  public DifferentialDrivePoseEstimator odometry;
   
   public final static Field2d field = new Field2d(); //used to simulate the field for the simulated robot
-  public static LimeLight limelightSim;
+  public LimeLight limelightSim;
   private LineRenderer turretDirection;
 
   public Drivetrain() {

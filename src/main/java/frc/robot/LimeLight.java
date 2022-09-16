@@ -38,7 +38,7 @@ public class LimeLight {
 
     //prereq is that tv has to be 1
     public static Object[] getRobotPoseFromVision() {
-        Rotation2d lookVector = Drivetrain.gyro.getRotation2d();
+        Rotation2d lookVector = RobotContainer.drivetrainSubsystem.gyro.getRotation2d();
         double turretRotationsRelative = (RobotContainer.shooterSubsystem.turretAlignmentMotor.getSelectedSensorPosition()/2048.) * Constants.GEARING_turret;
         double rotationOffset = (turretRotationsRelative * 360.) - LimeLight.getTx();
         double theta = Units.degreesToRadians(rotationOffset + lookVector.getDegrees());
@@ -59,9 +59,9 @@ public class LimeLight {
     }
     LineRenderer line = new LineRenderer(0,0,0,0,Drivetrain.field);
     public double getDegreeDifference() {
-        Translation2d robotPose = Drivetrain.odometry.getEstimatedPosition().getTranslation();
+        Translation2d robotPose = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getTranslation();
         Translation2d limelightToHub = Constants.hubPosition.minus(robotPose);
-        double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() - Drivetrain.gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
+        double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() - RobotContainer.drivetrainSubsystem.gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
         Translation2d originOrientation = new Translation2d(Math.cos(radian), Math.sin(radian));
         Translation2d localPosition = robotPose.plus(originOrientation);
         Translation2d headingVector = robotPose.minus(localPosition);

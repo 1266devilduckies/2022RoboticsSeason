@@ -25,6 +25,7 @@ import frc.robot.Constants;
 import frc.robot.GearUtil;
 import frc.robot.LimeLight;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX leftFlywheelMotor;
@@ -42,6 +43,7 @@ public class Shooter extends SubsystemBase {
   private boolean aligned = false;
   public static boolean startedSeeking = false;
   public static double timeSinceOverridedAutonomous = -1; // negative means disabled, time in FPGA seconds
+  private boolean forceOdometry = true;
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -111,10 +113,8 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    double canSeeAnyTarget = Drivetrain.limelightSim.getSimTv();
-    double degreesOff = Drivetrain.limelightSim.getSimTx(0.0);
-    //canSeeAnyTarget = Robot.isReal() ? LimeLight.getTv() : Drivetrain.limelightSim.getSimTv();
-    //double degreesOff = Robot.isReal() ? LimeLight.getTx() : Drivetrain.limelightSim.getSimTx(0.0);
+    canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv() : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
+    double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx() : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);
 
     double rotationSetpoint = 0; // in terms of degrees
     double rotation = turretAlignmentMotor.getSelectedSensorPosition() / Constants.ticksPerDegreeTurret; //in terms of degrees relative to turret
@@ -123,14 +123,14 @@ public class Shooter extends SubsystemBase {
       rotationSetpoint = rotation + degreesOff; // get offset based on camera
 
       if (!aligned) {
-        if (Robot.isReal()) {
-          Drivetrain.odometry.addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
+        if (Robot.isReal() && !forceOdometry) {
+          RobotContainer.drivetrainSubsystem.odometry.addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
         }
         feedCLRotateToAngle(rotationSetpoint);
       }
     }
     if (canSeeAnyTarget == 0.0) {
-      rotationSetpoint = rotation + Drivetrain.limelightSim.getDegreeDifference();
+      rotationSetpoint = rotation + RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
       feedCLRotateToAngle(rotationSetpoint);
     }
     aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()

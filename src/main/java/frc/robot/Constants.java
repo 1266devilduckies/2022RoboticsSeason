@@ -113,4 +113,7 @@ public final class Constants {
     public static final long actuatorFullyRetractedTimeMillis = 1000;
     public static final int indexingTimeMillis = 500;
     public static final long LOSScanMillis = 1000;
+    public static final double kS_turret = 0;
+    public static final double kV_turret = 0;
+    public static final double kA_turret = 0;
 }

@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     PortForwarder.add(5803, "limelight.local", 5803);
     PortForwarder.add(5804, "limelight.local", 5804);
     PortForwarder.add(5805, "limelight.local", 5805);
+    RobotContainer.drivetrainSubsystem.gyro.calibrate();
   }
 
   /**
@@ -69,8 +70,10 @@ public class Robot extends TimedRobot {
     Pose2d startingPose = (Pose2d)data[1];
     RobotContainer.drivetrainSubsystem.resetEncoders();
     RobotContainer.shooterSubsystem.resetEncoders();
+    RobotContainer.drivetrainSubsystem.gyro.reset();
+    //we need to reset all motors before resetting the software odometry, internally in this function it resets the drive masters
     RobotContainer.drivetrainSubsystem.resetOdometry(startingPose);
-    RobotContainer.drivetrainSubsystem.gyro.calibrate();
+
     m_autonomousCommand.schedule();
   }
 
@@ -87,9 +90,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    // RobotContainer.drivetrainSubsystem.resetEncoders();
-    // RobotContainer.shooterSubsystem.resetEncoders();
+    
   }
 
   /** This function is called periodically during operator control. */
