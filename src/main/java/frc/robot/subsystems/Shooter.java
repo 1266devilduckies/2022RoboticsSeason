@@ -76,7 +76,7 @@ public class Shooter extends SubsystemBase {
 
     turretAlignmentMotor.setNeutralMode(NeutralMode.Brake);
 
-    turretAlignmentMotor.setInverted(false);
+    turretAlignmentMotor.setInverted(true); //was false
 
     turretAlignmentMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
 
@@ -136,6 +136,7 @@ public class Shooter extends SubsystemBase {
     aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()
         - MathUtil.inputModulus(rotationSetpoint, -180, 180) * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
+    SmartDashboard.putNumber("degrees off", degreesOff);
   }
 
   @Override
