@@ -66,7 +66,7 @@ public class LimeLight {
         Translation2d localPosition = robotPose.plus(originOrientation);
         Translation2d headingVector = robotPose.minus(localPosition);
         line.update(robotPose.getX(), robotPose.getY(), localPosition.getX(), localPosition.getY(), Drivetrain.field);
-        return (180-Units.radiansToDegrees(Math.atan2(headingVector.getY(), headingVector.getX()) - Math.atan2(limelightToHub.getY(), limelightToHub.getX()))); //not sure why, just observed that it was opposite
+        return -(180-Units.radiansToDegrees(Math.atan2(headingVector.getY(), headingVector.getX()) - Math.atan2(limelightToHub.getY(), limelightToHub.getX()))); //not sure why, just observed that it was opposite
     }
 
     public double getSimTv() {

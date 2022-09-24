@@ -39,7 +39,6 @@ public class Shooter extends SubsystemBase {
   private final VictorSPXSimCollection indexerMotorSim;
   private final FlywheelSim flywheelSim;
   private final SingleJointedArmSim turretSim;
-  private final PIDController turretPID;
 
   private double canSeeAnyTarget = 0.0;
   private boolean aligned = false;
@@ -64,7 +63,7 @@ public class Shooter extends SubsystemBase {
     leftFlywheelMotor.setNeutralMode(NeutralMode.Coast);
     rightFlywheelMotor.setNeutralMode(NeutralMode.Coast);
 
-    leftFlywheelMotor.setInverted(false);
+    leftFlywheelMotor.setInverted(true);
     rightFlywheelMotor.setInverted(InvertType.OpposeMaster);
 
     leftFlywheelMotor.config_kP(0, Constants.PID_kP_flywheel);
@@ -78,7 +77,7 @@ public class Shooter extends SubsystemBase {
 
     turretAlignmentMotor.setNeutralMode(NeutralMode.Brake);
 
-    turretAlignmentMotor.setInverted(true); //was false
+    turretAlignmentMotor.setInverted(false); //was false
 
     turretAlignmentMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
 
@@ -89,8 +88,6 @@ public class Shooter extends SubsystemBase {
 
     turretAlignmentMotor.config_kP(0, Constants.PID_kP_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
-
-    turretPID = new PIDController(.01, 0., .002);
 
     turretAlignmentMotor
         .configMotionCruiseVelocity(GearUtil.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
@@ -124,20 +121,18 @@ public class Shooter extends SubsystemBase {
     double rotation = turretAlignmentMotor.getSelectedSensorPosition() / Constants.ticksPerDegreeTurret; //in terms of degrees relative to turret
 
     if (canSeeAnyTarget == 1.0) {
-      rotationSetpoint = rotation + degreesOff; // get offset based on camera
+      rotationSetpoint = rotation - degreesOff; // get offset based on camera
 
       if (!aligned) {
         if (Robot.isReal() && !forceOdometry) {
           SmartDashboard.putNumber("rotation offset actual", rotationSetpoint);
           RobotContainer.drivetrainSubsystem.odometry.addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
         }
-        double pidOutput = turretPID.calculate(LimeLight.getTx(), 0.0);
-        turretAlignmentMotor.set(ControlMode.PercentOutput, pidOutput);
-        //feedCLRotateToAngle(rotationSetpoint);
+        feedCLRotateToAngle(rotationSetpoint);
       }
     }
     if (canSeeAnyTarget == 0.0) {
-      rotationSetpoint = rotation + RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
+      rotationSetpoint = rotation - RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
       SmartDashboard.putNumber("field centric offset", RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference());
       feedCLRotateToAngle(rotationSetpoint);
     }
@@ -219,7 +214,9 @@ public class Shooter extends SubsystemBase {
   }
 
   private void feedCLRotateToAngle(double degrees) {
+    double mappedAngle = MathUtil.inputModulus(degrees, -180, 180);
+    System.out.println(mappedAngle);
     turretAlignmentMotor.set(ControlMode.MotionMagic,
-        MathUtil.inputModulus(degrees, -180, 180) * Constants.ticksPerDegreeTurret);
+        mappedAngle * Constants.ticksPerDegreeTurret);
   }
 }
