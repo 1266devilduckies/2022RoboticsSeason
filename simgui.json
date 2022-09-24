@@ -1,51 +1,9 @@
 {
-  "HALProvider": {
-    "Other Devices": {
-      "Talon FX[14]": {
-        "header": {
-          "open": true
-        },
-        "name": "Turret Alignment Motor [14]"
-      },
-      "Talon FX[14]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[1]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[1]/Fwd Limit": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[1]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[8]": {
-        "name": "LeftFlywheelMotor"
-      },
-      "Talon FX[8]/Integrated Sensor": {
-        "name": "LeftFlywheelMotor/Integrated Sensor"
-      }
-    },
-    "Solenoids": {
-      "window": {
-        "visible": true
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/Climber": "Subsystem",
       "/LiveWindow/Drivetrain": "Subsystem",
-      "/LiveWindow/ExampleSubsystem": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/Ungrouped/ADXRS450_Gyro[0]": "Gyro",
@@ -54,7 +12,6 @@
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
-      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Talon FX [12]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [13]": "Motor Controller",
@@ -67,11 +24,6 @@
       "/LiveWindow/Ungrouped/Victor SPX [9]": "Motor Controller",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
-    }
-  },
-  "NetworkTables": {
-    "SmartDashboard": {
-      "open": true
     }
   }
 }

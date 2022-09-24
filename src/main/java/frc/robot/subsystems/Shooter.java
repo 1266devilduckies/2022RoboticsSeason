@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -38,12 +39,13 @@ public class Shooter extends SubsystemBase {
   private final VictorSPXSimCollection indexerMotorSim;
   private final FlywheelSim flywheelSim;
   private final SingleJointedArmSim turretSim;
+  private final PIDController turretPID;
 
   private double canSeeAnyTarget = 0.0;
   private boolean aligned = false;
   public static boolean startedSeeking = false;
   public static double timeSinceOverridedAutonomous = -1; // negative means disabled, time in FPGA seconds
-  private boolean forceOdometry = true;
+  private boolean forceOdometry = false;
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -88,6 +90,8 @@ public class Shooter extends SubsystemBase {
     turretAlignmentMotor.config_kP(0, Constants.PID_kP_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
 
+    turretPID = new PIDController(.01, 0., .002);
+
     turretAlignmentMotor
         .configMotionCruiseVelocity(GearUtil.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
     turretAlignmentMotor
@@ -124,13 +128,17 @@ public class Shooter extends SubsystemBase {
 
       if (!aligned) {
         if (Robot.isReal() && !forceOdometry) {
+          SmartDashboard.putNumber("rotation offset actual", rotationSetpoint);
           RobotContainer.drivetrainSubsystem.odometry.addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
         }
-        feedCLRotateToAngle(rotationSetpoint);
+        double pidOutput = turretPID.calculate(LimeLight.getTx(), 0.0);
+        turretAlignmentMotor.set(ControlMode.PercentOutput, pidOutput);
+        //feedCLRotateToAngle(rotationSetpoint);
       }
     }
     if (canSeeAnyTarget == 0.0) {
       rotationSetpoint = rotation + RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
+      SmartDashboard.putNumber("field centric offset", RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference());
       feedCLRotateToAngle(rotationSetpoint);
     }
     aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()

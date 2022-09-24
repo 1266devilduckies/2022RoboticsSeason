@@ -61,7 +61,7 @@ public class LimeLight {
     public double getDegreeDifference() {
         Translation2d robotPose = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getTranslation();
         Translation2d limelightToHub = Constants.hubPosition.minus(robotPose);
-        double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() - RobotContainer.drivetrainSubsystem.gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
+        double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() + RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation().getDegrees());/* RobotContainer.drivetrainSubsystem.gyro.getAngle()*/ //turret is fixed to robot rotation however gyro is inverted
         Translation2d originOrientation = new Translation2d(Math.cos(radian), Math.sin(radian));
         Translation2d localPosition = robotPose.plus(originOrientation);
         Translation2d headingVector = robotPose.minus(localPosition);
