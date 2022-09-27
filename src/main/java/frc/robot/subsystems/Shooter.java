@@ -217,6 +217,8 @@ public class Shooter extends SubsystemBase {
     double mappedAngle = MathUtil.inputModulus(degrees, -180, 180);
     System.out.println(mappedAngle);
     turretAlignmentMotor.set(ControlMode.MotionMagic,
-        mappedAngle * Constants.ticksPerDegreeTurret);
+        -(mappedAngle * Constants.ticksPerDegreeTurret));
   }
+
+  
 }
