@@ -35,10 +35,13 @@ public class LimeLight {
     public static void setCurrentPipeline(int pipelineId) {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(pipelineId);
     }
+    public static void setLedMode(int ledState) {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ledState);
+    }
 
     //prereq is that tv has to be 1
     public static Object[] getRobotPoseFromVision() {
-        Rotation2d lookVector = RobotContainer.drivetrainSubsystem.gyro.getRotation2d();
+        Rotation2d lookVector = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation();
         double turretRotationsRelative = (RobotContainer.shooterSubsystem.turretAlignmentMotor.getSelectedSensorPosition()/2048.) * Constants.GEARING_turret;
         double rotationOffset = (turretRotationsRelative * 360.) - LimeLight.getTx();
         double theta = Units.degreesToRadians(rotationOffset + lookVector.getDegrees());

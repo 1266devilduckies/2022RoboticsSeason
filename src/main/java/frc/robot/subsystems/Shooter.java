@@ -78,7 +78,7 @@ public class Shooter extends SubsystemBase {
 
     turretAlignmentMotor.setNeutralMode(NeutralMode.Brake);
 
-    turretAlignmentMotor.setInverted(false); //was false
+    turretAlignmentMotor.setInverted(false); // was false
 
     turretAlignmentMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
 
@@ -89,6 +89,7 @@ public class Shooter extends SubsystemBase {
 
     turretAlignmentMotor.config_kP(0, Constants.PID_kP_turretAlignment);
     turretAlignmentMotor.config_kD(0, Constants.PID_kD_turretAlignment);
+    turretAlignmentMotor.setNeutralMode(NeutralMode.Coast);
 
     turretAlignmentMotor
         .configMotionCruiseVelocity(GearUtil.RPMToEncoderTicksPer100ms(220, Constants.GEARING_turret, 2048.));
@@ -110,34 +111,47 @@ public class Shooter extends SubsystemBase {
         Units.degreesToRadians(Constants.lowerBoundShooterDegrees),
         Units.degreesToRadians(Constants.upperBoundShooterDegrees),
         5, false);
+    if (forceOdometry) {
+      LimeLight.setLedMode(1); // turn off limelight
+    } else {
+      LimeLight.setLedMode(0); // turn on limelight based on pipeline settings
+    }
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv() : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
-    double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx() : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);
+    canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv()
+        : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
+    double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx()
+        : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);
 
     double rotationSetpoint = 0; // in terms of degrees
-    double rotation = this.degreesOnTurret(); //in terms of degrees relative to turret
+    double rotation = this.degreesOnTurret(); // in terms of degrees relative to turret
 
     if (canSeeAnyTarget == 1.0) {
-      rotationSetpoint = rotation - degreesOff; // get offset based on camera
+      //RobotContainer.drivetrainSubsystem.odometry
+      //      .addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
+      rotationSetpoint = rotation + degreesOff; // THE HOLY GRAIL WAS TO ADD THEM!!!!!
       if (!aligned) {
         if (Robot.isReal() && !forceOdometry) {
           SmartDashboard.putNumber("rotation offset actual", rotationSetpoint);
-          RobotContainer.drivetrainSubsystem.odometry.addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
         }
         feedCLRotateToAngle(rotationSetpoint);
       }
     }
     if (canSeeAnyTarget == 0.0) {
       rotationSetpoint = rotation - RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
-      SmartDashboard.putNumber("field centric offset", RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference());
-      feedCLRotateToAngle(rotationSetpoint);
+      SmartDashboard.putNumber("field centric offset",
+          RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference());
+      //feedCLRotateToAngle(rotationSetpoint);
+      double mappedAngle = MathUtil.inputModulus(rotationSetpoint, -180, 180);
+    turretAlignmentMotor.set(ControlMode.MotionMagic,
+        -(mappedAngle * Constants.ticksPerDegreeTurret));
     }
     aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()
-        - MathUtil.inputModulus(rotationSetpoint, -180, 180) * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
+        - MathUtil.inputModulus(rotationSetpoint, -180, 180)
+            * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
     SmartDashboard.putNumber("degrees off", degreesOff);
   }
@@ -215,10 +229,9 @@ public class Shooter extends SubsystemBase {
 
   private void feedCLRotateToAngle(double degrees) {
     double mappedAngle = MathUtil.inputModulus(degrees, -180, 180);
-    //System.out.println(degrees);
+    SmartDashboard.putNumber("angle robot centric", mappedAngle);
     turretAlignmentMotor.set(ControlMode.MotionMagic,
         mappedAngle * Constants.ticksPerDegreeTurret);
   }
 
-  
 }

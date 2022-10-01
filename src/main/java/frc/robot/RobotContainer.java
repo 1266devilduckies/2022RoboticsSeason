@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -72,7 +73,7 @@ public class RobotContainer {
     path1CommandGroup = new Auto1();
     path2CommandGroup = new Auto2();
 
-  Object[] data = {new SequentialCommandGroup(), new Pose2d(7.925151, 1.575881, Rotation2d.fromDegrees(0))}; //new Pose2d(0,0, Rotation2d.fromDegrees(0))}; //spec [command to run at auto, starting position for odometry]
+  Object[] data = {new SequentialCommandGroup(), new Pose2d(Units.feetToMeters(31),0, Rotation2d.fromDegrees(-37))}; //new Pose2d(0,0, Rotation2d.fromDegrees(0))}; //spec [command to run at auto, starting position for odometry]
     autonomousMode.setDefaultOption("Do nothing", data);
 
     setAutonomousMode("1 Ball Auto", Auto1.getStartingPose(), path1CommandGroup);
