@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -118,11 +119,10 @@ public class Shooter extends SubsystemBase {
     double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx() : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);
 
     double rotationSetpoint = 0; // in terms of degrees
-    double rotation = turretAlignmentMotor.getSelectedSensorPosition() / Constants.ticksPerDegreeTurret; //in terms of degrees relative to turret
+    double rotation = this.degreesOnTurret(); //in terms of degrees relative to turret
 
     if (canSeeAnyTarget == 1.0) {
       rotationSetpoint = rotation - degreesOff; // get offset based on camera
-
       if (!aligned) {
         if (Robot.isReal() && !forceOdometry) {
           SmartDashboard.putNumber("rotation offset actual", rotationSetpoint);
@@ -215,9 +215,9 @@ public class Shooter extends SubsystemBase {
 
   private void feedCLRotateToAngle(double degrees) {
     double mappedAngle = MathUtil.inputModulus(degrees, -180, 180);
-    System.out.println(mappedAngle);
+    //System.out.println(degrees);
     turretAlignmentMotor.set(ControlMode.MotionMagic,
-        -(mappedAngle * Constants.ticksPerDegreeTurret));
+        mappedAngle * Constants.ticksPerDegreeTurret);
   }
 
   
