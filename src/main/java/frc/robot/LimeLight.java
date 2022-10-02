@@ -35,7 +35,10 @@ public class LimeLight {
     public static void setCurrentPipeline(int pipelineId) {
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(pipelineId);
     }
+
     public static void setLedMode(int ledState) {
+        //dont use this for turning off it is unreliable
+
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ledState);
     }
 

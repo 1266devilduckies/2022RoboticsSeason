@@ -111,11 +111,6 @@ public class Shooter extends SubsystemBase {
         Units.degreesToRadians(Constants.lowerBoundShooterDegrees),
         Units.degreesToRadians(Constants.upperBoundShooterDegrees),
         5, false);
-    if (forceOdometry) {
-      LimeLight.setLedMode(1); // turn off limelight
-    } else {
-      LimeLight.setLedMode(0); // turn on limelight based on pipeline settings
-    }
   }
 
   @Override
@@ -134,17 +129,11 @@ public class Shooter extends SubsystemBase {
       //      .addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
       rotationSetpoint = rotation + degreesOff; // THE HOLY GRAIL WAS TO ADD THEM!!!!!
       if (!aligned) {
-        if (Robot.isReal() && !forceOdometry) {
-          SmartDashboard.putNumber("rotation offset actual", rotationSetpoint);
-        }
         feedCLRotateToAngle(rotationSetpoint);
       }
     }
     if (canSeeAnyTarget == 0.0) {
       rotationSetpoint = rotation - RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
-      SmartDashboard.putNumber("field centric offset",
-          RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference());
-      //feedCLRotateToAngle(rotationSetpoint);
       double mappedAngle = MathUtil.inputModulus(rotationSetpoint, -180, 180);
     turretAlignmentMotor.set(ControlMode.MotionMagic,
         -(mappedAngle * Constants.ticksPerDegreeTurret));
@@ -153,7 +142,6 @@ public class Shooter extends SubsystemBase {
         - MathUtil.inputModulus(rotationSetpoint, -180, 180)
             * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
     SmartDashboard.putBoolean("Ready To Shoot", aligned);
-    SmartDashboard.putNumber("degrees off", degreesOff);
   }
 
   @Override
@@ -227,9 +215,8 @@ public class Shooter extends SubsystemBase {
     return Math.abs(ticks - Constants.upperBoundTicks) < Constants.tickTolerance;
   }
 
-  private void feedCLRotateToAngle(double degrees) {
+  public void feedCLRotateToAngle(double degrees) {
     double mappedAngle = MathUtil.inputModulus(degrees, -180, 180);
-    SmartDashboard.putNumber("angle robot centric", mappedAngle);
     turretAlignmentMotor.set(ControlMode.MotionMagic,
         mappedAngle * Constants.ticksPerDegreeTurret);
   }

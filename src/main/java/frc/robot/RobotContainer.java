@@ -73,7 +73,7 @@ public class RobotContainer {
     path1CommandGroup = new Auto1();
     path2CommandGroup = new Auto2();
 
-  Object[] data = {new SequentialCommandGroup(), new Pose2d(Units.feetToMeters(31),0, Rotation2d.fromDegrees(-37))}; //new Pose2d(0,0, Rotation2d.fromDegrees(0))}; //spec [command to run at auto, starting position for odometry]
+  Object[] data = {new SequentialCommandGroup(), new Pose2d(Units.feetToMeters(38.9),2.869, Rotation2d.fromDegrees(90))}; //new Pose2d(0,0, Rotation2d.fromDegrees(0))}; //spec [command to run at auto, starting position for odometry]
     autonomousMode.setDefaultOption("Do nothing", data);
 
     setAutonomousMode("1 Ball Auto", Auto1.getStartingPose(), path1CommandGroup);
