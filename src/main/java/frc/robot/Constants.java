@@ -52,6 +52,9 @@ public final class Constants {
     //Turret
     public static final double PID_kP_turretAlignment = 0.05;
     public static final double PID_kD_turretAlignment = 0.0;
+    public static final double kSTurret = 0.58044;
+    public static final double kVTurret = 7.7555;
+    public static final double kATurret = 0.19171;
     public static final double ticksPerDegreeTurret = (2048*Constants.GEARING_turret)/360.;
     public static final double lowerBoundTicks = Constants.lowerBoundShooterDegrees * ticksPerDegreeTurret;
     public static final double upperBoundTicks = Constants.upperBoundShooterDegrees * ticksPerDegreeTurret;
