@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.complex.Auto1;
 import frc.robot.commands.complex.Auto2;
 import frc.robot.commands.complex.Fire2Balls;
+import frc.robot.commands.simple.IndexBall;
 import frc.robot.commands.simple.OverrideAuto;
 import frc.robot.commands.simple.OverrideBtnPressed;
 import frc.robot.commands.simple.StartIntake;
@@ -92,7 +93,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    btn_ps4x_driver.whenPressed(new OverrideBtnPressed());
+    //btn_ps4x_driver.whenPressed(new OverrideBtnPressed());
+    btn_ps4x_driver.whenPressed(new IndexBall(shooterSubsystem));
     //driver bindings
     btn_ps4r1_driver.whenPressed(new StartIntake(intakeSubsystem));
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));

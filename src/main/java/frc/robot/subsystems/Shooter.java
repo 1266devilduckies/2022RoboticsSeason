@@ -46,6 +46,7 @@ public class Shooter extends SubsystemBase {
   public static boolean startedSeeking = false;
   public static double timeSinceOverridedAutonomous = -1; // negative means disabled, time in FPGA seconds
   private boolean forceOdometry = false;
+  private int targetRPM = 0;
 
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
@@ -111,11 +112,22 @@ public class Shooter extends SubsystemBase {
         Units.degreesToRadians(Constants.lowerBoundShooterDegrees),
         Units.degreesToRadians(Constants.upperBoundShooterDegrees),
         5, false);
+
+    SmartDashboard.putNumber("target rpm", 0.0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    double rpmFromDashboard = SmartDashboard.getNumber("target rpm", 0.0);
+    if (rpmFromDashboard != targetRPM) {
+      targetRPM = (int)rpmFromDashboard;
+      this.setRPM(targetRPM);
+    }
+
+
+
     canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv()
         : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
     double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx()
