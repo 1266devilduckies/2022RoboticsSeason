@@ -1,7 +1,6 @@
 package frc.robot.commands.simple;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
@@ -18,7 +17,6 @@ public class IndexBall extends CommandBase {
   public void initialize() {
     startTime = Timer.getFPGATimestamp();
     shooterSubsystem.setIndexerMotor(1.0);
-    SmartDashboard.putNumber("testy lolol", 1.0);
   }
 
   @Override

@@ -36,8 +36,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFXSimCollection rightFlywheelMotorSim;
   public WPI_TalonFX turretAlignmentMotor;
   private final TalonFXSimCollection turretAlignmentMotorSim;
-  private final WPI_VictorSPX indexerMotor;
-  private final VictorSPXSimCollection indexerMotorSim;
+  private final WPI_TalonFX indexerMotor;
   private final FlywheelSim flywheelSim;
   private final SingleJointedArmSim turretSim;
 
@@ -51,7 +50,7 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     leftFlywheelMotor = new WPI_TalonFX(Constants.CANID_leftFlywheelMotor);
     rightFlywheelMotor = new WPI_TalonFX(Constants.CANID_rightFlywheelMotor);
-    indexerMotor = new WPI_VictorSPX(Constants.CANID_indexerMotor);
+    indexerMotor = new WPI_TalonFX(Constants.CANID_indexerMotor);
     turretAlignmentMotor = new WPI_TalonFX(Constants.CANID_turretAlignmentMotor);
 
     indexerMotor.configFactoryDefault();
@@ -102,7 +101,6 @@ public class Shooter extends SubsystemBase {
     leftFlywheelMotorSim = leftFlywheelMotor.getSimCollection();
     rightFlywheelMotorSim = rightFlywheelMotor.getSimCollection();
     turretAlignmentMotorSim = turretAlignmentMotor.getSimCollection();
-    indexerMotorSim = indexerMotor.getSimCollection();
 
     flywheelSim = new FlywheelSim(
         LinearSystemId.identifyVelocitySystem(Constants.kVFlywheel / 6.28, Constants.kAFlywheel / 6.28),
@@ -163,7 +161,6 @@ public class Shooter extends SubsystemBase {
     leftFlywheelMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     rightFlywheelMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     turretAlignmentMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
-    indexerMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
 
     flywheelSim.setInputVoltage(leftFlywheelMotor.getMotorOutputVoltage());
     flywheelSim.update(0.02);

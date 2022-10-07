@@ -38,8 +38,7 @@ public class LimeLight {
 
     public static void setLedMode(int ledState) {
         //dont use this for turning off it is unreliable
-
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ledState);
+        //NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(ledState);
     }
 
     //prereq is that tv has to be 1
