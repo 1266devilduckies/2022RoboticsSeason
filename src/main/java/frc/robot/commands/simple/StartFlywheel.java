@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.FlywheelInterpolator;
 import frc.robot.LimeLight;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
 
 public class StartFlywheel extends CommandBase {
@@ -19,6 +21,12 @@ public class StartFlywheel extends CommandBase {
   public void initialize() {
     double input = (double)LimeLight.getRobotPoseFromVision()[1];
     SmartDashboard.putNumber("distance to hub", input);
+
+    double x = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getX();
+    double y = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getY();
+    double rot = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation().getDegrees();
+    String robotPos = x + ", " + y + " - " + rot;
+    SmartDashboard.putString("robot location relative to bottom left corner", robotPos);
     int idx = FlywheelInterpolator.findRangeIdx(input);
     rpm = FlywheelInterpolator.interpolateDataFromIdx(Constants.flywheelRPMData, 
     idx, 
