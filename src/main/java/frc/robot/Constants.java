@@ -119,9 +119,13 @@ public final class Constants {
     public static final double kS_turret = 0;
     public static final double kV_turret = 0;
     public static final double kA_turret = 0;
+
+    //interpolation data
     public static final double[][] flywheelRPMData = {
       //format of rpm, distance for that rpm
-      {3200, Units.inchesToMeters(102)},
+      {3200, Units.feetToMeters(8.5)},
       {4500, Units.feetToMeters(15)},
+      //fake data
+      {6200, Units.feetToMeters(20)}
     };
 }
