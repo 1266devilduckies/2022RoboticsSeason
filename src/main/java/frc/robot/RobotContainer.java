@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.complex.Auto1;
 import frc.robot.commands.complex.Auto2;
 import frc.robot.commands.complex.Fire2Balls;
+import frc.robot.commands.simple.AlignToTarget;
 import frc.robot.commands.simple.IndexBall;
 import frc.robot.commands.simple.OverrideAuto;
 import frc.robot.commands.simple.OverrideBtnPressed;
@@ -52,6 +53,7 @@ public class RobotContainer {
   //Define joystick buttons
   JoystickButton btn_ps4r1_driver = new JoystickButton(driverJoystick, 6);
   JoystickButton btn_ps4x_driver = new JoystickButton(driverJoystick, 2);
+  JoystickButton btn_ps4L2_driver = new JoystickButton(driverJoystick, 7);
 
   JoystickButton btn_ps4r1_operator = new JoystickButton(operatorJoystick, 6);
 
@@ -95,6 +97,7 @@ public class RobotContainer {
 
     //btn_ps4x_driver.whenPressed(new OverrideBtnPressed());
     btn_ps4x_driver.whenPressed(new IndexBall(shooterSubsystem));
+    btn_ps4L2_driver.whileHeld(new AlignToTarget(drivetrainSubsystem), true);
     //driver bindings
     btn_ps4r1_driver.whenPressed(new StartIntake(intakeSubsystem));
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));

@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 public class VectorUtil {
     public static Pose2d moveForward(Pose2d pose, double offset) {
@@ -21,5 +22,9 @@ public class VectorUtil {
     public static Translation2d unit(Translation2d vector) {
         double mag = getMagnitude(vector);
         return new Translation2d(vector.getX()/mag, vector.getY()/mag);
+    }
+
+    public static Translation2d cross(Translation2d a, Translation2d b) {
+        return new Translation2d(a.getY(), -b.getX());
     }
 }
