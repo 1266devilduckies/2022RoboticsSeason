@@ -2,6 +2,7 @@ package frc.robot.commands.simple;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.ComputerVisionUtil;
 import frc.robot.Constants;
 import frc.robot.FlywheelInterpolator;
 import frc.robot.LimeLight;
@@ -19,7 +20,8 @@ public class StartFlywheel extends CommandBase {
 
   @Override
   public void initialize() {
-    double input = (double)LimeLight.getRobotPoseFromVision()[1];
+    double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
+    Constants.hubHeight, Constants.limelightMountAngle, LimeLight.getTx(), LimeLight.getTy());
     SmartDashboard.putNumber("distance to hub", input);
 
     double x = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getX();

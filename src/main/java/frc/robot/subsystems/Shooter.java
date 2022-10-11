@@ -13,6 +13,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ComputerVisionUtil;
 import frc.robot.Constants;
 import frc.robot.GearUtil;
 import frc.robot.LimeLight;
@@ -120,38 +123,47 @@ public class Shooter extends SubsystemBase {
 
     double rpmFromDashboard = SmartDashboard.getNumber("target rpm", 0.0);
     if (rpmFromDashboard != targetRPM) {
-      targetRPM = (int)rpmFromDashboard;
+      targetRPM = (int) rpmFromDashboard;
       this.setRPM(targetRPM);
     }
 
-
-
     canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv()
         : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
-    double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx()
-        : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);
-
-    double rotationSetpoint = 0; // in terms of degrees
-    double rotation = this.degreesOnTurret(); // in terms of degrees relative to turret
-
     if (canSeeAnyTarget == 1.0) {
-      //RobotContainer.drivetrainSubsystem.odometry
-      //      .addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0], Timer.getFPGATimestamp());
-      rotationSetpoint = rotation + degreesOff; // THE HOLY GRAIL WAS TO ADD THEM!!!!!
-      if (!aligned) {
-        feedCLRotateToAngle(rotationSetpoint);
-      }
+      RobotContainer.drivetrainSubsystem.odometry
+      .addVisionMeasurement(ComputerVisionUtil.estimateFieldToRobot(Constants.limelightHeight, 
+    Constants.hubHeight, Constants.limelightMountAngle, LimeLight.getTx(), LimeLight.getTy(), 
+    RobotContainer.drivetrainSubsystem.gyro.getRotation2d(), Constants.hubPosition, new Pose2d(3,0,Rotation2d.fromDegrees(0))),Timer.getFPGATimestamp());
     }
-    if (canSeeAnyTarget == 0.0) {
-      rotationSetpoint = rotation - RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
-      double mappedAngle = MathUtil.inputModulus(rotationSetpoint, -180, 180);
-    turretAlignmentMotor.set(ControlMode.MotionMagic,
-        -(mappedAngle * Constants.ticksPerDegreeTurret));
-    }
-    aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()
-        - MathUtil.inputModulus(rotationSetpoint, -180, 180)
-            * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts odometry and camera
-    SmartDashboard.putBoolean("Ready To Shoot", aligned);
+    // double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx()
+    // : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);
+
+    // double rotationSetpoint = 0; // in terms of degrees
+    // double rotation = this.degreesOnTurret(); // in terms of degrees relative to
+    // turret
+
+    // if (canSeeAnyTarget == 1.0) {
+    // //RobotContainer.drivetrainSubsystem.odometry
+    // // .addVisionMeasurement((Pose2d) LimeLight.getRobotPoseFromVision()[0],
+    // Timer.getFPGATimestamp());
+    // rotationSetpoint = rotation + degreesOff; // THE HOLY GRAIL WAS TO ADD
+    // THEM!!!!!
+    // if (!aligned) {
+    // feedCLRotateToAngle(rotationSetpoint);
+    // }
+    // }
+    // if (canSeeAnyTarget == 0.0) {
+    // rotationSetpoint = rotation -
+    // RobotContainer.drivetrainSubsystem.limelightSim.getDegreeDifference();
+    // double mappedAngle = MathUtil.inputModulus(rotationSetpoint, -180, 180);
+    // turretAlignmentMotor.set(ControlMode.MotionMagic,
+    // -(mappedAngle * Constants.ticksPerDegreeTurret));
+    // }
+    // aligned = Math.abs(turretAlignmentMotor.getSelectedSensorPosition()
+    // - MathUtil.inputModulus(rotationSetpoint, -180, 180)
+    // * Constants.ticksPerDegreeTurret) < Constants.tickTolerance; // trusts
+    // odometry and camera
+    // SmartDashboard.putBoolean("Ready To Shoot", aligned);
   }
 
   @Override
