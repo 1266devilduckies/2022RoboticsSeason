@@ -6,6 +6,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -27,6 +30,28 @@ public class AlignToTarget extends CommandBase {
         SmartDashboard.putNumber("aligner kP", kP);
         SmartDashboard.putNumber("aligner kI", kI);
         SmartDashboard.putNumber("aligner kD", kD);
+
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable datatable = inst.getTable("SmartDashboard");
+
+        datatable.getEntry("aligner kP").addListener(event -> {
+            kP = event.getEntry().getValue().getDouble();
+            skidAnglePID.setP(kP);
+            System.out.println("PID Gains: " + kP + ", " + kI + ", " + kD);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+        datatable.getEntry("aligner kI").addListener(event -> {
+            kI = event.getEntry().getValue().getDouble();
+            skidAnglePID.setI(kI);
+            System.out.println("PID Gains: " + kP + ", " + kI + ", " + kD);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+        datatable.getEntry("aligner kD").addListener(event -> {
+            kD = event.getEntry().getValue().getDouble();
+            skidAnglePID.setD(kD);
+            System.out.println("PID Gains: " + kP + ", " + kI + ", " + kD);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
         addRequirements(drivetrainSubsystem);
     }
 
@@ -39,18 +64,19 @@ public class AlignToTarget extends CommandBase {
     public void execute() {
         double canSeeAnyTarget = Robot.isReal() ? LimeLight.getTv()
                 : drivetrainSubsystem.limelightSim.getSimTv();
-        error = LimeLight.getTx();
+        error = Robot.isReal() ? LimeLight.getTx()
+        : drivetrainSubsystem.limelightSim.getSimTx(0.0);
         double pidOutput = skidAnglePID.calculate(-error, 0.0);
         if (canSeeAnyTarget == 0.0) {
-        Pose2d odometryPose = drivetrainSubsystem.odometry.getEstimatedPosition();
-        double radian = Units.degreesToRadians(odometryPose.getRotation().getDegrees());
-        Translation2d poseVector = new Translation2d(Math.cos(radian), Math.sin(radian));
-        Translation2d robotToHub = Constants.hubPosition.minus(odometryPose.getTranslation());
-        error = Math.atan2((poseVector.getY() * robotToHub.getX()) - (poseVector.getX()*robotToHub.getY()),
-        (poseVector.getX()*robotToHub.getX())+(poseVector.getY()*robotToHub.getY()));
-        
-        error = Units.radiansToDegrees(error);
-        pidOutput = skidAnglePID.calculate(-error, 0.0);
+            Pose2d odometryPose = drivetrainSubsystem.odometry.getEstimatedPosition();
+            double radian = Units.degreesToRadians(odometryPose.getRotation().getDegrees());
+            Translation2d poseVector = new Translation2d(Math.cos(radian), Math.sin(radian));
+            Translation2d robotToHub = Constants.hubPosition.minus(odometryPose.getTranslation());
+            error = Math.atan2((poseVector.getY() * robotToHub.getX()) - (poseVector.getX() * robotToHub.getY()),
+                    (poseVector.getX() * robotToHub.getX()) + (poseVector.getY() * robotToHub.getY()));
+
+            error = Units.radiansToDegrees(error);
+            pidOutput = skidAnglePID.calculate(-error, 0.0);
         }
         pidOutput += Constants.kSLinear;
         drivetrainSubsystem.tankDriveVolts(pidOutput, -pidOutput);

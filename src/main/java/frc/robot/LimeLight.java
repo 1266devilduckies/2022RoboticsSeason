@@ -85,7 +85,13 @@ public class LimeLight {
     }
 
     public double getSimTx(double defaultValue) {
-        double degreeDifference = getDegreeDifference();
+        Pose2d odometryPose = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition();
+            double radian = Units.degreesToRadians(odometryPose.getRotation().getDegrees());
+            Translation2d poseVector = new Translation2d(Math.cos(radian), Math.sin(radian));
+            Translation2d robotToHub = Constants.hubPosition.minus(odometryPose.getTranslation());
+            double degreeDifference = Math.atan2((poseVector.getY() * robotToHub.getX()) - (poseVector.getX() * robotToHub.getY()),
+                    (poseVector.getX() * robotToHub.getX()) + (poseVector.getY() * robotToHub.getY()));
+            degreeDifference = Units.radiansToDegrees(degreeDifference);
         return Math.abs(degreeDifference) <= Constants.limelightHorizontalRange ? degreeDifference : defaultValue;
     }
 
