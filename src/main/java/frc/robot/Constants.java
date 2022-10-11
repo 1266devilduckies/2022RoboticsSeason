@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -61,9 +63,16 @@ public final class Constants {
     public static final double tickTolerance = ticksPerDegreeTurret * 0.5;
     public static final Translation2d hubPosition = new Translation2d(Units.feetToMeters(54/2.), Units.feetToMeters(27/2.));
     public static final double limelightHorizontalRange = 27; //in terms of degrees
-    public static final double hubHeight = Units.feetToMeters(2.45); //2.6416 meters
-    public static final double limelightHeight = Units.feetToMeters(3.8); //.8 meters
-    public static final double limelightMountAngle = 0.; //30 degrees
+    public static final double hubHeight = 2.6416;
+    public static final double limelightHeight = 0.8;
+    public static final double limelightMountAngle = 30;
+    //in terms of units to meters with a field centric position with a robot pose of 0,0, (0,1)
+    public static final Transform2d limelightOffsetFromCenterRobot = new Transform2d(
+      new Translation2d(
+      Units.inchesToMeters(3),
+      0),
+      Rotation2d.fromDegrees(0)
+    );
 
     //Gear ratio reductions
     public static final double GEARING_drivetrainGearbox = 8.333;

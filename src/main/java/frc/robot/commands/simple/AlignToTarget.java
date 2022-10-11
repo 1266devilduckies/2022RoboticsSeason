@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.LimeLight;
@@ -15,10 +16,17 @@ import frc.robot.subsystems.Drivetrain;
 
 public class AlignToTarget extends CommandBase {
     Drivetrain drivetrainSubsystem;
-    PIDController skidAnglePID = new PIDController(0.2, 0.02, 0);
+    double error;
+    double kP = 0.2;
+    double kI = 0.02;
+    double kD = 0.0;
+    PIDController skidAnglePID = new PIDController(kP, kI, kD);
 
     public AlignToTarget(Drivetrain subsystem) {
         drivetrainSubsystem = subsystem;
+        SmartDashboard.putNumber("aligner kP", kP);
+        SmartDashboard.putNumber("aligner kI", kI);
+        SmartDashboard.putNumber("aligner kD", kD);
         addRequirements(drivetrainSubsystem);
     }
 
@@ -31,7 +39,7 @@ public class AlignToTarget extends CommandBase {
     public void execute() {
         double canSeeAnyTarget = Robot.isReal() ? LimeLight.getTv()
                 : drivetrainSubsystem.limelightSim.getSimTv();
-        double error = LimeLight.getTx();
+        error = LimeLight.getTx();
         double pidOutput = skidAnglePID.calculate(-error, 0.0);
         if (canSeeAnyTarget == 0.0) {
         Pose2d odometryPose = drivetrainSubsystem.odometry.getEstimatedPosition();
@@ -46,11 +54,12 @@ public class AlignToTarget extends CommandBase {
         }
         pidOutput += Constants.kSLinear;
         drivetrainSubsystem.tankDriveVolts(pidOutput, -pidOutput);
+        System.out.println(error);
     }
 
     @Override
     public boolean isFinished() {
-        return skidAnglePID.atSetpoint();
+        return error < 0.5;
     }
 
     @Override

@@ -129,11 +129,14 @@ public class Shooter extends SubsystemBase {
 
     canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv()
         : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
-    if (canSeeAnyTarget == 1.0) {
+    if (canSeeAnyTarget == 1.0 && Robot.isReal()) {
       RobotContainer.drivetrainSubsystem.odometry
       .addVisionMeasurement(ComputerVisionUtil.estimateFieldToRobot(Constants.limelightHeight, 
-    Constants.hubHeight, Constants.limelightMountAngle, LimeLight.getTx(), LimeLight.getTy(), 
-    RobotContainer.drivetrainSubsystem.gyro.getRotation2d(), Constants.hubPosition, new Pose2d(3,0,Rotation2d.fromDegrees(0))),Timer.getFPGATimestamp());
+    Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
+    Units.degreesToRadians(LimeLight.getTy()), Rotation2d.fromDegrees(LimeLight.getTx()), 
+    RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation(), 
+    new Pose2d(Constants.hubPosition, Rotation2d.fromDegrees(0)), 
+    Constants.limelightOffsetFromCenterRobot),Timer.getFPGATimestamp());
     }
     // double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx()
     // : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);

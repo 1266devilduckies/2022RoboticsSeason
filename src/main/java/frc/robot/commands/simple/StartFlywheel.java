@@ -1,5 +1,6 @@
 package frc.robot.commands.simple;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ComputerVisionUtil;
@@ -21,7 +22,8 @@ public class StartFlywheel extends CommandBase {
   @Override
   public void initialize() {
     double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
-    Constants.hubHeight, Constants.limelightMountAngle, LimeLight.getTx(), LimeLight.getTy());
+    Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
+    Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(LimeLight.getTx()));
     SmartDashboard.putNumber("distance to hub", input);
 
     double x = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getX();
