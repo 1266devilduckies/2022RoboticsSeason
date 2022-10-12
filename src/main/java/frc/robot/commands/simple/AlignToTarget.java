@@ -7,6 +7,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -61,29 +62,29 @@ public class AlignToTarget extends CommandBase {
 
     @Override
     public void execute() {
-        double canSeeAnyTarget = Robot.isReal() ? LimeLight.getTv()
-                : drivetrainSubsystem.limelightSim.getSimTv();
-        error = Robot.isReal() ? LimeLight.getTx()
-        : drivetrainSubsystem.limelightSim.getSimTx(0.0);
+        double canSeeAnyTarget = LimeLight.getTv();
+        error = -LimeLight.getTx();
         double pidOutput = skidAnglePID.calculate(error, 0.0);
-        if (canSeeAnyTarget == 0.0) {
-            Pose2d odometryPose = drivetrainSubsystem.odometry.getEstimatedPosition();
-            double radian = Units.degreesToRadians(odometryPose.getRotation().getDegrees());
-            Translation2d poseVector = new Translation2d(Math.cos(radian), Math.sin(radian));
-            Translation2d robotToHub = Constants.hubPosition.minus(odometryPose.getTranslation());
-            error = Math.atan2((poseVector.getY() * robotToHub.getX()) - (poseVector.getX() * robotToHub.getY()),
-                    (poseVector.getX() * robotToHub.getX()) + (poseVector.getY() * robotToHub.getY()));
+        // if (canSeeAnyTarget == 0.0) {
+        //     Pose2d odometryPose = drivetrainSubsystem.odometry.getEstimatedPosition();
+        //     double radian = Units.degreesToRadians(odometryPose.getRotation().getDegrees());
+        //     Translation2d poseVector = new Translation2d(Math.cos(radian), Math.sin(radian));
+        //     Translation2d robotToHub = Constants.hubPosition.minus(odometryPose.getTranslation());
+        //     error = Math.atan2((poseVector.getY() * robotToHub.getX()) - (poseVector.getX() * robotToHub.getY()),
+        //             (poseVector.getX() * robotToHub.getX()) + (poseVector.getY() * robotToHub.getY()));
 
-            error = Units.radiansToDegrees(error);
-            pidOutput = skidAnglePID.calculate(-error, 0.0);
-        }
+        //     error = Units.radiansToDegrees(error);
+        //     pidOutput = skidAnglePID.calculate(-error, 0.0);
+        // }
+        double ff;
         if (error > 0.2) {
-          pidOutput -= Constants.kSLinear;
+          ff = -Constants.kSLinear;
         } else {
-            pidOutput += Constants.kSLinear;
+            ff = Constants.kSLinear;
         }
-        drivetrainSubsystem.tankDriveVolts(pidOutput, -pidOutput);
-        //System.out.println(error);
+        drivetrainSubsystem.robotDrive.arcadeDrive(0, pidOutput + ff/RobotController.getBatteryVoltage());
+        //drivetrainSubsystem.tankDriveVolts(pidOutput + ff, -pidOutput - ff);
+        System.out.println(error);
     }
 
     @Override

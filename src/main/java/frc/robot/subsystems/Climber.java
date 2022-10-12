@@ -50,10 +50,16 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         double lVal = -RobotContainer.operatorJoystick.getY();
         //deadband needs to be around half because the operators joystick is trash now
+        double speed = 0.1;
+        if (leftClimberMotor.getSelectedSensorPosition() < Constants.upperBoundClimber/2.0) {
+            speed = 0.4;
+        } else if (leftClimberMotor.getSelectedSensorPosition() < Constants.upperBoundClimber/8.0) {
+            speed = 0.2;
+        }
         if (lVal > 0.5) {
-            setClimberPercentOutput(-.8);
+            setClimberPercentOutput(-speed);
         } else if (lVal < -0.5) {
-            setClimberPercentOutput(.8);
+            setClimberPercentOutput(speed);
         } else {
             setClimberPercentOutput(0.);
         }
@@ -61,5 +67,9 @@ public class Climber extends SubsystemBase {
      public void simulationPeriodic() {
         leftClimberMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
         rightClimberMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
+     }
+     public void resetEncoders() {
+         leftClimberMotor.setSelectedSensorPosition(0);
+         rightClimberMotor.setSelectedSensorPosition(0);
      }
 }

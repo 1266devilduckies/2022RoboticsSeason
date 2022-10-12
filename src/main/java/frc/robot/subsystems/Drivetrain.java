@@ -30,7 +30,7 @@ import frc.robot.LineRenderer;
 import frc.robot.RobotContainer;
 
 public class Drivetrain extends SubsystemBase {
-  private final DifferentialDrive robotDrive;
+  public final DifferentialDrive robotDrive;
   private final DifferentialDrivetrainSim robotDriveSim;
 
   //CAN devices

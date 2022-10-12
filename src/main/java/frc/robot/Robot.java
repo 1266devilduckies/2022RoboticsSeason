@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = (Command) data[0];
     Pose2d startingPose = (Pose2d) data[1];
     RobotContainer.drivetrainSubsystem.resetEncoders();
+    RobotContainer.climberSubsystem.resetEncoders();
     RobotContainer.shooterSubsystem.resetEncoders();
     RobotContainer.drivetrainSubsystem.gyro.reset();
     // we need to reset all motors before resetting the software odometry,
