@@ -52,6 +52,9 @@ public class AlignToTarget extends CommandBase {
             System.out.println("PID Gains: " + kP + ", " + kI + ", " + kD);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
+
+        skidAnglePID.setTolerance(0.2, 0.1);
+
         addRequirements(drivetrainSubsystem);
     }
 
@@ -66,7 +69,7 @@ public class AlignToTarget extends CommandBase {
                 : drivetrainSubsystem.limelightSim.getSimTv();
         error = Robot.isReal() ? LimeLight.getTx()
         : drivetrainSubsystem.limelightSim.getSimTx(0.0);
-        double pidOutput = skidAnglePID.calculate(-error, 0.0);
+        double pidOutput = skidAnglePID.calculate(error, 0.0);
         if (canSeeAnyTarget == 0.0) {
             Pose2d odometryPose = drivetrainSubsystem.odometry.getEstimatedPosition();
             double radian = Units.degreesToRadians(odometryPose.getRotation().getDegrees());
@@ -78,18 +81,22 @@ public class AlignToTarget extends CommandBase {
             error = Units.radiansToDegrees(error);
             pidOutput = skidAnglePID.calculate(-error, 0.0);
         }
-        pidOutput += Constants.kSLinear;
+        if (error > 0.2) {
+          pidOutput -= Constants.kSLinear;
+        } else {
+            pidOutput += Constants.kSLinear;
+        }
         drivetrainSubsystem.tankDriveVolts(pidOutput, -pidOutput);
-        System.out.println(error);
+        //System.out.println(error);
     }
 
     @Override
     public boolean isFinished() {
-        return error < 0.5;
+        return skidAnglePID.atSetpoint();
     }
 
     @Override
     public void end(boolean interrupted) {
-
+        drivetrainSubsystem.tankDriveVolts(0, 0);
     }
 }
