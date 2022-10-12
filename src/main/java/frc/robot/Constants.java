@@ -106,7 +106,7 @@ public final class Constants {
     public static final double trackWidth = Units.inchesToMeters(28);
     public static final double robotWeight = Units.lbsToKilograms(140);
 
-    public static final double drivetrainSpeedLimiter = 0.8; //Limit the drivetrain to 80%
+    public static final double drivetrainSpeedLimiter = .8; //Limit the drivetrain to 80%
     public static final double driverJoystickDeadband = 0.05;
 
     public static final double kMaxSpeedMetersPerSecond = 1.75;
