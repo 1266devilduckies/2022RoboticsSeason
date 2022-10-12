@@ -52,6 +52,8 @@ public class StartFlywheel extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-
+    if (interrupted) {
+      shooterSubsystem.setToCoast();
+    }
   }
 }

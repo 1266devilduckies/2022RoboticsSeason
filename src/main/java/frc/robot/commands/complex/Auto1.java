@@ -13,7 +13,7 @@ public class Auto1 extends SequentialCommandGroup {
     public Auto1() {
         addCommands(
             RobotContainer.bindOverride(TrajectoryFactories.generateTrajectoryCommand(firstPath)),
-            RobotContainer.bindOverride(new Fire2Balls(RobotContainer.shooterSubsystem))
+            RobotContainer.bindOverride(new FireBall(RobotContainer.shooterSubsystem))
             );
     }
 

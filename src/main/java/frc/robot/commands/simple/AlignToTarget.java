@@ -1,7 +1,5 @@
 package frc.robot.commands.simple;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.LimeLight;
 import frc.robot.Robot;
-import frc.robot.VectorUtil;
 import frc.robot.subsystems.Drivetrain;
 
 public class AlignToTarget extends CommandBase {
@@ -51,7 +48,6 @@ public class AlignToTarget extends CommandBase {
             skidAnglePID.setD(kD);
             System.out.println("PID Gains: " + kP + ", " + kI + ", " + kD);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
 
         skidAnglePID.setTolerance(0.2, 0.1);
 

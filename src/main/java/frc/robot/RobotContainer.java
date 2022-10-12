@@ -14,11 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.complex.Auto1;
 import frc.robot.commands.complex.Auto2;
-import frc.robot.commands.complex.Fire2Balls;
+import frc.robot.commands.complex.FireBall;
 import frc.robot.commands.simple.AlignToTarget;
 import frc.robot.commands.simple.IndexBall;
 import frc.robot.commands.simple.OverrideAuto;
-import frc.robot.commands.simple.OverrideBtnPressed;
 import frc.robot.commands.simple.StartIntake;
 import frc.robot.commands.simple.StopFlywheel;
 import frc.robot.commands.simple.StopIntake;
@@ -103,7 +102,7 @@ public class RobotContainer {
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));
 
     //operator bindings
-    btn_ps4r1_operator.whenPressed(new Fire2Balls(shooterSubsystem)); //doesnt actually fire, polls until aligned from shooter subsystem is true
+    btn_ps4r1_operator.whenPressed(new FireBall(shooterSubsystem));
     btn_ps4r1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
   }
 
