@@ -133,7 +133,7 @@ public class Shooter extends SubsystemBase {
       RobotContainer.drivetrainSubsystem.odometry
       .addVisionMeasurement(ComputerVisionUtil.estimateFieldToRobot(Constants.limelightHeight, 
     Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
-    Units.degreesToRadians(LimeLight.getTy()), Rotation2d.fromDegrees(LimeLight.getTx()), 
+    Units.degreesToRadians(LimeLight.getTy()), Rotation2d.fromDegrees(-LimeLight.getTx()), 
     RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation(), 
     new Pose2d(Constants.hubPosition, Rotation2d.fromDegrees(0)), 
     Constants.limelightOffsetFromCenterRobot),Timer.getFPGATimestamp());
