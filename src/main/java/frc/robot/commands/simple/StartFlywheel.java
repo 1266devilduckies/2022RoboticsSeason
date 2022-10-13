@@ -23,7 +23,7 @@ public class StartFlywheel extends CommandBase {
   public void initialize() {
     double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
     Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
-    Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(LimeLight.getTx()));
+    Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
     SmartDashboard.putNumber("distance to hub", input);
     
     int idx = FlywheelInterpolator.findRangeIdx(input);
