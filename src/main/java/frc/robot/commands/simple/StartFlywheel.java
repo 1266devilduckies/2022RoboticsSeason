@@ -29,6 +29,10 @@ public class StartFlywheel extends CommandBase {
     double x = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getX();
     double y = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getY();
     double rot = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation().getDegrees();
+    //round to not clutter screen
+    x = Math.floor(x*100)/100.;
+    y = Math.floor(y*100)/100.;
+    rot = Math.floor(rot*100)/100.;
     String robotPos = x + ", " + y + " - " + rot;
     SmartDashboard.putString("robot location relative to bottom left corner", robotPos);
     int idx = FlywheelInterpolator.findRangeIdx(input);
@@ -46,8 +50,10 @@ public class StartFlywheel extends CommandBase {
   
   @Override
   public boolean isFinished() {
-    System.out.println(Math.abs(rpm - shooterSubsystem.getCurrentRPM()));
-    return Math.abs(rpm - shooterSubsystem.getCurrentRPM()) <= (rpm * Constants.flywheelTolerance);
+    System.out.println("TARGET RPM: " + rpm);
+    double normalizedSpeed = Math.abs(shooterSubsystem.getCurrentRPM());
+    System.out.println("REAL RPM: " + normalizedSpeed);
+    return Math.abs(rpm - normalizedSpeed) <= (rpm * Constants.flywheelTolerance);
   }
 
   @Override
