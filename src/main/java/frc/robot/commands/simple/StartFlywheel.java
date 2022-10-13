@@ -1,5 +1,7 @@
 package frc.robot.commands.simple;
 
+import org.opencv.core.Mat;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -10,6 +12,7 @@ import frc.robot.LimeLight;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
+import edu.wpi.first.math.util.Units;
 
 public class StartFlywheel extends CommandBase {
   Shooter shooterSubsystem;
@@ -21,9 +24,10 @@ public class StartFlywheel extends CommandBase {
 
   @Override
   public void initialize() {
-    double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
-    Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
-    Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
+    double radians = Units.degreesToRadians(LimeLight.getTy() + Constants.limelightMountAngle);
+    double input = (Constants.hubHeight - Constants.limelightHeight)/Math.tan(radians);//ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
+    //Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
+    //Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
     SmartDashboard.putNumber("distance to hub", input);
     
     int idx = FlywheelInterpolator.findRangeIdx(input);
