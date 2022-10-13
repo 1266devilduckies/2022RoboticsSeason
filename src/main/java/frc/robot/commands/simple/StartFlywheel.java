@@ -25,16 +25,7 @@ public class StartFlywheel extends CommandBase {
     Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
     Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(LimeLight.getTx()));
     SmartDashboard.putNumber("distance to hub", input);
-
-    double x = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getX();
-    double y = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getY();
-    double rot = RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation().getDegrees();
-    //round to not clutter screen
-    x = Math.floor(x*100)/100.;
-    y = Math.floor(y*100)/100.;
-    rot = Math.floor(rot*100)/100.;
-    String robotPos = x + ", " + y + " - " + rot;
-    SmartDashboard.putString("robot location relative to bottom left corner", robotPos);
+    
     int idx = FlywheelInterpolator.findRangeIdx(input);
     rpm = FlywheelInterpolator.interpolateDataFromIdx(Constants.flywheelRPMData, 
     idx, 

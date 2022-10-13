@@ -130,13 +130,23 @@ public class Shooter extends SubsystemBase {
     canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv()
         : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
     if (canSeeAnyTarget == 1.0 && Robot.isReal()) {
-      RobotContainer.drivetrainSubsystem.odometry
-      .addVisionMeasurement(ComputerVisionUtil.estimateFieldToRobot(Constants.limelightHeight, 
+      Pose2d cvNoisyPose = ComputerVisionUtil.estimateFieldToRobot(Constants.limelightHeight, 
     Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
     Units.degreesToRadians(LimeLight.getTy()), Rotation2d.fromDegrees(-LimeLight.getTx()), 
     RobotContainer.drivetrainSubsystem.odometry.getEstimatedPosition().getRotation(), 
     new Pose2d(Constants.hubPosition, Rotation2d.fromDegrees(0)), 
-    Constants.limelightOffsetFromCenterRobot),Timer.getFPGATimestamp());
+    Constants.limelightOffsetFromCenterRobot);
+
+  double x = cvNoisyPose.getX();
+    double y = cvNoisyPose.getY();
+    double rot = cvNoisyPose.getRotation().getDegrees();
+    //round to not clutter screen
+    x = Math.floor(x*100)/100.;
+    y = Math.floor(y*100)/100.;
+    rot = Math.floor(rot*100)/100.;
+    String robotPos = x + ", " + y + " - " + rot;
+    SmartDashboard.putString("robot location relative to bottom left corner", robotPos);
+      RobotContainer.drivetrainSubsystem.odometry.addVisionMeasurement(cvNoisyPose,Timer.getFPGATimestamp());
     }
     // double degreesOff = (Robot.isReal() && !forceOdometry) ? LimeLight.getTx()
     // : RobotContainer.drivetrainSubsystem.limelightSim.getSimTx(0.0);
