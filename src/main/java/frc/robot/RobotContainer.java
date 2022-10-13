@@ -75,7 +75,7 @@ public class RobotContainer {
     path1CommandGroup = new Auto1();
     path2CommandGroup = new Auto2();
 
-  Object[] data = {new SequentialCommandGroup(), new Pose2d(0,0, Rotation2d.fromDegrees(0))}; //new Pose2d(0,0, Rotation2d.fromDegrees(0))}; //spec [command to run at auto, starting position for odometry]
+  Object[] data = {new SequentialCommandGroup(), new Pose2d(Units.feetToMeters(22), Units.feetToMeters(-0.5), Rotation2d.fromDegrees(30))}; //new Pose2d(0,0, Rotation2d.fromDegrees(0))}; //spec [command to run at auto, starting position for odometry]
     autonomousMode.setDefaultOption("Do nothing", data);
 
     setAutonomousMode("1 Ball Auto", Auto1.getStartingPose(), path1CommandGroup);
@@ -102,8 +102,8 @@ public class RobotContainer {
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));
 
     //operator bindings
-    btn_ps4r1_operator.whenPressed(new FireBall(shooterSubsystem));
-    btn_ps4r1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
+    btn_ps4r1_operator.whenPressed(new IndexBall(shooterSubsystem));
+    //btn_ps4r1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
   }
 
   /**

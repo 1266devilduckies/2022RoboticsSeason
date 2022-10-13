@@ -64,12 +64,12 @@ public final class Constants {
     public static final Translation2d hubPosition = new Translation2d(Units.feetToMeters(54/2.), Units.feetToMeters(27/2.));
     public static final double limelightHorizontalRange = 27; //in terms of degrees
     public static final double hubHeight = 2.6416;
-    public static final double limelightHeight = 0.8;
+    public static final double limelightHeight = Units.inchesToMeters(30);//0.8;
     public static final double limelightMountAngle = 30;
     //in terms of units to meters with a field centric position with a robot pose of 0,0, (0,1)
     public static final Transform2d limelightOffsetFromCenterRobot = new Transform2d(
       new Translation2d(
-      Units.inchesToMeters(3),
+      Units.inchesToMeters(12),
       0),
       Rotation2d.fromDegrees(0)
     );
@@ -106,7 +106,7 @@ public final class Constants {
     public static final double trackWidth = Units.inchesToMeters(28);
     public static final double robotWeight = Units.lbsToKilograms(140);
 
-    public static final double drivetrainSpeedLimiter = .8; //Limit the drivetrain to 80%
+    public static final double drivetrainSpeedLimiter = .5; //Limit the drivetrain to 80%
     public static final double driverJoystickDeadband = 0.05;
 
     public static final double kMaxSpeedMetersPerSecond = 1.75;

@@ -147,7 +147,7 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
 
     //Invert the left input due to PS4 API thinking up is -1
-    robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getRawAxis(2)*Constants.drivetrainSpeedLimiter);
+    robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getRawAxis(2)*Constants.drivetrainSpeedLimiter * (0.8/0.5));
 
     double leftSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
     double rightSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
