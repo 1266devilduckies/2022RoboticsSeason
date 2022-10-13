@@ -1,13 +1,16 @@
 package frc.robot.commands.simple;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -21,7 +24,13 @@ public class AlignToTarget extends CommandBase {
     double kP = 0.2;
     double kI = 0.02;
     double kD = 0.0;
-    PIDController skidAnglePID = new PIDController(kP, kI, kD);
+    double lastSpeed = 0;
+    double lastTime = Timer.getFPGATimestamp();
+    private final TrapezoidProfile.Constraints m_constraints =
+    //max velocity of 1.75 degrees a second with 0.75 degree a second acceleration maxed
+    new TrapezoidProfile.Constraints(1.75, 0.75);
+    private final ProfiledPIDController skidAnglePID =
+    new ProfiledPIDController(kP, kI, kD, m_constraints, 0.02); //.02 is 50hz
 
     public AlignToTarget(Drivetrain subsystem) {
         drivetrainSubsystem = subsystem;
@@ -57,14 +66,16 @@ public class AlignToTarget extends CommandBase {
 
     @Override
     public void initialize() {
-
+        //try and align it to 0 degree error with 0 velocity at that position
+        TrapezoidProfile.State zerodState = new TrapezoidProfile.State(0.0, 0.0);
+        skidAnglePID.setGoal(zerodState);
     }
 
     @Override
     public void execute() {
         double canSeeAnyTarget = LimeLight.getTv();
         error = -LimeLight.getTx();
-        double pidOutput = skidAnglePID.calculate(error, 0.0);
+        double pidOutput = skidAnglePID.calculate(error);
         // if (canSeeAnyTarget == 0.0) {
         //     Pose2d odometryPose = drivetrainSubsystem.odometry.getEstimatedPosition();
         //     double radian = Units.degreesToRadians(odometryPose.getRotation().getDegrees());
@@ -76,14 +87,12 @@ public class AlignToTarget extends CommandBase {
         //     error = Units.radiansToDegrees(error);
         //     pidOutput = skidAnglePID.calculate(-error, 0.0);
         // }
-        double ff;
+        double ff = Constants.kSLinear;
         if (error > 0.2) {
           ff = -Constants.kSLinear;
-        } else {
-            ff = Constants.kSLinear;
         }
+        
         drivetrainSubsystem.robotDrive.arcadeDrive(0, pidOutput + ff/RobotController.getBatteryVoltage());
-        //drivetrainSubsystem.tankDriveVolts(pidOutput + ff, -pidOutput - ff);
         System.out.println(error);
     }
 
