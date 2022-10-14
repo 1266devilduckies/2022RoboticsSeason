@@ -121,12 +121,6 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    double rpmFromDashboard = SmartDashboard.getNumber("target rpm", 0.0);
-    if (rpmFromDashboard != targetRPM) {
-      targetRPM = (int) rpmFromDashboard;
-      this.setRPM(targetRPM);
-    }
-
     canSeeAnyTarget = (Robot.isReal() && !forceOdometry) ? LimeLight.getTv()
         : RobotContainer.drivetrainSubsystem.limelightSim.getSimTv();
     if (canSeeAnyTarget == 1.0 && Robot.isReal()) {

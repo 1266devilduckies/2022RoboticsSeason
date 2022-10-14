@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ComputerVisionUtil;
 import frc.robot.Constants;
 import frc.robot.GearUtil;
 import frc.robot.LimeLight;
@@ -147,7 +148,13 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
 
     //Invert the left input due to PS4 API thinking up is -1
-    robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getRawAxis(2)*Constants.drivetrainSpeedLimiter * (0.8/0.5));
+
+    double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
+    Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
+    Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
+    SmartDashboard.putNumber("distance to hub", input);
+    
+    robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getRawAxis(2)*Constants.drivetrainSpeedLimiter);
 
     double leftSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
     double rightSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);

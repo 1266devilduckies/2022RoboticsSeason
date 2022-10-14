@@ -64,9 +64,9 @@ public final class Constants {
     public static final Translation2d hubPosition = new Translation2d(Units.feetToMeters(54/2.), Units.feetToMeters(27/2.));
     public static final double limelightHorizontalRange = 27; //in terms of degrees
         //43 in from cart
-    public static final double hubHeight = Units.inchesToMeters(71);//2.6416;
-    public static final double limelightHeight = Units.inchesToMeters(49);
-    public static final double limelightMountAngle = 30;//30;
+    public static final double hubHeight = 2.6416;
+    public static final double limelightHeight = Units.inchesToMeters(30);
+    public static final double limelightMountAngle = 24; // real pls no change :pray:
     //in terms of units to meters with a field centric position with a robot pose of 0,0, (0,1)
     public static final Transform2d limelightOffsetFromCenterRobot = new Transform2d(
       new Translation2d(             
@@ -107,7 +107,7 @@ public final class Constants {
     public static final double trackWidth = Units.inchesToMeters(28);
     public static final double robotWeight = Units.lbsToKilograms(140);
 
-    public static final double drivetrainSpeedLimiter = .5; //Limit the drivetrain to 80%
+    public static final double drivetrainSpeedLimiter = .8; //Limit the drivetrain to 80%
     public static final double driverJoystickDeadband = 0.05;
 
     public static final double kMaxSpeedMetersPerSecond = 1.75;
@@ -133,9 +133,20 @@ public final class Constants {
     //interpolation data
     public static final double[][] flywheelRPMData = {
       //format of rpm, distance for that rpm
-      {3200, Units.feetToMeters(8.5)},
-      {4500, Units.feetToMeters(15)},
-      //fake data
-      {6200, Units.feetToMeters(20)}
+      {3950, 2.64},
+      {4000, 2.77},
+      {4300, 3.1},
+      {4600, 3.22},
+      {4700, 3.33},
+      {4850,3.51},
+      {4950, 3.69}
+    };
+
+    //when there two ball
+    public static final double[][] flywheelRPMDataCompressed = {
+      //format of rpm, distance for that rpm
+      {},
+      {},
+      {},
     };
 }

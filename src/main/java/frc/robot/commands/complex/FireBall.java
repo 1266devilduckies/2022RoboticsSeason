@@ -10,7 +10,7 @@ import frc.robot.subsystems.Shooter;
 public class FireBall extends SequentialCommandGroup {
     public FireBall(Shooter shooterSubsystem) {
         addCommands(
-        new StartFlywheel(shooterSubsystem).withTimeout(2), 
+        new StartFlywheel(shooterSubsystem)/*.withTimeout(2)*/, 
         new IndexBall(shooterSubsystem),
         new StopFlywheel(shooterSubsystem));
     }

@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.JoystickSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.complex.Auto1;
@@ -55,6 +56,7 @@ public class RobotContainer {
   JoystickButton btn_ps4L2_driver = new JoystickButton(driverJoystick, 7);
 
   JoystickButton btn_ps4r1_operator = new JoystickButton(operatorJoystick, 6);
+  JoystickButton btn_ps4l1_operator = new JoystickButton(operatorJoystick, 5);
 
 
   private SendableChooser<Object[]> autonomousMode = new SendableChooser<Object[]>();
@@ -102,6 +104,9 @@ public class RobotContainer {
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));
 
     //operator bindings
+    btn_ps4l1_operator.whenPressed(new FireBall(shooterSubsystem));
+    btn_ps4l1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
+
     btn_ps4r1_operator.whenPressed(new FireBall(shooterSubsystem));
     btn_ps4r1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
   }

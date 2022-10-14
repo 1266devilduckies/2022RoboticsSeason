@@ -1,21 +1,21 @@
 package frc.robot;
 
 public class FlywheelInterpolator {
-    public static int findRangeIdx(double distance) { // in terms of meters
+    public static int findRangeIdx(double[][] data, double distance) { // in terms of meters
         // if the input is past the largest
         // recording it defaults to the biggest one for interpolating
         int idx = -1;
         double min = 0;
         double max;
 
-        if (distance < Constants.flywheelRPMData[0][1]) {
+        if (distance < data[0][1]) {
             return 0; // return early
         }
-        if (distance > Constants.flywheelRPMData[Constants.flywheelRPMData.length - 1][1]) {
-            return Constants.flywheelRPMData.length - 1; // return early
+        if (distance > data[data.length - 1][1]) {
+            return data.length - 1; // return early
         }
-        for (int i = 0; i < Constants.flywheelRPMData.length; i++) {
-            max = Constants.flywheelRPMData[i][1];
+        for (int i = 0; i < data.length; i++) {
+            max = data[i][1];
 
             if (min <= distance && distance <= max) {
                 idx = i;
