@@ -20,10 +20,13 @@ import edu.wpi.first.math.util.Units;
 public class StartFlywheel extends CommandBase {
   Shooter shooterSubsystem;
   double rpm;
+  double overrideValue;
+  boolean overrided = false;
+
   public StartFlywheel(Shooter subsystem) {
     shooterSubsystem = subsystem;
     SmartDashboard.putNumber("target rpm", 0.0);
-    
+
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable datatable = inst.getTable("SmartDashboard");
 
@@ -33,17 +36,26 @@ public class StartFlywheel extends CommandBase {
     addRequirements(shooterSubsystem);
   }
 
+  public StartFlywheel(Shooter subsystem, double overrideRpm) {
+    overrided = true;
+    overrideValue = overrideRpm;
+  }
+
   @Override
   public void initialize() {
-  double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
-    Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
-    Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
-    //SmartDashboard.putNumber("distance to hub", input);
-    
+    double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight,
+        Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle),
+        Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
+
     int idx = FlywheelInterpolator.findRangeIdx(Constants.flywheelRPMData, input);
-    rpm = FlywheelInterpolator.interpolateDataFromIdx(Constants.flywheelRPMData, 
-    idx, 
-    input);
+    if (!overrided) {
+      rpm = FlywheelInterpolator.interpolateDataFromIdx(Constants.flywheelRPMData,
+          idx,
+          input);
+    } else {
+      rpm = overrideValue;
+    }
+
     SmartDashboard.putNumber("target rpm real", rpm);
     shooterSubsystem.setRPM(rpm);
     shooterSubsystem.setIndexerMotor(0.0);
@@ -53,7 +65,7 @@ public class StartFlywheel extends CommandBase {
   public void execute() {
 
   }
-  
+
   @Override
   public boolean isFinished() {
     System.out.println("TARGET RPM: " + rpm);

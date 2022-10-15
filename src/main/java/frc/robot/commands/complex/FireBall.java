@@ -14,4 +14,10 @@ public class FireBall extends SequentialCommandGroup {
         new IndexBall(shooterSubsystem),
         new StopFlywheel(shooterSubsystem));
     }
+    public FireBall(Shooter shooterSubsystem, double modifiedRPM) {
+        addCommands(
+        new StartFlywheel(shooterSubsystem, modifiedRPM)/*.withTimeout(2)*/, 
+        new IndexBall(shooterSubsystem),
+        new StopFlywheel(shooterSubsystem));
+    }
 }

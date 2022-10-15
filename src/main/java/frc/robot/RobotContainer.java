@@ -104,7 +104,7 @@ public class RobotContainer {
     btn_ps4r1_driver.whenReleased(new StopIntake(intakeSubsystem));
 
     //operator bindings
-    btn_ps4l1_operator.whenPressed(new FireBall(shooterSubsystem));
+    btn_ps4l1_operator.whenPressed(new FireBall(shooterSubsystem, 3149.4140625));
     btn_ps4l1_operator.whenReleased(new StopFlywheel(shooterSubsystem));
 
     btn_ps4r1_operator.whenPressed(new FireBall(shooterSubsystem));
