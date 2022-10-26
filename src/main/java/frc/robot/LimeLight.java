@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,21 +14,44 @@ import frc.robot.subsystems.Drivetrain;
 public class LimeLight {
     FieldObject2d limelightFieldObject;
     Pose2d pose;
+    static PhotonCamera camera;
+    //apriltag invasion >:)
     public LimeLight(Field2d field) {
         limelightFieldObject = field.getObject("LimeLight");
+        camera = new PhotonCamera("photonvision");
     }
 
     public static double getTv() {
-        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
+        boolean target = camera.getLatestResult().hasTargets();
+        if (target == true) {
+            return 1.0;
+        } else {
+            return 0.0;
+        }
     }
     public static double getTx() {
-        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
+        if (getTv() == 1.0) {
+            var target = camera.getLatestResult().getBestTarget();
+            return target.getYaw();
+        } else {
+            return 0.0;
+        }
     }
     public static double getTy() {
-        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
+        if (getTv() == 1.0) {
+            var target = camera.getLatestResult().getBestTarget();
+            return target.getPitch();
+        } else {
+            return 0.0;
+        }
     }
     public static double getTa() {
-        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
+        if (getTv() == 1.0) {
+            var target = camera.getLatestResult().getBestTarget();
+            return target.getArea();
+        } else {
+            return 0.0;
+        }
     }
     public static double getCurrentPipeline() {
         return NetworkTableInstance.getDefault().getTable("limelight").getEntry("getpipe").getDouble(0.0);

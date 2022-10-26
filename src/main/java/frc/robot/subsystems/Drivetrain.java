@@ -83,9 +83,6 @@ public class Drivetrain extends SubsystemBase {
     MainLeftMotorFront.follow(MainLeftMotorBack);
     MainRightMotorFront.follow(MainRightMotorBack);
 
-    MainLeftMotorFront.setInverted(InvertType.FollowMaster);
-    MainRightMotorFront.setInverted(InvertType.FollowMaster);
-
     //Disable voltage compensation, it's bad to be compensating voltage for a system which draws loads of amps
     MainLeftMotorBack.enableVoltageCompensation(false);
     MainLeftMotorFront.enableVoltageCompensation(false);
@@ -93,14 +90,16 @@ public class Drivetrain extends SubsystemBase {
     MainRightMotorFront.enableVoltageCompensation(false);
 
     //Have the back motors be on brake as suggested by Johnny
-    MainLeftMotorBack.setNeutralMode(NeutralMode.Brake);
+    MainLeftMotorBack.setNeutralMode(NeutralMode.Coast); //brake
     MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
-    MainRightMotorBack.setNeutralMode(NeutralMode.Brake);
+    MainRightMotorBack.setNeutralMode(NeutralMode.Coast); //brake
     MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
 
     //Invert one of the sides
     MainLeftMotorBack.setInverted(true);
     MainRightMotorBack.setInverted(false);
+    MainLeftMotorFront.setInverted(InvertType.FollowMaster);
+    MainRightMotorFront.setInverted(InvertType.FollowMaster);
 
     //Initialize the drivetrain API logic to be used on the CAN devices
     robotDrive = new DifferentialDrive(MainLeftMotorBack, MainRightMotorBack);

@@ -23,31 +23,32 @@ public final class Constants {
 
     //All constants are in SI units
 
-    //Pneumatics CAN IDs
-    public static final int CANID_pneumaticsControlModule = 10;
     public static final int intakeSolenoidPort = 0;
-    public static final int CANID_intakeMotor = 4;
+
+    //Pneumatics CAN IDs
+    public static final int CANID_pneumaticsControlModule = 1;
+    public static final int CANID_intakeMotor = 6;
 
     //Drivetrain CAN IDs
-    public static final int CANID_mainLeftMotorBack = 0;
-    public static final int CANID_mainLeftMotorFront = 1;
+    public static final int CANID_mainLeftMotorBack = 3;
+    public static final int CANID_mainLeftMotorFront = 5;
 
-    public static final int CANID_mainRightMotorBack = 3;
-    public static final int CANID_mainRightMotorFront = 2;
+    public static final int CANID_mainRightMotorBack = 2;
+    public static final int CANID_mainRightMotorFront = 4;
 
     //Shooter CAN IDs
     public static final int CANID_leftFlywheelMotor = 8;
-    public static final int CANID_rightFlywheelMotor = 5;
+    public static final int CANID_rightFlywheelMotor = 7;
 
-    public static final int CANID_indexerMotor = 9;
+    public static final int CANID_indexerMotor = 10;
 
     public static final int CANID_turretAlignmentMotor = 14;
 
     //Climber CAN IDs
 
     //check in on these when you get the chance
-    public static final int CANID_leftClimberMotor = 13;
-    public static final int CANID_rightClimberMotor = 12;
+    public static final int CANID_leftClimberMotor = 10;
+    public static final int CANID_rightClimberMotor = 9;
     public static double upperBoundClimber = -150000.0; //negative is up
     public static double lowerBoundClimber = 0.0; //ten thousand
 
