@@ -34,14 +34,15 @@ public class Drivetrain extends SubsystemBase {
   public final DifferentialDrive robotDrive;
   private final DifferentialDrivetrainSim robotDriveSim;
 
-  //CAN devices
+  // CAN devices
   private final WPI_TalonFX MainLeftMotorBack;
   private final WPI_TalonFX MainRightMotorBack;
   private final WPI_TalonFX MainLeftMotorFront;
   private final WPI_TalonFX MainRightMotorFront;
 
-  //CAN Sim collections, have the ability to get and set the encoder position and velocity without actually changing the actual CAN devices. 
-  //You only really need two for are case, that being the masters
+  // CAN Sim collections, have the ability to get and set the encoder position and
+  // velocity without actually changing the actual CAN devices.
+  // You only really need two for are case, that being the masters
   private final TalonFXSimCollection leftMotorSim;
   private final TalonFXSimCollection rightMotorSim;
 
@@ -49,8 +50,8 @@ public class Drivetrain extends SubsystemBase {
   public ADXRS450_Gyro gyro;
 
   public DifferentialDrivePoseEstimator odometry;
-  
-  public final static Field2d field = new Field2d(); //used to simulate the field for the simulated robot
+
+  public final static Field2d field = new Field2d(); // used to simulate the field for the simulated robot
   public LimeLight limelightSim;
   private LineRenderer turretDirection;
 
@@ -64,104 +65,150 @@ public class Drivetrain extends SubsystemBase {
     gyro.calibrate();
     gyroSim = new ADXRS450_GyroSim(gyro);
     odometry = new DifferentialDrivePoseEstimator(Rotation2d.fromDegrees(-gyro.getAngle()),
-     new Pose2d(5.0, 8.0, new Rotation2d()),  
-     new MatBuilder<>(Nat.N5(), Nat.N1()).fill(0.02, 0.02, 0.01, 0.02, 0.02), // State measurement standard deviations. X, Y, theta.
-     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations. Left encoder, right encoder, gyro.
-     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Global measurement standard deviations. X, Y, and theta.);
-    
-    //Reset settings
+        new Pose2d(5.0, 8.0, new Rotation2d()),
+        new MatBuilder<>(Nat.N5(), Nat.N1()).fill(0.02, 0.02, 0.01, 0.02, 0.02), // State measurement standard
+                                                                                 // deviations. X, Y, theta.
+        new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations. Left
+                                                                     // encoder, right encoder, gyro.
+        new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Global measurement standard deviations. X, Y, and
+                                                                    // theta.);
+
+    // Reset settings
     MainLeftMotorBack.configFactoryDefault();
     MainRightMotorBack.configFactoryDefault();
     MainLeftMotorFront.configFactoryDefault();
     MainRightMotorFront.configFactoryDefault();
 
-    //Setup the integrated sensor
+    // Setup the integrated sensor
     MainLeftMotorBack.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
     MainRightMotorBack.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
 
-    //Slave the front motors to their respective back motors
+    // Slave the front motors to their respective back motors
     MainLeftMotorFront.follow(MainLeftMotorBack);
     MainRightMotorFront.follow(MainRightMotorBack);
 
-    //Disable voltage compensation, it's bad to be compensating voltage for a system which draws loads of amps
+    // Disable voltage compensation, it's bad to be compensating voltage for a
+    // system which draws loads of amps
     MainLeftMotorBack.enableVoltageCompensation(false);
     MainLeftMotorFront.enableVoltageCompensation(false);
     MainRightMotorBack.enableVoltageCompensation(false);
     MainRightMotorFront.enableVoltageCompensation(false);
 
-    //Have the back motors be on brake as suggested by Johnny
-    MainLeftMotorBack.setNeutralMode(NeutralMode.Coast); //brake
+    // Have the back motors be on brake as suggested by Johnny
+    MainLeftMotorBack.setNeutralMode(NeutralMode.Coast); // brake
     MainLeftMotorFront.setNeutralMode(NeutralMode.Coast);
-    MainRightMotorBack.setNeutralMode(NeutralMode.Coast); //brake
+    MainRightMotorBack.setNeutralMode(NeutralMode.Coast); // brake
     MainRightMotorFront.setNeutralMode(NeutralMode.Coast);
 
-    //Invert one of the sides
+    // Invert one of the sides
     MainLeftMotorBack.setInverted(true);
     MainRightMotorBack.setInverted(false);
     MainLeftMotorFront.setInverted(InvertType.FollowMaster);
     MainRightMotorFront.setInverted(InvertType.FollowMaster);
 
-    //Initialize the drivetrain API logic to be used on the CAN devices
+    // Initialize the drivetrain API logic to be used on the CAN devices
     robotDrive = new DifferentialDrive(MainLeftMotorBack, MainRightMotorBack);
 
-    //Initialize the drivetrain API which simulates the voltage outputs on the given CAN devices assigned to the DifferentialDrive class
+    // Initialize the drivetrain API which simulates the voltage outputs on the
+    // given CAN devices assigned to the DifferentialDrive class
 
-    // robotDriveSim = new DifferentialDrivetrainSim(LinearSystemId.identifyVelocitySystem(Constants.kVLinear, Constants.kALinear), 
+    // robotDriveSim = new
+    // DifferentialDrivetrainSim(LinearSystemId.identifyVelocitySystem(Constants.kVLinear,
+    // Constants.kALinear),
     // DCMotor.getFalcon500(2),
-    // Constants.GEARING_drivetrainGearbox, 
-    // Constants.trackWidth, 
-    // Constants.drivetrainWheelRadius, 
+    // Constants.GEARING_drivetrainGearbox,
+    // Constants.trackWidth,
+    // Constants.drivetrainWheelRadius,
     // VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
-    
+
     robotDriveSim = new DifferentialDrivetrainSim(
-      DCMotor.getFalcon500(2),  //2 Falcon 500s on each side of the drivetrain.
-      Constants.GEARING_drivetrainGearbox,               //Standard AndyMark Gearing reduction.
-      2.1,                      //MOI of 2.1 kg m^2 (from CAD model).
-      26.5,                     //Mass of the robot is 26.5 kg.
-      Constants.drivetrainWheelRadius,  //Robot uses 3" radius (6" diameter) wheels.
-      Constants.trackWidth,                    //Distance between wheels is _ meters.
-      
-      /*
-       * The standard deviations for measurement noise:
-       * x and y:          0.001 m
-       * heading:          0.001 rad
-       * l and r velocity: 0.1   m/s
-       * l and r position: 0.005 m
-       */
-      null //VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005) //Uncomment this line to add measurement noise.
+        DCMotor.getFalcon500(2), // 2 Falcon 500s on each side of the drivetrain.
+        Constants.GEARING_drivetrainGearbox, // Standard AndyMark Gearing reduction.
+        2.1, // MOI of 2.1 kg m^2 (from CAD model).
+        26.5, // Mass of the robot is 26.5 kg.
+        Constants.drivetrainWheelRadius, // Robot uses 3" radius (6" diameter) wheels.
+        Constants.trackWidth, // Distance between wheels is _ meters.
+
+        /*
+         * The standard deviations for measurement noise:
+         * x and y: 0.001 m
+         * heading: 0.001 rad
+         * l and r velocity: 0.1 m/s
+         * l and r position: 0.005 m
+         */
+        null // VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005) //Uncomment this
+             // line to add measurement noise.
     );
 
-    SmartDashboard.putData("Field", field); //send field to NT
+    SmartDashboard.putData("Field", field); // send field to NT
 
-    robotDrive.setDeadband(Constants.driverJoystickDeadband); //Apply deadbanding to fix controller drift
+    robotDrive.setDeadband(Constants.driverJoystickDeadband); // Apply deadbanding to fix controller drift
 
     leftMotorSim = MainLeftMotorBack.getSimCollection();
     rightMotorSim = MainRightMotorBack.getSimCollection();
 
     limelightSim = new LimeLight(field);
-    turretDirection = new LineRenderer(odometry.getEstimatedPosition().getX(), odometry.getEstimatedPosition().getY(), 3, 3, field);
+    turretDirection = new LineRenderer(odometry.getEstimatedPosition().getX(), odometry.getEstimatedPosition().getY(),
+        3, 3, field);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    //Invert the left input due to PS4 API thinking up is -1
+    // Invert the left input due to PS4 API thinking up is -1
 
-    double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight, 
-    Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle), 
-    Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
+    double input = ComputerVisionUtil.calculateDistanceToTarget(Constants.limelightHeight,
+        Constants.hubHeight, Units.degreesToRadians(Constants.limelightMountAngle),
+        Units.degreesToRadians(LimeLight.getTy()), Units.degreesToRadians(-LimeLight.getTx()));
     SmartDashboard.putNumber("distance to hub", input);
-    
-    robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter, RobotContainer.driverJoystick.getRawAxis(2)*Constants.drivetrainSpeedLimiter);
 
-    double leftSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
-    double rightSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
+    // -1,1
+    double x = -RobotContainer.driverJoystick.getRawAxis(1);
+    double y = RobotContainer.driverJoystick.getRawAxis(2);
+    double deadband = 0.5;
+    double turnSpeed = 1.;
+    double forwardSpeed = turnSpeed / 2.;
+    SmartDashboard.putString("joystick position",x + ", " + y);
 
-    odometry.update(gyro.getRotation2d(), 
-    new DifferentialDriveWheelSpeeds(leftSpeedMs, rightSpeedMs),
-    GearUtil.encoderTicksToMeters(MainLeftMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius),
-    GearUtil.encoderTicksToMeters(MainRightMotorBack.getSelectedSensorPosition(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    // extremize
+    double tempY = y;
+    y = Math.signum(x) * (Math.abs(x) < deadband ? 0 : 1);
+    x = Math.signum(tempY) * (Math.abs(tempY) < deadband ? 0 : 1);
+    if (x == 0 && y == 0) {
+      robotDrive.tankDrive(0, 0);
+    } else if (x == 0 && y == 1) {
+      robotDrive.tankDrive(forwardSpeed*2., forwardSpeed*2.);
+    } else if (x == 1 && y == 1) {
+      robotDrive.tankDrive(turnSpeed, 0);
+    } else if (x == 1 && y == 0) {
+      robotDrive.tankDrive(forwardSpeed, -forwardSpeed);
+    } else if (x == 1 && y == -1) {
+      robotDrive.tankDrive(0, -turnSpeed);
+    } else if (x == 0 && y == -1) {
+      robotDrive.tankDrive(-forwardSpeed*2., -forwardSpeed*2.);
+    } else if (x == -1 && y == -1) {
+      robotDrive.tankDrive(-turnSpeed, 0);
+    } else if (x == -1 && y == 0) {
+      robotDrive.tankDrive(-forwardSpeed, forwardSpeed);
+    } else if (x == -1 && y == 1) {
+      robotDrive.tankDrive(0, turnSpeed);
+    }
+
+    // robotDrive.arcadeDrive(-RobotContainer.driverJoystick.getRawAxis(1)*Constants.drivetrainSpeedLimiter,
+    // RobotContainer.driverJoystick.getRawAxis(2)*Constants.drivetrainSpeedLimiter);
+
+    double leftSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(),
+        Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
+    double rightSpeedMs = GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(),
+        Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius);
+
+    odometry.update(gyro.getRotation2d(),
+        new DifferentialDriveWheelSpeeds(leftSpeedMs, rightSpeedMs),
+        GearUtil.encoderTicksToMeters(MainLeftMotorBack.getSelectedSensorPosition(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius),
+        GearUtil.encoderTicksToMeters(MainRightMotorBack.getSelectedSensorPosition(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
   }
 
   @Override
@@ -170,58 +217,82 @@ public class Drivetrain extends SubsystemBase {
 
     Pose2d robotPose = odometry.getEstimatedPosition();
     field.setRobotPose(robotPose);
-    double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() - gyro.getAngle()); //turret is fixed to robot rotation however gyro is inverted
+    double radian = Units.degreesToRadians(RobotContainer.shooterSubsystem.degreesOnTurret() - gyro.getAngle()); // turret
+                                                                                                                 // is
+                                                                                                                 // fixed
+                                                                                                                 // to
+                                                                                                                 // robot
+                                                                                                                 // rotation
+                                                                                                                 // however
+                                                                                                                 // gyro
+                                                                                                                 // is
+                                                                                                                 // inverted
     Translation2d originOrientation = new Translation2d(Math.cos(radian), Math.sin(radian));
     Translation2d localPosition = robotPose.getTranslation().plus(originOrientation);
     Translation2d lookDirection = robotPose.getTranslation().minus(localPosition);
     Rotation2d look = new Rotation2d(lookDirection.getX(), lookDirection.getY());
     limelightSim.render(new Pose2d(localPosition, look));
-    turretDirection.update(robotPose.getX(), robotPose.getY(), Constants.hubPosition.getX(), Constants.hubPosition.getY(), field);
+    turretDirection.update(robotPose.getX(), robotPose.getY(), Constants.hubPosition.getX(),
+        Constants.hubPosition.getY(), field);
 
     SmartDashboard.putNumber("distanceSim", limelightSim.getSimDistanceToHub());
 
+    // For the motor master which is inverted, you'll need to invert it manually (ie
+    // with a negative sign) here when fetching any data
+    // CTRE doesn't support setInverted() for simulation
 
-    //For the motor master which is inverted, you'll need to invert it manually (ie with a negative sign) here when fetching any data 
-    //CTRE doesn't support setInverted() for simulation
-    
     leftMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     rightMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
     robotDriveSim.setInputs(leftMotorSim.getMotorOutputLeadVoltage(),
-                         -rightMotorSim.getMotorOutputLeadVoltage());
-    //The roboRIO updates at 50hz so you want to match what it actually is in simulation to get accurate simulations
+        -rightMotorSim.getMotorOutputLeadVoltage());
+    // The roboRIO updates at 50hz so you want to match what it actually is in
+    // simulation to get accurate simulations
     robotDriveSim.update(0.02);
 
-    //Update sensors
-    leftMotorSim.setIntegratedSensorRawPosition((int)GearUtil.metersToEncoderTicks(robotDriveSim.getLeftPositionMeters(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
-    leftMotorSim.setIntegratedSensorVelocity((int)GearUtil.metersPerSecondToEncoderTicksPer100ms(robotDriveSim.getLeftVelocityMetersPerSecond(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
-    rightMotorSim.setIntegratedSensorRawPosition((int)GearUtil.metersToEncoderTicks(-robotDriveSim.getRightPositionMeters(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
-    rightMotorSim.setIntegratedSensorVelocity((int)GearUtil.metersPerSecondToEncoderTicksPer100ms(-robotDriveSim.getRightVelocityMetersPerSecond(), Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    // Update sensors
+    leftMotorSim
+        .setIntegratedSensorRawPosition((int) GearUtil.metersToEncoderTicks(robotDriveSim.getLeftPositionMeters(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    leftMotorSim.setIntegratedSensorVelocity(
+        (int) GearUtil.metersPerSecondToEncoderTicksPer100ms(robotDriveSim.getLeftVelocityMetersPerSecond(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    rightMotorSim
+        .setIntegratedSensorRawPosition((int) GearUtil.metersToEncoderTicks(-robotDriveSim.getRightPositionMeters(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    rightMotorSim.setIntegratedSensorVelocity(
+        (int) GearUtil.metersPerSecondToEncoderTicksPer100ms(-robotDriveSim.getRightVelocityMetersPerSecond(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
 
-    //Update simulation gyro, it's detached from the actual gyro
+    // Update simulation gyro, it's detached from the actual gyro
     gyroSim.setAngle(robotDriveSim.getHeading().getDegrees());
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(), 
-    Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius), 
-    GearUtil.EncoderTicksPer100msToMetersPerSecond(MainRightMotorBack.getSelectedSensorVelocity(), 
-    Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
+    return new DifferentialDriveWheelSpeeds(
+        GearUtil.EncoderTicksPer100msToMetersPerSecond(MainLeftMotorBack.getSelectedSensorVelocity(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius),
+        GearUtil.EncoderTicksPer100msToMetersPerSecond(MainRightMotorBack.getSelectedSensorVelocity(),
+            Constants.GEARING_drivetrainGearbox, 2048.0, Constants.drivetrainWheelRadius));
   }
+
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();
   }
+
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     MainLeftMotorBack.setVoltage(leftVolts);
     MainRightMotorBack.setVoltage(rightVolts);
-    robotDrive.feed(); //feed watchdog to prevent error from clogging can bus
+    robotDrive.feed(); // feed watchdog to prevent error from clogging can bus
   }
+
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
     odometry.resetPosition(pose, gyro.getRotation2d());
   }
+
   public void resetEncoders() {
     MainLeftMotorBack.setSelectedSensorPosition(0);
     MainRightMotorBack.setSelectedSensorPosition(0);
   }
-  
+
 }

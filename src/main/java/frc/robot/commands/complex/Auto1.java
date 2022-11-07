@@ -12,8 +12,8 @@ public class Auto1 extends SequentialCommandGroup {
 
     public Auto1() {
         addCommands(
-            RobotContainer.bindOverride(TrajectoryFactories.generateTrajectoryCommand(firstPath)),
-            RobotContainer.bindOverride(new FireBall(RobotContainer.shooterSubsystem))
+            /* RobotContainer.bindOverride( */TrajectoryFactories.generateTrajectoryCommand(firstPath)/* ) */,
+            /* RobotContainer.bindOverride( */new FireBall(RobotContainer.shooterSubsystem)/* ) */
             );
     }
 

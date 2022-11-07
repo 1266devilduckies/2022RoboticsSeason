@@ -4,6 +4,8 @@ import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,11 +20,12 @@ public class LimeLight {
     //apriltag invasion >:)
     public LimeLight(Field2d field) {
         limelightFieldObject = field.getObject("LimeLight");
-        camera = new PhotonCamera("photonvision");
+        camera = new PhotonCamera("gloworm");
     }
 
     public static double getTv() {
         boolean target = camera.getLatestResult().hasTargets();
+        System.out.print(target);
         if (target == true) {
             return 1.0;
         } else {
