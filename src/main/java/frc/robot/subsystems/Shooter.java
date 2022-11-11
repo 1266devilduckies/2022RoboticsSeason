@@ -71,6 +71,7 @@ public class Shooter extends SubsystemBase {
     rightFlywheelMotor.setInverted(InvertType.OpposeMaster);
 
     leftFlywheelMotor.config_kP(0, Constants.PID_kP_flywheel);
+    leftFlywheelMotor.config_kD(0, Constants.PID_kD_flywheel);
 
     leftFlywheelMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 100);
 
